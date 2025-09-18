@@ -1,0 +1,34 @@
+# Dependencies
+/vendor/
+/composer.phar
+
+# Environment / Secrets
+.env
+.env.*.local
+config/database.php
+config/openai.php
+
+# Uploads / Temp / Cache
+uploads/
+upload/
+storage/
+tmp/
+temp/
+cache/
+*.log
+logs/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.code-workspace
+*.swp
+*.swo
+
+# Build / Reports
+coverage/
+build/
+dist/
+
