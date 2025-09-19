@@ -1,0 +1,46 @@
+product_id,product_name,category,price_range,unit_price,motif_type,origin,availability,seasonal_demand
+BAT001,Batik Parang Klasik V1,Parang Klasik,High,404700,Modern,Solo,In Stock,Year-round
+BAT002,Batik Parang Klasik V2,Parang Klasik,High,429372,Traditional,Solo,In Stock,Year-round
+BAT003,Batik Parang Klasik V3,Parang Klasik,Low,132240,Traditional,Solo,Pre-order,Holiday
+BAT004,Batik Sido Mukti V1,Sido Mukti,High,316653,Modern,Solo,Limited,Wedding Season
+BAT005,Batik Sido Mukti V2,Sido Mukti,Medium,288704,Modern,Solo,Pre-order,Year-round
+BAT006,Batik Sido Mukti V3,Sido Mukti,High,488932,Traditional,Solo,Pre-order,Wedding Season
+BAT007,Batik Sido Asih V1,Sido Asih,Medium,239174,Traditional,Solo,Limited,Holiday
+BAT008,Batik Sido Asih V2,Sido Asih,Low,109470,Traditional,Solo,Pre-order,Wedding Season
+BAT009,Batik Sido Asih V3,Sido Asih,Medium,281225,Traditional,Solo,Pre-order,Year-round
+BAT010,Batik Truntum V1,Truntum,High,378235,Contemporary,Solo,Pre-order,Wedding Season
+BAT011,Batik Truntum V2,Truntum,Low,70032,Modern,Solo,In Stock,Wedding Season
+BAT012,Batik Truntum V3,Truntum,High,300149,Contemporary,Solo,Limited,Holiday
+BAT013,Batik Kawung V1,Kawung,Low,64662,Modern,Solo,Limited,Year-round
+BAT014,Batik Kawung V2,Kawung,Low,81571,Contemporary,Solo,In Stock,Year-round
+BAT015,Batik Kawung V3,Kawung,High,427399,Traditional,Solo,Pre-order,Year-round
+BAT016,Batik Megamendung V1,Megamendung,Low,136474,Modern,Pekalongan,Pre-order,Year-round
+BAT017,Batik Megamendung V2,Megamendung,Medium,288326,Contemporary,Pekalongan,Limited,Year-round
+BAT018,Batik Megamendung V3,Megamendung,High,497988,Contemporary,Pekalongan,Pre-order,Year-round
+BAT019,Batik Jlamprang V1,Jlamprang,High,381714,Modern,Pekalongan,Pre-order,Wedding Season
+BAT020,Batik Jlamprang V2,Jlamprang,Medium,264845,Contemporary,Pekalongan,Limited,Year-round
+BAT021,Batik Jlamprang V3,Jlamprang,Low,79451,Traditional,Pekalongan,Limited,Year-round
+BAT022,Batik Terang Bulan V1,Terang Bulan,High,445207,Traditional,Pekalongan,Pre-order,Year-round
+BAT023,Batik Terang Bulan V2,Terang Bulan,Low,59305,Contemporary,Pekalongan,Pre-order,Year-round
+BAT024,Batik Terang Bulan V3,Terang Bulan,Low,58834,Traditional,Pekalongan,Limited,Year-round
+BAT025,Batik Pesisir V1,Pesisir,High,362391,Modern,Pekalongan,Pre-order,Holiday
+BAT026,Batik Pesisir V2,Pesisir,Low,120678,Traditional,Pekalongan,Pre-order,Wedding Season
+BAT027,Batik Pesisir V3,Pesisir,High,423907,Traditional,Pekalongan,Limited,Holiday
+BAT028,Batik Batik Tulis V1,Batik Tulis,Low,62363,Traditional,Pekalongan,Pre-order,Holiday
+BAT029,Batik Batik Tulis V2,Batik Tulis,Medium,261038,Modern,Pekalongan,Limited,Wedding Season
+BAT030,Batik Batik Tulis V3,Batik Tulis,Low,138259,Contemporary,Pekalongan,Pre-order,Year-round
+BAT031,Batik Batik Bakaran V1,Batik Bakaran,Low,102772,Contemporary,Bakaran (Pati),Limited,Year-round
+BAT032,Batik Batik Bakaran V2,Batik Bakaran,Low,75112,Traditional,Bakaran (Pati),Pre-order,Holiday
+BAT033,Batik Batik Bakaran V3,Batik Bakaran,Low,105296,Traditional,Bakaran (Pati),Limited,Holiday
+BAT034,Batik Motif Pesisir V1,Motif Pesisir,Low,59880,Modern,Bakaran (Pati),Pre-order,Year-round
+BAT035,Batik Motif Pesisir V2,Motif Pesisir,Low,135477,Contemporary,Bakaran (Pati),In Stock,Year-round
+BAT036,Batik Motif Pesisir V3,Motif Pesisir,Low,71798,Modern,Bakaran (Pati),Limited,Holiday
+BAT037,Batik Batik Tulis Halus V1,Batik Tulis Halus,Low,102565,Traditional,Bakaran (Pati),In Stock,Holiday
+BAT038,Batik Batik Tulis Halus V2,Batik Tulis Halus,Low,101173,Modern,Bakaran (Pati),Limited,Holiday
+BAT039,Batik Batik Tulis Halus V3,Batik Tulis Halus,Medium,295691,Contemporary,Bakaran (Pati),Pre-order,Holiday
+BAT040,Batik Batik Cap V1,Batik Cap,Low,74890,Modern,Bakaran (Pati),In Stock,Year-round
+BAT041,Batik Batik Cap V2,Batik Cap,High,492869,Contemporary,Bakaran (Pati),In Stock,Wedding Season
+BAT042,Batik Batik Cap V3,Batik Cap,Medium,164985,Traditional,Bakaran (Pati),Pre-order,Holiday
+BAT043,Batik Batik Kombinasi V1,Batik Kombinasi,High,439231,Traditional,Bakaran (Pati),In Stock,Wedding Season
+BAT044,Batik Batik Kombinasi V2,Batik Kombinasi,Low,74356,Traditional,Bakaran (Pati),Pre-order,Year-round
+BAT045,Batik Batik Kombinasi V3,Batik Kombinasi,High,361657,Modern,Bakaran (Pati),In Stock,Wedding Season

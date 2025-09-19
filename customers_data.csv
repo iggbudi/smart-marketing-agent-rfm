@@ -1,0 +1,301 @@
+customer_id,age,gender,income_level,batik_preference,purchase_frequency,satisfaction_score,loyalty_score,preferred_channel,location
+CUST001,40,Male,High,Traditional,Annually,5,5,Tokopedia,Surabaya
+CUST002,38,Female,Low,Contemporary,Annually,2,3,Direct Store,Surabaya
+CUST003,29,Male,Medium,Traditional,Monthly,5,2,Tokopedia,Bandung
+CUST004,47,Male,Low,Contemporary,Semi-annually,2,4,Tokopedia,Yogyakarta
+CUST005,58,Male,High,Contemporary,Monthly,2,3,Instagram,Jakarta
+CUST006,60,Male,Medium,Contemporary,Quarterly,3,2,Tokopedia,Yogyakarta
+CUST007,56,Female,Low,Traditional,Annually,3,1,Instagram,Surabaya
+CUST008,33,Female,Low,Mix,Annually,5,1,Instagram,Jakarta
+CUST009,34,Male,Medium,Modern,Annually,2,1,Tokopedia,Surabaya
+CUST010,27,Female,Low,Modern,Monthly,3,5,Direct Store,Yogyakarta
+CUST011,34,Male,Low,Modern,Annually,1,2,Tokopedia,Pekalongan
+CUST012,51,Male,Medium,Modern,Monthly,4,1,Direct Store,Bandung
+CUST013,37,Female,Medium,Contemporary,Quarterly,2,1,WhatsApp,Semarang
+CUST014,46,Female,Low,Contemporary,Semi-annually,5,4,Tokopedia,Jakarta
+CUST015,32,Female,Low,Contemporary,Monthly,1,5,Direct Store,Surabaya
+CUST016,45,Female,High,Traditional,Annually,5,2,Tokopedia,Jakarta
+CUST017,52,Male,High,Modern,Semi-annually,4,1,Tokopedia,Yogyakarta
+CUST018,45,Male,High,Contemporary,Semi-annually,4,3,Direct Store,Solo
+CUST019,43,Male,Low,Mix,Annually,2,5,Tokopedia,Semarang
+CUST020,60,Male,Medium,Contemporary,Quarterly,4,5,Tokopedia,Semarang
+CUST021,53,Female,High,Modern,Annually,2,1,Tokopedia,Yogyakarta
+CUST022,65,Female,Low,Modern,Semi-annually,2,2,WhatsApp,Jakarta
+CUST023,27,Male,Medium,Traditional,Annually,4,5,WhatsApp,Solo
+CUST024,49,Female,Medium,Modern,Quarterly,1,1,Direct Store,Bandung
+CUST025,36,Female,Low,Modern,Monthly,4,2,Direct Store,Solo
+CUST026,58,Female,Medium,Mix,Annually,2,4,Direct Store,Surabaya
+CUST027,40,Female,High,Mix,Quarterly,3,4,Instagram,Solo
+CUST028,43,Male,Medium,Contemporary,Semi-annually,5,1,WhatsApp,Bandung
+CUST029,39,Female,High,Modern,Quarterly,1,4,Direct Store,Surabaya
+CUST030,59,Female,Medium,Traditional,Quarterly,4,4,Instagram,Pekalongan
+CUST031,61,Female,Medium,Traditional,Semi-annually,3,4,Direct Store,Yogyakarta
+CUST032,59,Male,Medium,Modern,Semi-annually,4,4,Instagram,Semarang
+CUST033,46,Female,High,Modern,Annually,2,5,Instagram,Semarang
+CUST034,62,Male,Low,Mix,Quarterly,4,2,Instagram,Surabaya
+CUST035,49,Female,Low,Mix,Semi-annually,3,4,Tokopedia,Pekalongan
+CUST036,51,Female,Low,Mix,Monthly,5,1,Tokopedia,Bandung
+CUST037,29,Male,Low,Modern,Quarterly,1,5,WhatsApp,Bandung
+CUST038,33,Female,High,Traditional,Quarterly,4,3,Tokopedia,Bandung
+CUST039,63,Male,Low,Contemporary,Monthly,5,1,Tokopedia,Yogyakarta
+CUST040,49,Female,High,Modern,Monthly,5,2,Instagram,Solo
+CUST041,44,Male,High,Traditional,Semi-annually,5,4,Tokopedia,Jakarta
+CUST042,57,Female,Low,Mix,Annually,1,4,Tokopedia,Solo
+CUST043,54,Male,Medium,Modern,Semi-annually,5,5,Direct Store,Semarang
+CUST044,52,Female,Medium,Modern,Monthly,3,4,WhatsApp,Pekalongan
+CUST045,54,Female,Medium,Traditional,Annually,3,2,Direct Store,Bandung
+CUST046,47,Female,Medium,Contemporary,Semi-annually,5,1,WhatsApp,Jakarta
+CUST047,40,Female,Medium,Modern,Annually,4,4,Instagram,Jakarta
+CUST048,43,Male,Medium,Modern,Semi-annually,5,3,Direct Store,Yogyakarta
+CUST049,58,Female,Medium,Contemporary,Semi-annually,4,3,Tokopedia,Surabaya
+CUST050,39,Male,High,Modern,Semi-annually,1,5,WhatsApp,Bandung
+CUST051,38,Female,Medium,Contemporary,Monthly,2,3,WhatsApp,Surabaya
+CUST052,36,Female,Low,Modern,Semi-annually,1,1,Tokopedia,Solo
+CUST053,33,Female,Low,Traditional,Semi-annually,4,4,Direct Store,Surabaya
+CUST054,36,Male,Medium,Mix,Monthly,1,4,Direct Store,Jakarta
+CUST055,61,Male,Low,Modern,Semi-annually,1,2,Instagram,Yogyakarta
+CUST056,51,Male,High,Mix,Annually,4,3,Direct Store,Surabaya
+CUST057,61,Male,High,Traditional,Quarterly,2,3,Instagram,Bandung
+CUST058,40,Male,High,Traditional,Quarterly,1,4,Direct Store,Solo
+CUST059,63,Female,Medium,Traditional,Quarterly,3,3,Direct Store,Jakarta
+CUST060,39,Female,High,Modern,Annually,1,5,WhatsApp,Solo
+CUST061,34,Female,Low,Traditional,Monthly,2,3,Tokopedia,Semarang
+CUST062,32,Female,High,Contemporary,Annually,3,5,Direct Store,Semarang
+CUST063,30,Male,Medium,Contemporary,Semi-annually,1,1,WhatsApp,Solo
+CUST064,61,Male,High,Contemporary,Monthly,2,4,Direct Store,Surabaya
+CUST065,36,Female,High,Mix,Monthly,4,3,Direct Store,Surabaya
+CUST066,45,Male,Low,Contemporary,Annually,4,3,Direct Store,Pekalongan
+CUST067,60,Male,Medium,Traditional,Semi-annually,3,3,Instagram,Pekalongan
+CUST068,50,Male,High,Mix,Annually,1,2,Tokopedia,Yogyakarta
+CUST069,56,Female,Low,Modern,Semi-annually,5,2,Tokopedia,Semarang
+CUST070,56,Male,Low,Modern,Quarterly,3,5,Instagram,Yogyakarta
+CUST071,51,Male,Low,Traditional,Annually,1,2,Direct Store,Solo
+CUST072,43,Female,Medium,Mix,Annually,2,4,WhatsApp,Semarang
+CUST073,37,Male,Low,Contemporary,Annually,3,5,Tokopedia,Pekalongan
+CUST074,25,Female,High,Contemporary,Annually,2,4,Direct Store,Surabaya
+CUST075,46,Female,Medium,Contemporary,Quarterly,2,5,Direct Store,Bandung
+CUST076,51,Male,Medium,Mix,Annually,4,2,Direct Store,Jakarta
+CUST077,33,Female,Low,Mix,Monthly,5,4,Instagram,Solo
+CUST078,34,Female,High,Modern,Monthly,4,3,Tokopedia,Yogyakarta
+CUST079,50,Male,Medium,Mix,Semi-annually,4,5,Instagram,Yogyakarta
+CUST080,29,Male,High,Contemporary,Quarterly,1,4,Instagram,Pekalongan
+CUST081,65,Male,Medium,Modern,Semi-annually,1,1,Tokopedia,Pekalongan
+CUST082,28,Female,Medium,Contemporary,Annually,2,2,Direct Store,Yogyakarta
+CUST083,36,Male,Low,Traditional,Annually,5,2,Direct Store,Yogyakarta
+CUST084,34,Male,Medium,Contemporary,Annually,3,1,Direct Store,Surabaya
+CUST085,59,Male,Low,Mix,Semi-annually,5,3,Direct Store,Solo
+CUST086,41,Female,Medium,Modern,Annually,4,1,WhatsApp,Semarang
+CUST087,61,Female,High,Contemporary,Semi-annually,1,4,Tokopedia,Jakarta
+CUST088,61,Male,High,Mix,Semi-annually,2,5,Tokopedia,Bandung
+CUST089,65,Male,High,Contemporary,Quarterly,1,1,Tokopedia,Pekalongan
+CUST090,53,Male,High,Contemporary,Quarterly,1,3,Tokopedia,Solo
+CUST091,51,Male,Low,Modern,Semi-annually,5,5,Tokopedia,Pekalongan
+CUST092,35,Female,Medium,Contemporary,Semi-annually,1,4,Instagram,Bandung
+CUST093,39,Female,High,Contemporary,Monthly,4,1,Tokopedia,Yogyakarta
+CUST094,32,Female,Medium,Contemporary,Annually,3,1,WhatsApp,Semarang
+CUST095,26,Female,High,Modern,Monthly,4,3,Direct Store,Jakarta
+CUST096,33,Male,Low,Contemporary,Annually,1,1,WhatsApp,Yogyakarta
+CUST097,33,Female,Medium,Contemporary,Annually,5,2,Direct Store,Solo
+CUST098,31,Female,High,Mix,Semi-annually,1,3,WhatsApp,Semarang
+CUST099,53,Male,Medium,Traditional,Semi-annually,5,3,Instagram,Semarang
+CUST100,42,Male,Low,Mix,Monthly,2,5,Instagram,Jakarta
+CUST101,46,Male,Low,Modern,Monthly,5,2,WhatsApp,Pekalongan
+CUST102,39,Female,Low,Traditional,Semi-annually,2,2,Tokopedia,Pekalongan
+CUST103,36,Male,High,Traditional,Quarterly,1,3,WhatsApp,Yogyakarta
+CUST104,45,Male,Low,Contemporary,Monthly,2,4,Instagram,Solo
+CUST105,29,Female,Medium,Contemporary,Monthly,4,5,WhatsApp,Yogyakarta
+CUST106,27,Female,Medium,Traditional,Monthly,4,4,Direct Store,Solo
+CUST107,31,Female,High,Mix,Monthly,1,3,WhatsApp,Jakarta
+CUST108,33,Female,High,Contemporary,Annually,5,5,Tokopedia,Semarang
+CUST109,57,Female,Low,Traditional,Quarterly,4,4,WhatsApp,Semarang
+CUST110,46,Female,Medium,Mix,Monthly,3,4,Tokopedia,Solo
+CUST111,41,Female,Low,Mix,Monthly,1,1,Instagram,Semarang
+CUST112,31,Female,Low,Traditional,Semi-annually,1,4,Tokopedia,Pekalongan
+CUST113,52,Male,Medium,Contemporary,Semi-annually,1,5,WhatsApp,Bandung
+CUST114,55,Male,Low,Contemporary,Semi-annually,1,3,WhatsApp,Pekalongan
+CUST115,52,Male,High,Contemporary,Monthly,2,3,Tokopedia,Surabaya
+CUST116,47,Male,Low,Modern,Annually,1,2,Instagram,Jakarta
+CUST117,58,Male,Medium,Mix,Annually,3,2,Tokopedia,Surabaya
+CUST118,45,Male,Low,Modern,Quarterly,5,1,Instagram,Surabaya
+CUST119,53,Female,Medium,Mix,Annually,3,2,Instagram,Surabaya
+CUST120,52,Male,Medium,Mix,Semi-annually,1,2,Direct Store,Yogyakarta
+CUST121,28,Male,Low,Contemporary,Quarterly,2,3,Tokopedia,Surabaya
+CUST122,32,Male,Medium,Mix,Quarterly,2,4,WhatsApp,Yogyakarta
+CUST123,60,Female,Low,Mix,Monthly,4,1,Direct Store,Jakarta
+CUST124,45,Female,High,Mix,Annually,3,1,Direct Store,Jakarta
+CUST125,45,Male,High,Mix,Semi-annually,1,4,Instagram,Bandung
+CUST126,52,Female,High,Traditional,Annually,3,3,WhatsApp,Surabaya
+CUST127,35,Male,High,Traditional,Quarterly,3,3,WhatsApp,Bandung
+CUST128,31,Male,Medium,Modern,Quarterly,5,2,Instagram,Bandung
+CUST129,65,Female,Medium,Mix,Semi-annually,3,2,Direct Store,Jakarta
+CUST130,55,Female,High,Contemporary,Semi-annually,5,1,Tokopedia,Yogyakarta
+CUST131,29,Female,Medium,Mix,Monthly,1,3,Tokopedia,Jakarta
+CUST132,30,Female,Medium,Traditional,Annually,5,2,Tokopedia,Yogyakarta
+CUST133,55,Male,Low,Mix,Monthly,3,1,WhatsApp,Jakarta
+CUST134,40,Female,Medium,Modern,Semi-annually,3,3,Direct Store,Semarang
+CUST135,46,Male,High,Contemporary,Monthly,3,1,Direct Store,Surabaya
+CUST136,41,Male,Medium,Traditional,Quarterly,3,3,Direct Store,Bandung
+CUST137,63,Male,Medium,Mix,Semi-annually,2,5,Instagram,Solo
+CUST138,52,Female,Low,Contemporary,Semi-annually,2,2,Tokopedia,Pekalongan
+CUST139,56,Male,Low,Modern,Quarterly,1,3,Instagram,Yogyakarta
+CUST140,59,Male,High,Contemporary,Quarterly,5,4,WhatsApp,Bandung
+CUST141,36,Male,High,Mix,Monthly,4,3,WhatsApp,Semarang
+CUST142,64,Female,High,Mix,Quarterly,5,2,Tokopedia,Pekalongan
+CUST143,55,Male,Medium,Mix,Annually,3,4,Direct Store,Bandung
+CUST144,37,Male,Medium,Traditional,Annually,3,5,Instagram,Solo
+CUST145,58,Male,Medium,Traditional,Quarterly,3,4,WhatsApp,Pekalongan
+CUST146,52,Male,Low,Mix,Semi-annually,1,4,Instagram,Semarang
+CUST147,57,Female,Low,Mix,Monthly,3,2,Instagram,Surabaya
+CUST148,31,Female,Low,Modern,Monthly,3,4,WhatsApp,Pekalongan
+CUST149,55,Female,High,Traditional,Monthly,1,3,WhatsApp,Pekalongan
+CUST150,34,Female,Low,Contemporary,Quarterly,3,1,Instagram,Bandung
+CUST151,51,Female,Low,Traditional,Annually,5,5,Instagram,Solo
+CUST152,57,Male,High,Modern,Semi-annually,4,1,Tokopedia,Bandung
+CUST153,61,Female,Low,Traditional,Semi-annually,1,5,Instagram,Semarang
+CUST154,55,Male,High,Mix,Semi-annually,3,1,Tokopedia,Pekalongan
+CUST155,29,Female,Low,Traditional,Semi-annually,2,1,Tokopedia,Yogyakarta
+CUST156,46,Male,High,Mix,Annually,2,2,Instagram,Solo
+CUST157,54,Male,Medium,Modern,Monthly,2,1,Tokopedia,Surabaya
+CUST158,57,Female,High,Mix,Semi-annually,1,2,Tokopedia,Surabaya
+CUST159,28,Female,Medium,Traditional,Semi-annually,4,4,Direct Store,Semarang
+CUST160,46,Male,Medium,Mix,Semi-annually,5,3,Instagram,Solo
+CUST161,52,Male,Medium,Modern,Semi-annually,3,1,Instagram,Surabaya
+CUST162,43,Female,Medium,Mix,Quarterly,4,3,Direct Store,Jakarta
+CUST163,47,Female,Medium,Traditional,Monthly,4,3,WhatsApp,Jakarta
+CUST164,34,Female,Low,Modern,Monthly,2,3,Tokopedia,Semarang
+CUST165,61,Male,High,Modern,Annually,3,3,Direct Store,Pekalongan
+CUST166,29,Male,High,Contemporary,Annually,3,3,WhatsApp,Jakarta
+CUST167,26,Male,Medium,Mix,Monthly,3,3,Direct Store,Bandung
+CUST168,64,Female,High,Mix,Quarterly,1,2,Instagram,Semarang
+CUST169,36,Female,Low,Contemporary,Semi-annually,1,5,Tokopedia,Surabaya
+CUST170,35,Male,Medium,Modern,Monthly,2,2,WhatsApp,Pekalongan
+CUST171,56,Male,Medium,Contemporary,Annually,5,2,Instagram,Jakarta
+CUST172,44,Female,High,Mix,Annually,4,5,Instagram,Bandung
+CUST173,45,Male,Medium,Mix,Semi-annually,2,5,WhatsApp,Pekalongan
+CUST174,33,Female,High,Traditional,Monthly,5,2,Tokopedia,Bandung
+CUST175,35,Female,High,Modern,Semi-annually,5,3,Instagram,Surabaya
+CUST176,37,Female,Low,Contemporary,Monthly,5,2,WhatsApp,Bandung
+CUST177,64,Female,High,Traditional,Monthly,1,1,Tokopedia,Solo
+CUST178,38,Female,High,Traditional,Annually,5,3,Tokopedia,Semarang
+CUST179,40,Female,Medium,Mix,Monthly,1,2,Direct Store,Semarang
+CUST180,55,Female,Low,Contemporary,Quarterly,3,3,Tokopedia,Semarang
+CUST181,33,Female,High,Traditional,Semi-annually,2,4,Instagram,Surabaya
+CUST182,53,Male,Low,Traditional,Monthly,3,4,Direct Store,Bandung
+CUST183,35,Female,High,Contemporary,Quarterly,2,4,Direct Store,Semarang
+CUST184,44,Female,Low,Traditional,Annually,5,4,WhatsApp,Bandung
+CUST185,62,Female,Low,Traditional,Semi-annually,4,5,Direct Store,Surabaya
+CUST186,59,Male,Low,Mix,Quarterly,3,3,Direct Store,Surabaya
+CUST187,27,Female,Low,Modern,Semi-annually,5,3,Instagram,Semarang
+CUST188,57,Female,High,Contemporary,Monthly,2,1,Direct Store,Surabaya
+CUST189,46,Female,Low,Modern,Annually,5,1,Instagram,Jakarta
+CUST190,33,Female,Medium,Mix,Quarterly,5,5,WhatsApp,Surabaya
+CUST191,64,Female,Low,Mix,Semi-annually,5,3,Direct Store,Solo
+CUST192,61,Female,Medium,Traditional,Semi-annually,3,1,Direct Store,Yogyakarta
+CUST193,44,Male,High,Mix,Semi-annually,5,5,WhatsApp,Solo
+CUST194,28,Female,Low,Mix,Quarterly,2,1,Instagram,Bandung
+CUST195,26,Female,Medium,Mix,Quarterly,4,2,Direct Store,Yogyakarta
+CUST196,64,Female,High,Traditional,Quarterly,5,2,Tokopedia,Solo
+CUST197,55,Female,Medium,Modern,Annually,5,3,Tokopedia,Solo
+CUST198,41,Female,Low,Modern,Semi-annually,5,3,WhatsApp,Surabaya
+CUST199,43,Male,High,Mix,Semi-annually,4,3,Tokopedia,Surabaya
+CUST200,32,Female,Medium,Contemporary,Quarterly,3,1,Tokopedia,Solo
+CUST201,30,Female,Medium,Contemporary,Annually,2,2,Tokopedia,Yogyakarta
+CUST202,42,Male,Low,Modern,Quarterly,1,5,WhatsApp,Solo
+CUST203,39,Male,Low,Mix,Semi-annually,4,1,WhatsApp,Jakarta
+CUST204,60,Male,Medium,Mix,Annually,2,3,Tokopedia,Surabaya
+CUST205,28,Male,High,Modern,Monthly,2,4,WhatsApp,Jakarta
+CUST206,50,Female,Low,Contemporary,Monthly,1,3,Instagram,Surabaya
+CUST207,43,Female,High,Mix,Quarterly,5,4,Tokopedia,Bandung
+CUST208,32,Female,Low,Mix,Semi-annually,2,1,Tokopedia,Pekalongan
+CUST209,43,Male,Low,Mix,Annually,5,3,Instagram,Semarang
+CUST210,31,Male,Low,Mix,Semi-annually,2,1,Tokopedia,Semarang
+CUST211,40,Female,Medium,Contemporary,Semi-annually,5,5,Instagram,Surabaya
+CUST212,48,Male,Low,Traditional,Annually,3,2,Direct Store,Solo
+CUST213,57,Female,High,Traditional,Semi-annually,3,5,WhatsApp,Bandung
+CUST214,33,Female,Low,Mix,Semi-annually,4,5,Direct Store,Pekalongan
+CUST215,59,Male,Low,Traditional,Annually,5,3,Instagram,Yogyakarta
+CUST216,32,Male,High,Modern,Quarterly,2,3,Direct Store,Jakarta
+CUST217,38,Female,Low,Mix,Monthly,4,2,Direct Store,Semarang
+CUST218,61,Male,High,Mix,Semi-annually,1,4,Tokopedia,Pekalongan
+CUST219,25,Male,High,Traditional,Monthly,4,3,Instagram,Yogyakarta
+CUST220,28,Male,Medium,Traditional,Semi-annually,4,2,WhatsApp,Pekalongan
+CUST221,51,Female,Medium,Mix,Annually,4,1,WhatsApp,Solo
+CUST222,47,Male,Low,Mix,Quarterly,2,1,Instagram,Surabaya
+CUST223,54,Female,High,Mix,Quarterly,2,4,Tokopedia,Bandung
+CUST224,42,Male,High,Traditional,Monthly,4,5,Instagram,Bandung
+CUST225,38,Male,Low,Traditional,Annually,5,1,WhatsApp,Solo
+CUST226,27,Female,Medium,Modern,Quarterly,1,2,Tokopedia,Bandung
+CUST227,61,Female,High,Contemporary,Quarterly,3,2,WhatsApp,Semarang
+CUST228,44,Female,Low,Modern,Annually,5,4,Instagram,Surabaya
+CUST229,49,Female,High,Mix,Annually,2,3,Direct Store,Bandung
+CUST230,59,Female,Low,Modern,Semi-annually,2,4,Instagram,Yogyakarta
+CUST231,51,Female,High,Modern,Annually,2,3,WhatsApp,Surabaya
+CUST232,30,Female,Medium,Traditional,Quarterly,1,3,Direct Store,Solo
+CUST233,63,Male,Low,Modern,Quarterly,4,2,Tokopedia,Surabaya
+CUST234,25,Male,Low,Traditional,Annually,2,5,WhatsApp,Semarang
+CUST235,40,Female,Medium,Mix,Annually,5,3,Tokopedia,Surabaya
+CUST236,48,Female,Medium,Traditional,Annually,3,2,Tokopedia,Surabaya
+CUST237,51,Male,High,Modern,Quarterly,1,3,Direct Store,Surabaya
+CUST238,34,Male,Medium,Modern,Annually,5,2,Direct Store,Yogyakarta
+CUST239,46,Female,Medium,Mix,Annually,2,3,WhatsApp,Bandung
+CUST240,59,Female,Low,Traditional,Monthly,1,1,Instagram,Semarang
+CUST241,33,Male,Low,Modern,Monthly,2,5,Direct Store,Surabaya
+CUST242,28,Female,High,Mix,Monthly,1,5,Direct Store,Jakarta
+CUST243,26,Female,High,Contemporary,Monthly,5,4,WhatsApp,Jakarta
+CUST244,31,Male,Low,Modern,Semi-annually,3,3,Direct Store,Jakarta
+CUST245,48,Female,Medium,Modern,Quarterly,3,1,Instagram,Jakarta
+CUST246,50,Female,Medium,Mix,Monthly,1,2,Instagram,Semarang
+CUST247,52,Female,High,Traditional,Monthly,2,2,Direct Store,Surabaya
+CUST248,27,Male,High,Contemporary,Monthly,2,3,Instagram,Bandung
+CUST249,62,Male,High,Mix,Monthly,3,2,WhatsApp,Yogyakarta
+CUST250,49,Female,Medium,Modern,Monthly,5,3,Instagram,Jakarta
+CUST251,52,Male,Low,Contemporary,Annually,3,1,Tokopedia,Pekalongan
+CUST252,53,Female,Low,Contemporary,Annually,4,2,Direct Store,Jakarta
+CUST253,64,Female,Low,Traditional,Monthly,3,2,Direct Store,Solo
+CUST254,65,Male,High,Mix,Semi-annually,3,1,Instagram,Jakarta
+CUST255,44,Female,Medium,Contemporary,Monthly,2,1,WhatsApp,Semarang
+CUST256,53,Female,Low,Traditional,Monthly,3,5,Instagram,Yogyakarta
+CUST257,63,Female,Medium,Traditional,Semi-annually,4,4,Instagram,Solo
+CUST258,60,Male,High,Modern,Annually,2,2,Tokopedia,Surabaya
+CUST259,42,Female,Low,Traditional,Quarterly,4,3,Direct Store,Surabaya
+CUST260,55,Male,Medium,Contemporary,Quarterly,4,5,WhatsApp,Semarang
+CUST261,31,Male,Medium,Traditional,Annually,3,5,Direct Store,Pekalongan
+CUST262,46,Female,Medium,Mix,Quarterly,3,3,WhatsApp,Semarang
+CUST263,45,Male,Medium,Contemporary,Semi-annually,4,5,WhatsApp,Surabaya
+CUST264,49,Female,Medium,Contemporary,Monthly,5,2,WhatsApp,Solo
+CUST265,60,Male,High,Mix,Quarterly,4,3,Instagram,Pekalongan
+CUST266,51,Female,Low,Contemporary,Quarterly,3,2,Direct Store,Pekalongan
+CUST267,49,Male,Medium,Mix,Annually,5,5,Direct Store,Yogyakarta
+CUST268,27,Female,High,Traditional,Monthly,2,3,WhatsApp,Solo
+CUST269,64,Male,High,Mix,Semi-annually,4,1,Instagram,Jakarta
+CUST270,41,Male,High,Modern,Annually,3,4,Direct Store,Pekalongan
+CUST271,62,Male,Medium,Traditional,Annually,1,3,Direct Store,Jakarta
+CUST272,32,Male,Medium,Contemporary,Semi-annually,4,2,Direct Store,Surabaya
+CUST273,55,Male,Medium,Mix,Semi-annually,1,3,Instagram,Pekalongan
+CUST274,32,Male,Medium,Traditional,Quarterly,2,5,WhatsApp,Yogyakarta
+CUST275,35,Female,High,Mix,Annually,2,4,WhatsApp,Bandung
+CUST276,65,Female,Medium,Traditional,Quarterly,4,5,Direct Store,Semarang
+CUST277,25,Male,Low,Contemporary,Monthly,5,1,WhatsApp,Surabaya
+CUST278,45,Male,Medium,Traditional,Semi-annually,4,5,Tokopedia,Yogyakarta
+CUST279,49,Female,High,Traditional,Semi-annually,3,4,WhatsApp,Pekalongan
+CUST280,44,Male,High,Modern,Semi-annually,1,2,Tokopedia,Jakarta
+CUST281,36,Female,High,Modern,Annually,4,5,WhatsApp,Yogyakarta
+CUST282,49,Female,Low,Mix,Quarterly,5,2,Direct Store,Surabaya
+CUST283,33,Male,Medium,Mix,Monthly,3,1,Direct Store,Bandung
+CUST284,37,Female,High,Mix,Annually,4,4,Direct Store,Semarang
+CUST285,35,Male,High,Traditional,Quarterly,3,1,Tokopedia,Bandung
+CUST286,59,Female,Low,Mix,Annually,5,5,Instagram,Yogyakarta
+CUST287,32,Female,High,Contemporary,Monthly,4,5,WhatsApp,Semarang
+CUST288,31,Male,Medium,Traditional,Annually,3,3,Instagram,Semarang
+CUST289,32,Male,Low,Contemporary,Annually,2,5,WhatsApp,Pekalongan
+CUST290,38,Male,Low,Contemporary,Semi-annually,5,5,WhatsApp,Surabaya
+CUST291,43,Female,High,Contemporary,Monthly,2,4,Instagram,Surabaya
+CUST292,33,Male,Low,Modern,Semi-annually,2,4,Direct Store,Bandung
+CUST293,61,Female,High,Mix,Annually,4,1,Instagram,Semarang
+CUST294,57,Female,High,Contemporary,Annually,4,3,Instagram,Pekalongan
+CUST295,30,Female,High,Contemporary,Monthly,5,4,WhatsApp,Semarang
+CUST296,38,Female,Medium,Contemporary,Semi-annually,3,5,WhatsApp,Yogyakarta
+CUST297,56,Female,High,Traditional,Monthly,1,4,Instagram,Jakarta
+CUST298,35,Female,Medium,Traditional,Annually,2,2,Tokopedia,Bandung
+CUST299,42,Male,High,Contemporary,Semi-annually,1,3,WhatsApp,Jakarta
+CUST300,50,Female,High,Modern,Annually,1,1,Instagram,Bandung
