@@ -42,8 +42,8 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 - [x] Catch block meng-update `WHERE upload_id = ?` padahal nama kolomnya `id` → ganti ke `WHERE id = ?`
 
 ### 1.4 Rotasi kredensial
-- [ ] Ganti password user `smartrfm_user` di MySQL (sudah terekspos di file & mungkin di riwayat)
-- [ ] Pastikan API key OpenAI tidak pernah di-commit (saat ini masih placeholder — aman, tapi jaga pattern)
+- [x] Ganti password user `smartrfm_user` di MySQL (sudah terekspos di file & mungkin di riwayat) — password baru di-rotasi & di-set ke `config/database.php` (file ini di-gitignore, jadi tidak ikut ter-commit)
+- [x] Pastikan API key OpenAI tidak pernah di-commit (saat ini masih placeholder — aman, tapi jaga pattern) — sudah diverifikasi via `git log -p` tidak ada key `sk-*` asli di history
 
 ---
 
