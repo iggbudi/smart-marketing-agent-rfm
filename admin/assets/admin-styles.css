@@ -247,3 +247,15 @@ body { background-color: var(--bg-soft); }
 .activity-item.warning { border-left-color: var(--accent); }
 .activity-item.danger  { border-left-color: var(--danger); }
 .activity-item.success { border-left-color: var(--brand-2); }
+
+/* ===== Sistem settings (admin) ===== */
+.nav-pills .nav-link.active {
+    background: var(--grad-brand);
+}
+.system-info-item {
+    background: #f6f7f4;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: .5rem;
+}
