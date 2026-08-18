@@ -237,3 +237,13 @@ body { background-color: var(--bg-soft); }
     .kpi-card { flex-direction: column-reverse; align-items: flex-start; gap: 8px; }
     .kpi-value { font-size: 1.2rem; }
 }
+
+/* ===== Item aktivitas (analytics admin) ===== */
+.activity-item {
+    border-left: 3px solid var(--brand-1);
+    padding-left: 15px;
+    margin-bottom: 15px;
+}
+.activity-item.warning { border-left-color: var(--accent); }
+.activity-item.danger  { border-left-color: var(--danger); }
+.activity-item.success { border-left-color: var(--brand-2); }
