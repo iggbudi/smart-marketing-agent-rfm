@@ -20,21 +20,57 @@ $messageType = '';
 // Handle Excel upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
     requireCsrf();
-    $uploadDir = 'uploads/';
-    if (!file_exists($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
-    }
-    
-    $fileName = $_FILES['excel_file']['name'];
-    $uploadPath = $uploadDir . uniqid() . '_' . $fileName;
-    
-    if (move_uploaded_file($_FILES['excel_file']['tmp_name'], $uploadPath)) {
-        // Process Excel file (simplified version)
-        $message = 'File berhasil diupload! Proses import akan dilakukan dalam background.';
-        $messageType = 'success';
-    } else {
-        $message = 'Gagal mengupload file.';
+
+    $file = $_FILES['excel_file'];
+
+    // Batas maksimal ukuran file (5 MB)
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        $message = 'Gagal mengunggah file (error code ' . (int)$file['error'] . ').';
         $messageType = 'danger';
+    } elseif ($file['size'] > 5 * 1024 * 1024) {
+        $message = 'Ukuran file melebihi batas maksimal 5 MB.';
+        $messageType = 'danger';
+    } else {
+        // Validasi ekstensi yang diizinkan
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $allowedExt = ['xlsx', 'xls', 'csv'];
+
+        if (!in_array($ext, $allowedExt, true)) {
+            $message = 'Ekstensi file tidak diizinkan. Gunakan .xlsx, .xls, atau .csv.';
+            $messageType = 'danger';
+        } else {
+            // Validasi MIME asli via finfo (bukan hanya klaim jenis dari client)
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $mime = $finfo->file($file['tmp_name']);
+            $allowedMimes = [
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+                'application/vnd.ms-excel',                                          // .xls
+                'application/octet-stream',                                          // beberapa .xls lama terdeteksi ini
+                'text/csv',
+                'text/plain',
+            ];
+
+            if (!in_array($mime, $allowedMimes, true)) {
+                $message = 'Tipe file tidak valid. Pastikan file yang diunggah benar-benar spreadsheet/CSV. (terdeteksi: ' . htmlspecialchars($mime) . ')';
+                $messageType = 'danger';
+            } else {
+                // Simpan dengan nama acak ke folder terproteksi (bukan nama asli user)
+                $uploadDir = __DIR__ . '/storage/uploads/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0770, true);
+                }
+                $newName = date('Ymd_His') . '_' . bin2hex(random_bytes(8)) . '.' . $ext;
+                $uploadPath = $uploadDir . $newName;
+
+                if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                    $message = 'File berhasil diupload! Proses import akan dilakukan dalam background.';
+                    $messageType = 'success';
+                } else {
+                    $message = 'Gagal mengupload file.';
+                    $messageType = 'danger';
+                }
+            }
+        }
     }
 }
 ?>

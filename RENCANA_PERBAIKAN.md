@@ -60,9 +60,9 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 - [ ] (Opsional) kunci `user_sessions` ke IP/UA ringan — **didefer** (berisiko kunci di luar saat IP dinamis; dipertimbangkan ulang)
 
 ### 2.3 Validasi upload file sungguhan
-- [ ] Validasi ekstensi + MIME via `finfo_file()` (bukan hanya `$file['type']` dari client)
-- [ ] Batasi ukuran file (mis. 5 MB) dan rename file sebelum disimpan
-- [ ] Simpan file upload di luar web root atau folder yang diblokir eksekusi PHP
+- [x] Validasi ekstensi + MIME via `finfo_file()` (bukan hanya `$file['type']` dari client)
+- [x] Batasi ukuran file (maks. 5 MB) dan rename file sebelum disimpan (nama acak, bukan nama user)
+- [x] Simpan file upload di luar web root atau folder yang diblokir eksekusi PHP (ke `storage/uploads/` + `.htaccess` blokir PHP/listing)
 
 ### 2.4 Header keamanan (di PHP atau vhost Apache)
 - [ ] `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`

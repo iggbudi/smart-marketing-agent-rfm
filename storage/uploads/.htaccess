@@ -1,0 +1,5 @@
+# Proteksi folder upload: non-aktifkan listing & blokir eksekusi PHP
+Options -Indexes
+<FilesMatch "\.(php|phtml|php[0-9]|phar)$">
+    Require all denied
+</FilesMatch>

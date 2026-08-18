@@ -11,7 +11,11 @@ config/openai.php
 # Uploads / Temp / Cache
 uploads/
 upload/
-storage/
+storage/*
+!storage/uploads/
+storage/uploads/*
+!storage/uploads/.htaccess
+!storage/uploads/.gitkeep
 tmp/
 temp/
 cache/
