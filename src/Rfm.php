@@ -4,7 +4,7 @@
  * Logika RFM (Recency, Frequency, Monetary) murni & terpusat.
  *
  * Single source of truth untuk ambang skor & segmentasi.
- * SQL di includes/rfm.php DIBANGUN dari fungsi-fungsi ini agar tidak ada
+ * SQL di src/Rfm/RfmService.php DIBANGUN dari fungsi-fungsi ini agar tidak ada
  * duplikasi logika antara PHP (unit test) dan SQL (query).
  */
 
@@ -14,7 +14,7 @@ class Rfm
 {
     /**
      * Skor recency berdasarkan umur transaksi terakhir (hari).
-     * Sama dengan ambang DATEDIFF pada query recalculateRFM().
+     * Sama dengan ambang DATEDIFF pada query RfmService::recalculate().
      */
     public static function scoreRecency(int $daysSinceLastPurchase): int
     {

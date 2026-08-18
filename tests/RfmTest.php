@@ -2,7 +2,7 @@
 /**
  * tests/RfmTest.php
  * Unit test logika RFM murni (src/Rfm.php).
- * Skor & segmentasi harus konsisten dengan query SQL di includes/rfm.php
+ * Skor & segmentasi harus konsisten dengan query SQL di src/Rfm/RfmService.php
  * (SQL dibangun dari fungsi-fungsi yang sama, jadi otomatis sinkron).
  */
 

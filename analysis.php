@@ -11,65 +11,39 @@
 </head>
 <body>
     <?php
+    require_once __DIR__ . '/vendor/autoload.php';
     require_once 'config/database.php';
     require_once 'config/auth.php';
-    
+
     // Require UMKM owner access
     requireAuth(['umkm_owner']);
-    
+
     $user = getCurrentUser();
     $db = getDB();
-    
+
     // Get user's business
     $business = auth()->getUserBusiness($user['id']);
     if (!$business) {
         die('Error: No business associated with your account. Please contact administrator.');
     }
 
-// RFM dihitung ulang hanya saat diminta eksplisit (POST+CSRF) atau first-run (belum ada data)
-require_once 'includes/rfm.php';
+    $rfm = new \App\Rfm\RfmService($db);
+    $rfmMessage = '';
+    $rfmMessageType = '';
 
-$rfmMessage = '';
-$rfmMessageType = '';
+    // Rekalkulasi hanya saat diminta eksplisit (POST+CSRF) atau first-run (belum ada data)
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'recalculate') {
+        requireCsrf();
+        $rfm->recalculate($business['id'], $_SESSION['user_id']);
+        $rfmMessage = 'RFM berhasil dihitung ulang (' . date('d/m/Y H:i') . ').';
+        $rfmMessageType = 'success';
+    } elseif ($rfm->ensureCalculated($business['id'], $_SESSION['user_id'])) {
+        $rfmMessage = 'RFM dihitung otomatis (belum ada data analisis).';
+        $rfmMessageType = 'info';
+    }
 
-$rfmCount = (int)$db->query("SELECT COUNT(*) FROM rfm_analysis WHERE business_id = " . (int)$business['id'])->fetchColumn();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'recalculate') {
-    requireCsrf();
-    recalculateRFM($db, $business['id'], $_SESSION['user_id']);
-    $rfmMessage = 'RFM berhasil dihitung ulang (' . date('d/m/Y H:i') . ').';
-    $rfmMessageType = 'success';
-} elseif ($rfmCount === 0) {
-    // First-run only: hitung sekali agar halaman & dashboard segera terisi
-    recalculateRFM($db, $business['id'], $_SESSION['user_id']);
-    $rfmMessage = 'RFM dihitung otomatis (belum ada data analisis).';
-    $rfmMessageType = 'info';
-}
-    
-    // Get RFM results for this business only
-    $stmt = $db->prepare("
-        SELECT 
-            c.customer_name as name,
-            c.email,
-            r.recency_score,
-            r.frequency_score,
-            r.monetary_score,
-            r.rfm_segment as segment,
-            r.total_transactions,
-            r.total_spent,
-            r.last_purchase_date as last_transaction
-        FROM rfm_analysis r
-        JOIN customers c ON r.customer_id = c.id
-        WHERE r.business_id = ?
-        ORDER BY r.recency_score DESC, r.frequency_score DESC, r.monetary_score DESC
-    ");
-    $stmt->execute([$business['id']]);
-    $rfmResults = $stmt->fetchAll();
-    
-    // Get segment summary for this business
-    $stmt = $db->prepare("SELECT rfm_segment as segment, COUNT(*) as count FROM rfm_analysis WHERE business_id = ? GROUP BY rfm_segment");
-    $stmt->execute([$business['id']]);
-    $segmentSummary = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+    $rfmResults = $rfm->results($business['id']);
+    $segmentSummary = $rfm->segmentSummary($business['id']);
     ?>
 
     <!-- Mobile Menu Toggle -->
