@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Business types for dropdown
 $business_types = \App\Business\BusinessProfileService::businessTypes();
+$mobilePageTitle = 'Profil Bisnis';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -54,10 +55,8 @@ $business_types = \App\Business\BusinessProfileService::businessTypes();
     <link href="assets/user-styles.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
+    <!-- Mobile Top Bar (hamburger + judul + avatar) -->
+    <?php include 'includes/mobile-topbar.php'; ?>
 
     <div class="wrapper">
         <?php include 'includes/sidebar.php'; ?>
@@ -223,6 +222,7 @@ $business_types = \App\Business\BusinessProfileService::businessTypes();
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/mobile.js"></script>
     <script>
         // Mobile menu toggle
         function toggleSidebar() {
@@ -292,5 +292,8 @@ $business_types = \App\Business\BusinessProfileService::businessTypes();
             e.target.value = value;
         });
     </script>
+
+    <!-- Bottom Navigation (mobile) -->
+    <?php include 'includes/bottom-nav.php'; ?>
 </body>
 </html>

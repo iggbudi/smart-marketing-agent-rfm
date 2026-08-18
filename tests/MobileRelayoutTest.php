@@ -91,4 +91,14 @@ class MobileRelayoutTest extends TestCase
         $this->assertStringContainsString('classList.remove(\'show\')', $js, 'mobile.js: klik backdrop menutup sidebar');
         $this->assertStringContainsString('DOMContentLoaded', $js, 'mobile.js: inisialisasi saat DOM siap');
     }
+
+    /** @dataProvider halamanUserProvider */
+    public function testHalamanUserPasangShellMobile(string $page): void
+    {
+        $src = file_get_contents(dirname(__DIR__) . '/' . $page);
+        $this->assertNotFalse($src, "$page harus bisa dibaca");
+        $this->assertStringContainsString('mobile-topbar.php', $src, "$page: wajib include top bar");
+        $this->assertStringContainsString('bottom-nav.php', $src, "$page: wajib include bottom nav");
+        $this->assertStringContainsString('mobile.js', $src, "$page: wajib memuat assets/mobile.js");
+    }
 }

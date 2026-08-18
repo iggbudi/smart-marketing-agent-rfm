@@ -79,6 +79,7 @@ try {
     $message = 'Error loading customers: ' . $e->getMessage();
     $messageType = 'danger';
 }
+$mobilePageTitle = 'Data Pelanggan';
 ?>
 
 <!DOCTYPE html>
@@ -92,10 +93,8 @@ try {
     <link href="assets/user-styles.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
+    <!-- Mobile Top Bar (hamburger + judul + avatar) -->
+    <?php include 'includes/mobile-topbar.php'; ?>
 
     <!-- Sidebar -->
     <?php include 'includes/sidebar.php'; ?>
@@ -308,6 +307,7 @@ try {
     </form>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/mobile.js"></script>
     <script>
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('show');
@@ -346,5 +346,8 @@ try {
             }, 3000);
         }
     </script>
+
+    <!-- Bottom Navigation (mobile) -->
+    <?php include 'includes/bottom-nav.php'; ?>
 </body>
 </html>

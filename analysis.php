@@ -44,12 +44,11 @@
 
     $rfmResults = $rfm->results($business['id']);
     $segmentSummary = $rfm->segmentSummary($business['id']);
+    $mobilePageTitle = 'RFM Analysis';
     ?>
 
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
+    <!-- Mobile Top Bar (hamburger + judul + avatar) -->
+    <?php include 'includes/mobile-topbar.php'; ?>
 
     <!-- Sidebar -->
     <?php include 'includes/sidebar.php'; ?>
@@ -153,6 +152,7 @@
     ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/mobile.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
@@ -173,5 +173,8 @@
             document.querySelector('.sidebar').classList.toggle('show');
         }
     </script>
+
+    <!-- Bottom Navigation (mobile) -->
+    <?php include 'includes/bottom-nav.php'; ?>
 </body>
 </html>

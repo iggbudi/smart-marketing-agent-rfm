@@ -41,16 +41,22 @@ class MobileMenuToggleTest extends TestCase
         $src = file_get_contents(dirname(__DIR__) . '/' . $page);
         $this->assertNotFalse($src, "$page harus bisa dibaca");
 
+        // Tombol kini berasal dari include top bar (SATU sumber) yang wajib dipasang.
         $this->assertStringContainsString(
-            'mobile-menu-toggle',
+            'mobile-topbar.php',
             $src,
-            "$page: tombol .mobile-menu-toggle wajib ada (menu mobile hilang tanpa tombol ini)"
+            "$page: wajib include top bar (sumber tombol .mobile-menu-toggle)"
         );
         $this->assertStringContainsString(
             'function toggleSidebar()',
             $src,
             "$page: JS toggleSidebar() wajib ada agar tombol bisa membuka sidebar"
         );
+
+        // Tombol itu sendiri hidup di include — pastikan isinya benar.
+        $topbar = file_get_contents(dirname(__DIR__) . '/includes/mobile-topbar.php');
+        $this->assertNotFalse($topbar, 'mobile-topbar.php harus bisa dibaca');
+        $this->assertStringContainsString('mobile-menu-toggle', $topbar, 'mobile-topbar.php: tombol toggle wajib ada');
     }
 
     public function testAiContentRenderMemuatTombolToggle(): void

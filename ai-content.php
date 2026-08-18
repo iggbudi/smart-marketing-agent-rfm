@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['segment'])) {
 
 // Riwayat konten terbaru
 $recent_content = $generator->recent(5);
+$mobilePageTitle = 'Generator Konten AI';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,10 +52,8 @@ $recent_content = $generator->recent(5);
     <link href="assets/user-styles.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
+    <!-- Mobile Top Bar (hamburger + judul + avatar) -->
+    <?php include 'includes/mobile-topbar.php'; ?>
 
     <div class="wrapper">
         <?php include 'includes/sidebar.php'; ?>
@@ -220,6 +219,7 @@ $recent_content = $generator->recent(5);
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/mobile.js"></script>
     <script>
         // Mobile menu toggle
         function toggleSidebar() {
@@ -279,5 +279,8 @@ $recent_content = $generator->recent(5);
             });
         }
     </script>
+
+    <!-- Bottom Navigation (mobile) -->
+    <?php include 'includes/bottom-nav.php'; ?>
 </body>
 </html>

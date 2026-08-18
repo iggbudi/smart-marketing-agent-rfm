@@ -22,6 +22,7 @@ $stats = $dash->getStats($business['id']);
 $recent_transactions = $dash->getRecentTransactions($business['id'], 10);
 $rfm_data = $dash->getRfmData($business['id']);
 $revenue_trend = $dash->getRevenueTrend($business['id'], 6);
+$mobilePageTitle = 'Dashboard';
 ?>
 
 <!DOCTYPE html>
@@ -36,10 +37,8 @@ $revenue_trend = $dash->getRevenueTrend($business['id'], 6);
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
+    <!-- Mobile Top Bar (hamburger + judul + avatar) -->
+    <?php include 'includes/mobile-topbar.php'; ?>
 
     <!-- Sidebar -->
     <?php include 'includes/sidebar.php'; ?>
@@ -207,6 +206,7 @@ $revenue_trend = $dash->getRevenueTrend($business['id'], 6);
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/mobile.js"></script>
     <script>
         // Mobile menu toggle
         function toggleSidebar() {
@@ -309,5 +309,8 @@ $revenue_trend = $dash->getRevenueTrend($business['id'], 6);
         });
         <?php endif; ?>
     </script>
+
+    <!-- Bottom Navigation (mobile) -->
+    <?php include 'includes/bottom-nav.php'; ?>
 </body>
 </html>
