@@ -1,13 +1,7 @@
 <?php
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once '../config/database.php';
 require_once '../config/auth.php';
-require_once '../includes/export.php';
-
-// Check if PhpSpreadsheet is available
-$hasPhpSpreadsheet = class_exists('PhpOffice\PhpSpreadsheet\Spreadsheet');
-if ($hasPhpSpreadsheet) {
-    require_once '../vendor/autoload.php';
-}
 
 // Require UMKM owner access
 requireAuthJson(['umkm_owner']);
@@ -24,23 +18,10 @@ if (!$business) {
     exit;
 }
 
-// Get customers for this business
-$customers = [];
+// Data dari slice Customers
 try {
-    $stmt = $db->prepare("
-        SELECT c.*, 
-               COUNT(t.id) as total_transactions,
-               COALESCE(SUM(t.amount), 0) as total_spent,
-               MAX(t.transaction_date) as last_transaction
-        FROM customers c 
-        LEFT JOIN transactions t ON c.id = t.customer_id 
-        WHERE c.business_id = ? 
-        GROUP BY c.id 
-        ORDER BY c.created_at DESC
-    ");
-    $stmt->execute([$business['id']]);
-    $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
+    $customers = (new \App\Customers\CustomerRepository($db))->withStats($business['id']);
+} catch (\PDOException $e) {
     header('Content-Type: application/json');
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Error loading customers: ' . $e->getMessage()]);
@@ -48,19 +29,18 @@ try {
 }
 
 // Fallback CSV bila PhpSpreadsheet tidak tersedia
-if (!$hasPhpSpreadsheet) {
+if (!class_exists('PhpOffice\PhpSpreadsheet\Spreadsheet')) {
     $filename = 'customers_' . date('Y-m-d_H-i-s') . '.csv';
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename="' . $filename . '"');
-    writeCustomersCsv($customers);
+    \App\Export\CustomersExporter::writeCsv($customers);
     exit;
 }
 
-// Export Excel (XLSX)
 try {
-    $spreadsheet = buildCustomersSpreadsheet($business['business_name'], $customers);
+    $spreadsheet = \App\Export\CustomersExporter::buildSpreadsheet($business['name'], $customers);
 
-    $filename = 'customers_' . $business['business_name'] . '_' . date('Y-m-d_H-i-s') . '.xlsx';
+    $filename = 'customers_' . $business['name'] . '_' . date('Y-m-d_H-i-s') . '.xlsx';
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment;filename="' . $filename . '"');
     header('Cache-Control: max-age=0');
@@ -73,4 +53,3 @@ try {
     echo json_encode(['success' => false, 'error' => 'Error creating Excel file: ' . $e->getMessage()]);
     exit;
 }
-?>

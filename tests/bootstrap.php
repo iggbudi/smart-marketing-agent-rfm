@@ -16,7 +16,6 @@ putenv('DB_PASSWORD=');
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-// Memuat definisi AuthManager & fungsi global (config/auth.php) dan helper
-// export (includes/export.php) agar bisa diuji langsung.
+// Memuat definisi AuthManager & fungsi global (config/auth.php) agar bisa
+// diuji langsung. Autoload composer menangani class App\* (repository/exporter/import).
 require_once dirname(__DIR__) . '/config/auth.php';
-require_once dirname(__DIR__) . '/includes/export.php';

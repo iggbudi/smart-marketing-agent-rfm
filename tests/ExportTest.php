@@ -1,10 +1,12 @@
 <?php
 /**
  * tests/ExportTest.php
- * Unit test helper export (includes/export.php):
- * format baris, output CSV (BOM UTF-8 + header + data), dan round-trip XLSX.
+ * Slice Export: format baris, CSV (BOM UTF-8 + header + data), round-trip XLSX.
+ * Format dikunci di sini (AGENTS.md §8 Export): jangan ubah tanpa update test ini.
  */
 
+use App\Export\CustomersExporter;
+use App\Export\TransactionsExporter;
 use PHPUnit\Framework\TestCase;
 
 class ExportTest extends TestCase
@@ -38,11 +40,10 @@ class ExportTest extends TestCase
 
     public function testFormatCustomerRow()
     {
-        $row = formatCustomerExportRow(0, $this->sampleCustomer());
+        $row = CustomersExporter::formatRow(0, $this->sampleCustomer());
         $this->assertSame([1, 'Andi Wijaya', '08111111111', 'andi@email.com', '3', '450000', '01/08/2026', '15/01/2026'], $row);
 
-        // index 4 -> nomor 5; tanggal hilang -> '-'
-        $row = formatCustomerExportRow(4, $this->sampleCustomer(['email' => '', 'last_transaction' => null]));
+        $row = CustomersExporter::formatRow(4, $this->sampleCustomer(['email' => '', 'last_transaction' => null]));
         $this->assertSame(5, $row[0]);
         $this->assertSame('-', $row[3]);
         $this->assertSame('-', $row[6]);
@@ -50,12 +51,10 @@ class ExportTest extends TestCase
 
     public function testFormatTransactionRow()
     {
-        $row = formatTransactionExportRow(0, $this->sampleTransaction());
-        // total = amount * quantity = 300000
+        $row = TransactionsExporter::formatRow(0, $this->sampleTransaction());
         $this->assertSame([1, '05/08/2026', 'Sari Dewi', '08222222222', 'Batik Kawung', '2', '150000', 300000], $row);
 
-        // produk kosong -> '-'
-        $row = formatTransactionExportRow(0, $this->sampleTransaction(['product_name' => null]));
+        $row = TransactionsExporter::formatRow(0, $this->sampleTransaction(['product_name' => null]));
         $this->assertSame('-', $row[4]);
     }
 
@@ -64,15 +63,14 @@ class ExportTest extends TestCase
     public function testCustomersCsvHasBomHeadersAndRows()
     {
         $file = tempnam(sys_get_temp_dir(), 'csv_cust_');
-        writeCustomersCsv([$this->sampleCustomer()], $file);
+        CustomersExporter::writeCsv([$this->sampleCustomer()], $file);
 
         $raw = file_get_contents($file);
         $this->assertStringStartsWith(chr(0xEF) . chr(0xBB) . chr(0xBF), $raw, 'CSV harus berawalan BOM UTF-8');
 
-        // Baca baris: lewati BOM pada sel pertama
         $lines = explode("\n", trim($raw));
         $header = str_getcsv(substr($lines[0], 3)); // buang BOM
-        $this->assertSame(exportCustomersHeaders(), $header);
+        $this->assertSame(CustomersExporter::headers(), $header);
 
         $data = str_getcsv($lines[1]);
         $this->assertSame('1', $data[0]);
@@ -84,14 +82,14 @@ class ExportTest extends TestCase
     public function testTransactionsCsvHasBomHeadersAndRows()
     {
         $file = tempnam(sys_get_temp_dir(), 'csv_tx_');
-        writeTransactionsCsv([$this->sampleTransaction()], $file);
+        TransactionsExporter::writeCsv([$this->sampleTransaction()], $file);
 
         $raw = file_get_contents($file);
         $this->assertStringStartsWith(chr(0xEF) . chr(0xBB) . chr(0xBF), $raw);
 
         $lines = explode("\n", trim($raw));
         $header = str_getcsv(substr($lines[0], 3));
-        $this->assertSame(exportTransactionsHeaders(), $header);
+        $this->assertSame(TransactionsExporter::headers(), $header);
 
         $data = str_getcsv($lines[1]);
         $this->assertSame('Batik Kawung', $data[4]);
@@ -103,43 +101,40 @@ class ExportTest extends TestCase
 
     public function testCustomersSpreadsheetRoundTrip()
     {
-        $spreadsheet = buildCustomersSpreadsheet('Batik Semarang', [$this->sampleCustomer()]);
+        $spreadsheet = CustomersExporter::buildSpreadsheet('Batik Semarang', [$this->sampleCustomer()]);
         $this->assertInstanceOf(\PhpOffice\PhpSpreadsheet\Spreadsheet::class, $spreadsheet);
         $this->assertSame('Data Pelanggan - Batik Semarang', $spreadsheet->getProperties()->getTitle());
 
         $sheet = $spreadsheet->getActiveSheet();
-        // Header
         $this->assertSame('Nama Pelanggan', $sheet->getCell('B1')->getValue());
         $this->assertSame('Total Belanja (Rp)', $sheet->getCell('F1')->getValue());
-        // Data baris 2
         $this->assertSame(1, $sheet->getCell('A2')->getValue());
         $this->assertSame('Andi Wijaya', $sheet->getCell('B2')->getValue());
-        $this->assertEquals(450000, $sheet->getCell('F2')->getValue()); // numeric string di-cast otomatis
+        $this->assertEquals(450000, $sheet->getCell('F2')->getValue());
         $this->assertSame('01/08/2026', $sheet->getCell('G2')->getValue());
     }
 
     public function testTransactionsSpreadsheetRoundTrip()
     {
-        $spreadsheet = buildTransactionsSpreadsheet('Batik Semarang', [$this->sampleTransaction()]);
+        $spreadsheet = TransactionsExporter::buildSpreadsheet('Batik Semarang', [$this->sampleTransaction()]);
         $this->assertSame('Data Transaksi - Batik Semarang', $spreadsheet->getProperties()->getTitle());
 
         $sheet = $spreadsheet->getActiveSheet();
         $this->assertSame('Nama Produk', $sheet->getCell('E1')->getValue());
         $this->assertSame('Sari Dewi', $sheet->getCell('C2')->getValue());
-        $this->assertEquals(150000, $sheet->getCell('G2')->getValue()); // numeric string di-cast otomatis
-        $this->assertSame(300000, $sheet->getCell('H2')->getValue()); // total
+        $this->assertEquals(150000, $sheet->getCell('G2')->getValue());
+        $this->assertSame(300000, $sheet->getCell('H2')->getValue());
     }
 
     public function testSpreadsheetCanBeWrittenAsXlsx()
     {
-        $spreadsheet = buildCustomersSpreadsheet('Batik Semarang', [$this->sampleCustomer()]);
+        $spreadsheet = CustomersExporter::buildSpreadsheet('Batik Semarang', [$this->sampleCustomer()]);
         $tmp = tempnam(sys_get_temp_dir(), 'xlsx_');
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
         $writer->save($tmp);
         $this->assertFileExists($tmp);
         $this->assertGreaterThan(1000, filesize($tmp), 'File XLSX tidak boleh kosong');
 
-        // Baca ulang & verifikasi isi
         $loaded = \PhpOffice\PhpSpreadsheet\IOFactory::load($tmp);
         $this->assertSame('Andi Wijaya', $loaded->getActiveSheet()->getCell('B2')->getValue());
         unlink($tmp);

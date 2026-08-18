@@ -1,13 +1,7 @@
 <?php
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once '../config/database.php';
 require_once '../config/auth.php';
-require_once '../includes/export.php';
-
-// Check if PhpSpreadsheet is available
-$hasPhpSpreadsheet = class_exists('PhpOffice\PhpSpreadsheet\Spreadsheet');
-if ($hasPhpSpreadsheet) {
-    require_once '../vendor/autoload.php';
-}
 
 // Require UMKM owner access
 requireAuthJson(['umkm_owner']);
@@ -24,19 +18,10 @@ if (!$business) {
     exit;
 }
 
-// Get transactions for this business
-$transactions = [];
+// Data dari slice Transactions
 try {
-    $stmt = $db->prepare("
-        SELECT t.*, c.customer_name, c.phone
-        FROM transactions t 
-        JOIN customers c ON t.customer_id = c.id 
-        WHERE t.business_id = ? 
-        ORDER BY t.transaction_date DESC, t.created_at DESC
-    ");
-    $stmt->execute([$business['id']]);
-    $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
+    $transactions = (new \App\Transactions\TransactionRepository($db))->allWithCustomer($business['id']);
+} catch (\PDOException $e) {
     header('Content-Type: application/json');
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Error loading transactions: ' . $e->getMessage()]);
@@ -44,19 +29,18 @@ try {
 }
 
 // Fallback CSV bila PhpSpreadsheet tidak tersedia
-if (!$hasPhpSpreadsheet) {
+if (!class_exists('PhpOffice\PhpSpreadsheet\Spreadsheet')) {
     $filename = 'transactions_' . date('Y-m-d_H-i-s') . '.csv';
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename="' . $filename . '"');
-    writeTransactionsCsv($transactions);
+    \App\Export\TransactionsExporter::writeCsv($transactions);
     exit;
 }
 
-// Export Excel (XLSX)
 try {
-    $spreadsheet = buildTransactionsSpreadsheet($business['business_name'], $transactions);
+    $spreadsheet = \App\Export\TransactionsExporter::buildSpreadsheet($business['name'], $transactions);
 
-    $filename = 'transactions_' . $business['business_name'] . '_' . date('Y-m-d_H-i-s') . '.xlsx';
+    $filename = 'transactions_' . $business['name'] . '_' . date('Y-m-d_H-i-s') . '.xlsx';
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment;filename="' . $filename . '"');
     header('Cache-Control: max-age=0');
@@ -69,4 +53,3 @@ try {
     echo json_encode(['success' => false, 'error' => 'Error creating Excel file: ' . $e->getMessage()]);
     exit;
 }
-?>
