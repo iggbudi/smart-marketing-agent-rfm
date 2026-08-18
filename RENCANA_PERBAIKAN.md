@@ -117,19 +117,19 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 - [x] Hapus CSV sample data dari repo (8 file: `customers_data.csv`, `transactions_data.csv`, dll.) — hanya data seeding, tidak direferensikan kode/docs; disimpan di arsip eksternal
 
 ### 4.3 Dokumentasi
-- [ ] Update README: instruksi deployment server Linux (bukan hanya XAMPP), hardening checklist, catatan env var
-- [ ] Tambah `docs/SECURITY.md`: daftar header keamanan, kebijakan session, rotasi kredensial
+- [x] Update README: instruksi deployment server Linux (Nginx + PHP-FPM + MariaDB, `--no-dev`, vhost + deny rule, Let's Encrypt), hardening checklist, catatan env var (sudah di Fase 3.5 + bagian Linux Deployment)
+- [x] Tambah `docs/SECURITY.md`: daftar header keamanan, kebijakan session, CSRF, keamanan API/upload, prosedur rotasi kredensial, checklist hardening deployment
 
 ---
 
 ## Checklist Definisi Selesai (Definition of Done)
 
-- [ ] Semua endpoint `/api/*` menolak request tanpa session valid (401/403 JSON)
-- [ ] Tidak ada file `debug_*`, `check_*`, `fix_*`, `test*`, `generate_*` yang bisa diakses via URL
-- [ ] Semua form POST memiliki CSRF token yang diverifikasi server
-- [ ] `session_regenerate_id()` dipanggil saat login
-- [ ] Upload Excel benar-benar membaca file user dan mengimport sesuai business
-- [ ] RFM hanya dihitung saat diminta eksplisit, bukan setiap page-load
+- [x] Semua endpoint `/api/*` menolak request tanpa session valid (401/403 JSON)
+- [x] Tidak ada file `debug_*`, `check_*`, `fix_*`, `test*`, `generate_*` yang bisa diakses via URL
+- [x] Semua form POST memiliki CSRF token yang diverifikasi server
+- [x] `session_regenerate_id()` dipanggil saat login
+- [x] Upload Excel benar-benar membaca file user dan mengimport sesuai business
+- [x] RFM hanya dihitung saat diminta eksplisit, bukan setiap page-load
 - [x] `composer test` hijau (27 test/509 asersi); dashboard duplikat dihapus; pagination aktif
 
 ---

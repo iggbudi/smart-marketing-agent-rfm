@@ -89,6 +89,93 @@ Smart Marketing Agent adalah platform komprehensif untuk analisis RFM (Recency, 
    Admin Panel: http://localhost/smart/admin/
    ```
 
+### Linux Production Deployment (Nginx + PHP-FPM + MariaDB)
+
+> Instruksi ini untuk server Linux (Debian/Ubuntu). Server live `smartrfm.my.id`
+> memakai pola ini. Sertakan `--no-dev` agar PHPUnit tidak terpasang di produksi.
+
+1. **Dependency:**
+   ```bash
+   sudo apt update
+   sudo apt install -y nginx php8.3-fpm php8.3-mysql php8.3-curl php8.3-xml php8.3-mbstring php8.3-zip mariadb-server composer git
+   ```
+
+2. **Clone & instal dependensi:**
+   ```bash
+   cd /var/www
+   git clone https://github.com/iggbudi/smart-marketing-agent-rfm.git smartrfm.my.id
+   cd smartrfm.my.id
+   composer install --no-dev --optimize-autoloader
+   ```
+
+3. **Database (buat user terpisah, jangan root):**
+   ```bash
+   sudo mysql
+   CREATE DATABASE smart_marketing_rfm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   CREATE USER 'smartrfm_user'@'localhost' IDENTIFIED BY '<password-kuat>';
+   GRANT ALL PRIVILEGES ON smart_marketing_rfm.* TO 'smartrfm_user'@'localhost';
+   FLUSH PRIVILEGES;
+   exit
+
+   mysql -u root smart_marketing_rfm < database_schema.sql
+   mysql -u root smart_marketing_rfm < database_update.sql
+   mysql -u root smart_marketing_rfm < database_indexes.sql
+   ```
+   > Catatan: `database_update.sql` & `database_indexes.sql` berisi `USE smart_marketing_rfm;`.
+   > Jika nama DB Anda berbeda, hapus baris `USE` tersebut (`sed '/^USE /d' file.sql | mysql -u root nama_db`).
+
+4. **Environment (kredensial via env var / .env, lihat `config/env.php`):**
+   ```bash
+   cp .env.example .env
+   nano .env        # isi DB_HOST/DB_USER/DB_PASSWORD, OPENAI_API_KEY (opsional)
+   ```
+
+5. **Nginx vhost (`/etc/nginx/sites-available/smartrfm`):**
+   ```nginx
+   server {
+       listen 80;
+       server_name smartrfm.my.id www.smartrfm.my.id;
+       root /var/www/smartrfm.my.id;
+       index index.php;
+
+       location / { try_files $uri $uri/ =404; }
+
+       # PHP-FPM
+       location ~ \.php$ {
+           include snippets/fastcgi-php.conf;
+           fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+       }
+
+       # Larangan akses: config, includes, src, tests, storage, vendor, .env
+       location ~ ^/(config|includes|src|tests|storage|vendor|scripts)/ { deny all; }
+       location ~ /\.env$ { deny all; }
+
+       # Upload tidak boleh dieksekusi PHP (untuk Apache sudah via storage/uploads/.htaccess)
+       location ~ ^/storage/uploads/.*\.(php|phtml|php[0-9]|phar)$ { deny all; }
+   }
+   ```
+   Lalu:
+   ```bash
+   sudo ln -s /etc/nginx/sites-available/smartrfm /etc/nginx/sites-enabled/
+   sudo nginx -t && sudo systemctl reload nginx
+   ```
+
+6. **HTTPS (wajib di produksi):**
+   ```bash
+   sudo apt install -y certbot python3-certbot-nginx
+   sudo certbot --nginx -d smartrfm.my.id -d www.smartrfm.my.id
+   ```
+
+7. **Cek instalasi:**
+   ```bash
+   cd /var/www/smartrfm.my.id
+   find . -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l   # lint semua
+   mysql -u root -e "SELECT VERSION();" smart_marketing_rfm
+   ```
+   Buka https://smartrfm.my.id/login.php dan login sebagai Super Admin/UMKM Owner.
+
+8. **Hardening checklist** — lihat `docs/SECURITY.md`.
+
 ## Default Accounts
 
 ### Super Admin
@@ -182,6 +269,9 @@ GET /api/analytics       # Platform analytics
 ```
 
 ## Security Features
+
+> 📄 Kebijakan lengkap (header, session, CSRF, upload, rotasi kredensial, checklist
+> hardening): [`docs/SECURITY.md`](docs/SECURITY.md)
 
 ### Authentication
 - Bcrypt password hashing
@@ -468,11 +558,14 @@ Edit file `analysis.php` pada bagian query RFM calculation untuk menyesuaikan:
 - WhatsApp API: Integrate untuk automated messaging
 
 ### 8. **Security Checklist**
-- [ ] Ganti password MySQL default
-- [ ] Simpan OpenAI API key di environment variable
-- [ ] Validate input data upload
-- [ ] Implement user authentication (login system)
-- [ ] Setup HTTPS untuk production
+- [x] Ganti password MySQL default & rotasi kredensial DB (Fase 1.4)
+- [x] Simpan OpenAI API key / kredensial DB di environment variable / `.env` (Fase 3.5)
+- [x] Validasi input data upload: ekstensi + MIME via `finfo`, batas 5MB, rename acak (Fase 2.3)
+- [x] Implement user authentication (login system) + CSRF semua form + session hardening (Fase 1–2)
+- [x] Endpoint `/api/*` wajib autentikasi (401/403 JSON) (Fase 1.1)
+- [ ] Setup HTTPS untuk production (aktifkan Let's Encrypt — lihat bagian Linux Deployment & `docs/SECURITY.md` §8)
+
+> Detail lengkap: [`docs/SECURITY.md`](docs/SECURITY.md)
 
 ### 9. **Performance Optimization**
 - Database indexing untuk tabel besar
@@ -483,10 +576,10 @@ Edit file `analysis.php` pada bagian query RFM calculation untuk menyesuaikan:
 ### 10. **Backup & Maintenance**
 ```bash
 # Backup database
-mysqldump -u root -p smart_marketing > backup_$(date +%Y%m%d).sql
+mysqldump -u root -p smart_marketing_rfm > backup_$(date +%Y%m%d).sql
 
-# Backup files
-tar -czf smart_backup_$(date +%Y%m%d).tar.gz /xampp/htdocs/smart/
+# Backup files (repo + arsip kredensial lokal; jangan commit .env)
+tar -czf smart_backup_$(date +%Y%m%d).tar.gz /var/www/smartrfm.my.id/ --exclude=vendor --exclude=.git
 ```
 
 ## Kontak Support
