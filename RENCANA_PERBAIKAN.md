@@ -69,7 +69,7 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 - [ ] Pertimbangkan CSP dasar (perhatikan CDN Bootstrap/FA/Chart.js/DataTables) — **didefer**: banyak halaman memakai inline `<script>` + banyak CDN, butuh refactor bertahap agar tidak merusak fungsionalitas
 
 ### 2.5 Perbaiki `Database::getConnection()`
-- [ ] Jangan `echo 'Connection error.'` ke output — lempar exception atau tampilkan halaman error netral; log detail ke `error_log`
+- [x] Jangan `echo 'Connection error.'` ke output — lempar exception netral + log detail ke `error_log` (diterapkan di `config/database.example.php`; file lokal `config/database.php` juga disesuaikan, namun tidak ikut ter-commit karena gitignored)
 
 ---
 

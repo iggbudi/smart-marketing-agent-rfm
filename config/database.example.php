@@ -18,7 +18,9 @@ class Database {
             );
             $this->conn->exec('set names utf8');
         } catch (PDOException $exception) {
-            echo 'Connection error: ' . $exception->getMessage();
+            // Jangan bocorkan detail koneksi ke output; log detail, lalu lempar exception netral
+            error_log('DB connection error: ' . $exception->getMessage());
+            throw new RuntimeException('Terjadi gangguan koneksi database. Silakan coba lagi atau hubungi administrator.');
         }
         return $this->conn;
     }
