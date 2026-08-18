@@ -83,10 +83,10 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 - [x] Laporkan jumlah baris sukses/gagal + pesan per baris ke user
 
 ### 3.2 Refactor kalkulasi RFM
-- [ ] Pindahkan fungsi `calculateRFM()` dari `analysis.php` ke file terpusat (mis. `includes/rfm.php`)
-- [ ] Hilangkan duplikasi CASE 3-skor (diulang 4× dalam satu query) — pecah jadi subquery skor dulu, lalu segmentasi dari skor
-- [ ] **Jangan jalankan DELETE+INSERT massal setiap page-load**: jalankan hanya via tombol eksplisit "Hitung Ulang RFM" (POST + CSRF) atau cron
-- [ ] Simpan juga `last_purchase_date`, `total_transactions`, `total_spent` saat insert (kolom sudah ada tapi tidak diisi)
+- [x] Pindahkan fungsi `calculateRFM()` dari `analysis.php` ke file terpusat (`includes/rfm.php` → `recalculateRFM()`)
+- [x] Hilangkan duplikasi CASE 3-skor (diulang 4× dalam satu query) — pecah jadi subquery skor dulu, lalu segmentasi dari skor
+- [x] **Jangan jalankan DELETE+INSERT massal setiap page-load**: jalankan hanya via tombol eksplisit "Hitung Ulang RFM" (POST + CSRF) atau saat first-run (data kosong)
+- [x] Simpan juga `last_purchase_date`, `total_transactions`, `total_spent` saat insert (kolom sekarang terisi; halaman analysis membaca langsung dari kolom tsb)
 
 ### 3.3 Bersihkan duplikasi
 - [ ] Hapus `dashboard_old.php` dan `dashboard_new.php` (identik/versi lama dari `dashboard.php`)

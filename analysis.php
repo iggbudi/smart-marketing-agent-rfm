@@ -25,126 +25,26 @@
     if (!$business) {
         die('Error: No business associated with your account. Please contact administrator.');
     }
-    
-    // Calculate RFM Analysis for this business only
-    function calculateRFM($businessId) {
-        global $db;
-        
-        // Clear existing RFM analysis for this business
-        $stmt = $db->prepare("DELETE FROM rfm_analysis WHERE business_id = ?");
-        $stmt->execute([$businessId]);
-        
-        // Calculate RFM scores for this business
-        $query = "
-            INSERT INTO rfm_analysis (business_id, customer_id, recency_score, frequency_score, monetary_score, rfm_segment, analysis_date, created_at)
-            SELECT 
-                c.business_id,
-                c.id,
-                CASE 
-                    WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 30 THEN 5
-                    WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 90 THEN 4
-                    WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 180 THEN 3
-                    WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 365 THEN 2
-                    ELSE 1
-                END as recency_score,
-                CASE 
-                    WHEN COUNT(t.id) >= 10 THEN 5
-                    WHEN COUNT(t.id) >= 7 THEN 4
-                    WHEN COUNT(t.id) >= 5 THEN 3
-                    WHEN COUNT(t.id) >= 3 THEN 2
-                    ELSE 1
-                END as frequency_score,
-                CASE 
-                    WHEN AVG(t.amount) >= 500000 THEN 5
-                    WHEN AVG(t.amount) >= 300000 THEN 4
-                    WHEN AVG(t.amount) >= 200000 THEN 3
-                    WHEN AVG(t.amount) >= 100000 THEN 2
-                    ELSE 1
-                END as monetary_score,
-                CASE 
-                    WHEN 
-                        (CASE 
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 30 THEN 5
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 90 THEN 4
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 180 THEN 3
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 365 THEN 2
-                            ELSE 1
-                        END) >= 4 AND 
-                        (CASE 
-                            WHEN COUNT(t.id) >= 10 THEN 5
-                            WHEN COUNT(t.id) >= 7 THEN 4
-                            WHEN COUNT(t.id) >= 5 THEN 3
-                            WHEN COUNT(t.id) >= 3 THEN 2
-                            ELSE 1
-                        END) >= 4 AND 
-                        (CASE 
-                            WHEN AVG(t.amount) >= 500000 THEN 5
-                            WHEN AVG(t.amount) >= 300000 THEN 4
-                            WHEN AVG(t.amount) >= 200000 THEN 3
-                            WHEN AVG(t.amount) >= 100000 THEN 2
-                            ELSE 1
-                        END) >= 4 
-                    THEN 'Champions'
-                    WHEN 
-                        (CASE 
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 30 THEN 5
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 90 THEN 4
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 180 THEN 3
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 365 THEN 2
-                            ELSE 1
-                        END) >= 3 AND 
-                        (CASE 
-                            WHEN COUNT(t.id) >= 10 THEN 5
-                            WHEN COUNT(t.id) >= 7 THEN 4
-                            WHEN COUNT(t.id) >= 5 THEN 3
-                            WHEN COUNT(t.id) >= 3 THEN 2
-                            ELSE 1
-                        END) >= 3 
-                    THEN 'Loyal Customers'
-                    WHEN 
-                        (CASE 
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 30 THEN 5
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 90 THEN 4
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 180 THEN 3
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 365 THEN 2
-                            ELSE 1
-                        END) >= 3 AND 
-                        (CASE 
-                            WHEN AVG(t.amount) >= 500000 THEN 5
-                            WHEN AVG(t.amount) >= 300000 THEN 4
-                            WHEN AVG(t.amount) >= 200000 THEN 3
-                            WHEN AVG(t.amount) >= 100000 THEN 2
-                            ELSE 1
-                        END) >= 3 
-                    THEN 'Potential Loyalists'
-                    WHEN 
-                        (CASE 
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 30 THEN 5
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 90 THEN 4
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 180 THEN 3
-                            WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 365 THEN 2
-                            ELSE 1
-                        END) <= 2 
-                    THEN 'At Risk'
-                    ELSE 'Lost Customers'
-                END as rfm_segment,
-                CURDATE(),
-                NOW()
-            FROM customers c
-            LEFT JOIN transactions t ON c.id = t.customer_id
-            WHERE c.business_id = ?
-            GROUP BY c.id, c.business_id
-        ";
-        
-        $stmt = $db->prepare($query);
-        $stmt->execute([$businessId]);
-        
-        // Log activity
-        auth()->logActivity($_SESSION['user_id'], 'rfm_calculation', 'RFM analysis calculated', $businessId);
-    }
-    
-    // Run RFM calculation for this business
-    calculateRFM($business['id']);
+
+// RFM dihitung ulang hanya saat diminta eksplisit (POST+CSRF) atau first-run (belum ada data)
+require_once 'includes/rfm.php';
+
+$rfmMessage = '';
+$rfmMessageType = '';
+
+$rfmCount = (int)$db->query("SELECT COUNT(*) FROM rfm_analysis WHERE business_id = " . (int)$business['id'])->fetchColumn();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'recalculate') {
+    requireCsrf();
+    recalculateRFM($db, $business['id'], $_SESSION['user_id']);
+    $rfmMessage = 'RFM berhasil dihitung ulang (' . date('d/m/Y H:i') . ').';
+    $rfmMessageType = 'success';
+} elseif ($rfmCount === 0) {
+    // First-run only: hitung sekali agar halaman & dashboard segera terisi
+    recalculateRFM($db, $business['id'], $_SESSION['user_id']);
+    $rfmMessage = 'RFM dihitung otomatis (belum ada data analisis).';
+    $rfmMessageType = 'info';
+}
     
     // Get RFM results for this business only
     $stmt = $db->prepare("
@@ -155,14 +55,12 @@
             r.frequency_score,
             r.monetary_score,
             r.rfm_segment as segment,
-            COUNT(t.id) as total_transactions,
-            COALESCE(SUM(t.amount), 0) as total_spent,
-            MAX(t.transaction_date) as last_transaction
+            r.total_transactions,
+            r.total_spent,
+            r.last_purchase_date as last_transaction
         FROM rfm_analysis r
         JOIN customers c ON r.customer_id = c.id
-        LEFT JOIN transactions t ON c.id = t.customer_id
         WHERE r.business_id = ?
-        GROUP BY r.id, c.customer_name, c.email, r.recency_score, r.frequency_score, r.monetary_score, r.rfm_segment
         ORDER BY r.recency_score DESC, r.frequency_score DESC, r.monetary_score DESC
     ");
     $stmt->execute([$business['id']]);
@@ -190,11 +88,22 @@
                 <p class="text-muted">Recency, Frequency, Monetary analysis untuk segmentasi pelanggan</p>
             </div>
             <div>
-                <button class="btn btn-primary" onclick="location.reload()">
-                    <i class="fas fa-sync"></i> Refresh Analysis
-                </button>
+                <form method="post" class="d-inline">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="action" value="recalculate">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-calculator"></i> Hitung Ulang RFM
+                    </button>
+                </form>
             </div>
         </div>
+
+        <?php if ($rfmMessage): ?>
+        <div class="alert alert-<?= htmlspecialchars($rfmMessageType) ?> alert-dismissible fade show" role="alert">
+            <?= htmlspecialchars($rfmMessage) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php endif; ?>
 
         <!-- Segment Summary -->
         <div class="row mb-4">
