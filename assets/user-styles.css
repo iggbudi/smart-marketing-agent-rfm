@@ -1,6 +1,20 @@
 /* User Dashboard Styles */
+
+/* ===== Design Tokens (identitas: hijau-teal + amber, segmen UMKM Indonesia) ===== */
+:root {
+    --brand-1: #0f766e;
+    --brand-2: #059669;
+    --grad-brand: linear-gradient(135deg, #0f766e 0%, #059669 100%);
+    --accent: #f59e0b;
+    --danger: #dc2626;
+    --bg-soft: #f6f7f4;
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+}
+
 body {
-    background-color: #f8f9fa;
+    background-color: var(--bg-soft);
 }
 
 .sidebar {
@@ -9,7 +23,7 @@ body {
     left: 0;
     width: 250px;
     height: 100vh;
-    background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+    background: var(--grad-brand);
     z-index: 1000;
     overflow-y: auto;
 }
@@ -69,7 +83,7 @@ body {
 }
 
 .stats-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--grad-brand);
     color: white;
     padding: 20px;
     border-radius: 12px;
@@ -77,15 +91,15 @@ body {
 }
 
 .stats-card.customers { 
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); 
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
 }
 
 .stats-card.transactions { 
-    background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%); 
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); 
 }
 
 .stats-card.revenue { 
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
+    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%); 
 }
 
 /* Tables */
@@ -116,7 +130,7 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--grad-brand);
     border: none;
 }
 
@@ -133,8 +147,8 @@ body {
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: #2193b0;
-    box-shadow: 0 0 0 0.2rem rgba(33, 147, 176, 0.25);
+    border-color: var(--brand-1);
+    box-shadow: 0 0 0 0.2rem rgba(15, 118, 110, 0.25);
 }
 
 /* Mobile Menu Toggle */
@@ -148,7 +162,7 @@ body {
         top: 15px;
         left: 15px;
         z-index: 1100;
-        background: #2193b0;
+        background: var(--brand-1);
         color: white;
         border: none;
         border-radius: 8px;
@@ -157,7 +171,7 @@ body {
     }
     
     .mobile-menu-toggle:hover {
-        background: #1a7a95;
+        background: #0c5f58;
     }
 }
 
@@ -188,13 +202,13 @@ body {
 }
 
 .upload-area:hover {
-    border-color: #2193b0;
-    background: #e3f2fd;
+    border-color: var(--brand-1);
+    background: #ecfdf5;
 }
 
 .upload-area.dragover {
-    border-color: #2193b0;
-    background: #e3f2fd;
+    border-color: var(--brand-1);
+    background: #ecfdf5;
 }
 
 /* Scrollbar Styling */
