@@ -25,8 +25,9 @@ URL = file `.php` langsung di docroot.
 | Kredensial env | `config/env.php` | `env($key, $default)` — prioritas: env var > `.env` > default |
 | DB / OpenAI | `config/database.php`, `config/openai.php` (**gitignored**) | Template yang di-commit: `*.example.php` |
 | API | `api/*.php` | `requireAuthJson()` → JSON + status HTTP benar |
-| Logika terpusat | `includes/rfm.php`, `includes/import.php`, `includes/export.php`, `includes/pagination.php`, `includes/sidebar.php` | Satu-satunya sumber sidebar (admin pakai wrapper) |
-| Logika murni (PSR-4 `App\`) | `src/Rfm.php` | Single source of truth skor/segmen RFM; SQL di `includes/rfm.php` **dibangun** dari sini |
+| Logika terpusat (cross-cutting) | `includes/pagination.php`, `includes/sidebar.php` | Satu-satunya sumber sidebar (admin pakai wrapper) |
+| Slice per fitur (PSR-4 `App\`) | `src/Customers`, `src/Transactions`, `src/Dashboard`, `src/Rfm`, `src/Import`, `src/Upload`, `src/Export`, `src/Ai`, `src/Business` | Tiap fitur punya class repository/service (query + aturan bisnis TIDAK inline di halaman); halaman/API tipis memanggil class ini |
+| Logika murni (PSR-4 `App\`) | `src/Rfm.php` | Single source of truth skor/segmen RFM; SQL di `src/Rfm/RfmService.php` **dibangun** dari sini |
 | Test | `tests/*.php` | PHPUnit 9.6; bootstrap arahkan ke DB test |
 | SQL | `database_schema.sql`, `database_update.sql`, `database_indexes.sql` | Migrasi manual (tidak ada migrasi otomatis) |
 
@@ -59,10 +60,16 @@ di-scope `business_id = ?` milik user session** (via `auth()->getUserBusiness()`
    dan `.env.example`.
 7. File `debug_*`, `check_*`, `fix_*`, `test*`, `generate_*` tidak boleh ada
    di web root (tidak bisa diakses via URL).
-8. Jangan duplikasi logika yang sudah terpusat: sidebar, RFM, export, import,
-   pagination. Kalau menambah fitur serupa, perpanjang helper yang ada.
+8. Jangan duplikasi logika yang sudah terpusat: sidebar, pagination, slice
+   per fitur (`src/<Fitur>/`). Kalau menambah fitur serupa, perpanjang class yang ada.
 9. Header keamanan & session cookie sudah diset di `config/auth.php` — jangan
    hapus/double-set. Detail: `docs/SECURITY.md`.
+10. **Autoload**: halaman/API yang memakai class `App\*` wajib memuat
+    `vendor/autoload.php` sendiri di awal (`__DIR__ . '/vendor/autoload.php'` docroot /
+    `dirname(__DIR__) . '/vendor/autoload.php'` di `api/`). Web request tidak memuat
+    autoload otomatis. JANGAN pindahkan ke `config/database.php` — itu mengubah
+    perilaku `class_exists()` di `api/export-*.php` (CSV → XLSX). Untuk fitur AI,
+    halaman juga wajib `require config/openai.php` (definisi `\OpenAIClient`).
 
 ---
 
@@ -110,7 +117,7 @@ composer validate --no-check-publish
 composer audit            # harus 0 CVE (saat ini phpspreadsheet 1.30.6)
 
 # 4) Test fungsional (bila DB live aksesibel, MariaDB 10.11 lokal)
-#    - recalculateRFM() harus cocok dgn App\Rfm::segmentFromScores()
+#    - RfmService::recalculate() harus cocok dgn App\Rfm::segmentFromScores()
 #    - render halaman via wrapper CLI dengan session valid (pola tests/ + /tmp)
 ```
 
@@ -177,18 +184,22 @@ Bila masih mengerjakan sisa item `RENCANA_PERBAIKAN.md`, lanjutkan prefix
 - Validasi server-side (jangan andalkan HTML5 `required` saja).
 
 ### 7.5 Fitur export/import baru
-- **Export**: perpanjang `includes/export.php` — tambah `xxxHeaders()`,
-  `formatXxxRow()`, `writeXxxCsv()`, `buildXxxSpreadsheet()`; jangan tulis
+- **Export**: perpanjang `src/Export/CustomersExporter.php` / `TransactionsExporter.php` —
+  tambah `headers()`, `formatRow()`, `writeCsv()`, `buildSpreadsheet()`; jangan tulis
   logika PhpSpreadsheet inline di API. Tambah kasus di `tests/ExportTest.php`
   (BOM, header, baris, round-trip XLSX).
-- **Import**: perpanjang `includes/import.php` (`importCustomerSpreadsheet` +
-  helper `_import*`); header fleksibel ID/EN; upsert per `business_id`;
+- **Import**: perpanjang `src/Import/SpreadsheetImporter.php` (`import()` + method
+  private `readCsv/mapColumns/cell/normalizeDate/normalizeAmount/upsertCustomer/logStart/logFinish`);
+  header fleksibel ID/EN; upsert per `business_id`;
   `beginTransaction/commit/rollBack`; laporan sukses/gagal per baris.
 - Validasi upload: ekstensi + MIME `finfo_file()`, ≤ 5MB, rename acak, simpan
   di `storage/uploads/` (terproteksi, lihat SECURITY.md §6).
 
 ### 7.6 Fitur AI (OpenAI)
-- `api/generate-content.php` + `ai-content.php`; key dari `env('OPENAI_API_KEY')`.
+- `api/generate-content.php` + `ai-content.php`; logika terpusat di `src/Ai/ContentGenerator.php`
+  (`generate(segment, ?\OpenAIClient)`, fallback dummy, persist, `recent()`).
+- key dari `env('OPENAI_API_KEY')`; halaman/API yang memakainya wajib `require config/openai.php`
+  (definisi `\OpenAIClient`) + `require vendor/autoload.php`.
 - Jangan commit key; `config/openai.example.php` adalah template.
 - Hitung/pantau token via `api_usage_logs` bila relevan.
 
@@ -196,12 +207,12 @@ Bila masih mengerjakan sisa item `RENCANA_PERBAIKAN.md`, lanjutkan prefix
 
 ## 8. Refactor — Checklist per Area (WAJIB dicek sebelum mulai)
 
-### RFM (`includes/rfm.php`, `src/Rfm.php`, `analysis.php`)
+### RFM (`src/Rfm/RfmService.php`, `src/Rfm.php`, `analysis.php`)
 - `src/Rfm.php` adalah **single source of truth** (skor + segmentasi); SQL di
-  `includes/rfm.php` DIBANGUN dari `App\Rfm::*Sql()`. Ubah logika di SATU tempat,
+  `src/Rfm/RfmService.php` DIBANGUN dari `App\Rfm::*Sql()`. Ubah logika di SATU tempat,
   dua-duanya (PHP & SQL) otomatis sinkron.
 - Setelah refactor, jalankan `composer test` (RfmTest 125 kombinasi skor) **dan**
-  test fungsional: `recalculateRFM($db, 1)` → cocokkan `rfm_segment` vs
+  test fungsional: `(new App\Rfm\RfmService($db))->recalculate(1)` → cocokkan `rfm_segment` vs
   `App\Rfm::segmentFromScores()`.
 - `analysis.php` & dashboard membaca tabel `rfm_analysis` **langsung**
   (skor sudah dipersist) — jangan pindahkan komputasi ke page-load.
@@ -215,7 +226,7 @@ Bila masih mengerjakan sisa item `RENCANA_PERBAIKAN.md`, lanjutkan prefix
   (login/session expiry/role check terhadap DB test).
 - Jangan ubah `AuthManager` tanpa update test yang menyangkutnya.
 
-### Export (`includes/export.php`, `api/export-*.php`)
+### Export (`src/Export/*`, `api/export-*.php`)
 - Pertahankan: BOM UTF-8 di CSV, header kolom, format tanggal `d/m/Y`,
   fallback `'-'`, total `amount*qty`. `tests/ExportTest.php` mengunci format ini.
 - API export wajib tetap `requireAuthJson` + scope bisnis; jangan pindahkan
@@ -235,7 +246,7 @@ Bila masih mengerjakan sisa item `RENCANA_PERBAIKAN.md`, lanjutkan prefix
   lokal; **contoh di-commit** = `*.example.php` + `.env.example`.
 - Tambah var env → update `.env.example` + README §Konfigurasi.
 
-### Upload (`upload.php`, `api/upload-excel.php`, `includes/import.php`)
+### Upload (`upload.php`, `api/upload-excel.php`, `src/Import/SpreadsheetImporter.php`, `src/Upload/UploadValidator.php`)
 - Jangan longgarkan validasi (MIME `finfo`, 5MB, rename acak, folder terproteksi).
 - Error handling: jangan `echo` detail koneksi/query ke output — `error_log` +
   exception netral.

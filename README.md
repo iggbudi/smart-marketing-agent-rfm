@@ -472,18 +472,40 @@ OPENAI_BASE_URL=https://api.openai.com/v1/chat/completions
 ### 4. **Struktur File Akhir**
 ```
 d:/xampp/htdocs/smart/
-├── config/
-│   ├── database.php
-│   └── openai.php
-├── api/
+├── config/                     # Kredensial & bootstrap (AuthManager, env, DB, OpenAI)
+│   ├── database.php            # getDB() (gitignored; template: database.example.php)
+│   ├── openai.php              # class OpenAIClient (gitignored; template: openai.example.php)
+│   └── auth.php                # AuthManager + requireAuth/requireAuthJson/csrf_*
+├── src/                        # Slice vertikal per fitur (PSR-4 App\ => src/)
+│   ├── Customers/CustomerRepository.php
+│   ├── Transactions/TransactionRepository.php
+│   ├── Dashboard/DashboardStats.php
+│   ├── Rfm/RfmService.php      # rekalkulasi & baca rfm_analysis
+│   ├── Rfm.php                 # single source of truth skor/segmen (TIDAK diubah)
+│   ├── Import/SpreadsheetImporter.php
+│   ├── Upload/UploadValidator.php
+│   ├── Export/CustomersExporter.php
+│   ├── Export/TransactionsExporter.php
+│   ├── Ai/ContentGenerator.php
+│   └── Business/BusinessProfileService.php
+├── includes/                   # Cross-cutting saja
+│   ├── sidebar.php             # satu-satunya sumber menu (user + admin)
+│   └── pagination.php
+├── api/                        # Endpoint JSON (tipis; auth + panggil class src/)
 │   ├── generate-content.php
 │   └── upload-excel.php
-├── database_schema.sql
-├── dashboard.php
-├── budget.php
-├── analysis.php
+│   └── export-customers.php / export-transactions.php
+├── *.php (docroot)             # Halaman UMKM tipis: requireAuth -> panggil class -> render
+│   ├── dashboard.php / customers.php / transactions.php / analysis.php
+│   └── upload.php / ai-content.php / profile.php / index.php / login.php
+├── admin/                      # Panel super_admin (subsistem terpisah, belum di-slice)
+├── tests/                      # PHPUnit 9.6 (DB test: smart_marketing_rfm_test)
+├── database_*.sql              # Migrasi manual (schema/update/indexes)
 └── README.md
 ```
+> Catatan: halaman/API yang memakai class `App\*` memuat `vendor/autoload.php` sendiri
+> di awal (bukan dari `config/database.php`). Slice alur kerja: lihat
+> `docs/plans/2026-08-18-vertical-slicing-sprints.md` (4 sprint, sudah selesai S1–S4).
 
 ### 5. **Testing Setup**
 
