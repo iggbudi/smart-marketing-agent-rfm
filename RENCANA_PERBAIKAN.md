@@ -113,8 +113,8 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 - [x] CI sederhana: script `composer test` → `phpunit` (phpunit.xml + tests/bootstrap.php arahkan ke DB test; catatan: saat menjalankan sebagai root perlu `COMPOSER_ALLOW_SUPERUSER=1`)
 
 ### 4.2 Kebersihan repo
-- [ ] Hapus file PDF besar dari repo (`imk.pdf` 3.9MB, `panduan.pdf` 3.9MB, `Budget_...pdf` 39MB) — simpan di storage eksternal / Git LFS
-- [ ] Hapus CSV sample data dari repo jika hanya untuk seeding (pindah ke script seeder)
+- [x] Hapus file PDF besar dari repo (`imk.pdf` 3.9MB, `panduan.pdf` 3.9MB, `Budget_...pdf` 39MB) — dipindah ke arsip eksternal `/var/www/smartrfm-pdf-archive/` (luar repo); `*.pdf` masuk `.gitignore`; blobs lama tetap ada di history — opsi purge history via `git filter-repo` dicatat sebagai tindak lanjut opsional
+- [x] Hapus CSV sample data dari repo (8 file: `customers_data.csv`, `transactions_data.csv`, dll.) — hanya data seeding, tidak direferensikan kode/docs; disimpan di arsip eksternal
 
 ### 4.3 Dokumentasi
 - [ ] Update README: instruksi deployment server Linux (bukan hanya XAMPP), hardening checklist, catatan env var

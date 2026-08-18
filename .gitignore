@@ -40,3 +40,6 @@ dist/
 # PHPUnit
 .phpunit.result.cache
 .phpunit.cache/
+
+# Dokumen besar / sample data (arsip eksternal, lihat RENCANA 4.2)
+*.pdf
