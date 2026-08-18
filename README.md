@@ -336,7 +336,7 @@ Please ensure compliance with local data protection regulations.
 ### 2. **Setup Database**
 1. Buka phpMyAdmin (http://localhost/phpmyadmin)
 2. Buat database baru: `smart_marketing`
-3. Import file: `database_schema.sql`
+3. Import file: `database_schema.sql`, lalu `database_update.sql` (multi-user) dan `database_indexes.sql` (index performa Fase 3.4)
 
 ```sql
 # Atau jalankan manual:
@@ -344,6 +344,8 @@ mysql -u root -p
 CREATE DATABASE smart_marketing;
 USE smart_marketing;
 SOURCE database_schema.sql;
+SOURCE database_update.sql;
+SOURCE database_indexes.sql;
 ```
 
 ### 3. **Konfigurasi File**

@@ -1,6 +1,7 @@
 <?php
 require_once 'config/database.php';
 require_once 'config/auth.php';
+require_once 'includes/pagination.php';
 
 // Require UMKM owner access
 requireAuth(['umkm_owner']);
@@ -54,7 +55,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Get customers for this business
+// Statistik agregat (seluruh data bisnis, bukan hanya halaman aktif)
+$totalCustomers = 0;
+$activeCustomers = 0;
+$totalSales = 0;
+try {
+    $stmt = $db->prepare("SELECT COUNT(*) FROM customers WHERE business_id = ?");
+    $stmt->execute([$business['id']]);
+    $totalCustomers = (int)$stmt->fetchColumn();
+
+    $stmt = $db->prepare("SELECT COUNT(DISTINCT customer_id) FROM transactions WHERE business_id = ?");
+    $stmt->execute([$business['id']]);
+    $activeCustomers = (int)$stmt->fetchColumn();
+
+    $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE business_id = ?");
+    $stmt->execute([$business['id']]);
+    $totalSales = (float)$stmt->fetchColumn();
+} catch (PDOException $e) {
+    $message = 'Error loading statistics: ' . $e->getMessage();
+    $messageType = 'danger';
+}
+
+// Pencarian server-side
+$search = trim($_GET['q'] ?? '');
+$where = 'c.business_id = ?';
+$params = [$business['id']];
+if ($search !== '') {
+    $like = '%' . $search . '%';
+    $where .= ' AND (c.customer_name LIKE ? OR c.phone LIKE ? OR c.email LIKE ?)';
+    array_push($params, $like, $like, $like);
+}
+
+$totalRows = 0;
+try {
+    $stmt = $db->prepare("SELECT COUNT(*) FROM customers c WHERE " . $where);
+    $stmt->execute($params);
+    $totalRows = (int)$stmt->fetchColumn();
+} catch (PDOException $e) {
+    $message = 'Error loading customers: ' . $e->getMessage();
+    $messageType = 'danger';
+}
+
+[$page, $perPage, $offset, $totalPages] = paginate($totalRows);
+
+// Get customers for this business (halaman aktif)
 $customers = [];
 try {
     $stmt = $db->prepare("
@@ -64,11 +108,12 @@ try {
                MAX(t.transaction_date) as last_transaction
         FROM customers c 
         LEFT JOIN transactions t ON c.id = t.customer_id 
-        WHERE c.business_id = ? 
+        WHERE " . $where . "
         GROUP BY c.id 
         ORDER BY c.created_at DESC
+        LIMIT " . (int)$perPage . " OFFSET " . (int)$offset . "
     ");
-    $stmt->execute([$business['id']]);
+    $stmt->execute($params);
     $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $message = 'Error loading customers: ' . $e->getMessage();
@@ -118,7 +163,7 @@ try {
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h3 class="mb-0"><?= count($customers) ?></h3>
+                                <h3 class="mb-0"><?= number_format($totalCustomers, 0, ',', '.') ?></h3>
                                 <p class="mb-0">Total Pelanggan</p>
                             </div>
                             <i class="fas fa-users fa-2x opacity-75"></i>
@@ -131,7 +176,7 @@ try {
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h3 class="mb-0"><?= count(array_filter($customers, function($c) { return $c['total_transactions'] > 0; })) ?></h3>
+                                <h3 class="mb-0"><?= number_format($activeCustomers, 0, ',', '.') ?></h3>
                                 <p class="mb-0">Pelanggan Aktif</p>
                             </div>
                             <i class="fas fa-user-check fa-2x opacity-75"></i>
@@ -144,7 +189,7 @@ try {
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h3 class="mb-0"><?= count(array_filter($customers, function($c) { return $c['total_transactions'] == 0; })) ?></h3>
+                                <h3 class="mb-0"><?= number_format($totalCustomers - $activeCustomers, 0, ',', '.') ?></h3>
                                 <p class="mb-0">Belum Transaksi</p>
                             </div>
                             <i class="fas fa-user-clock fa-2x opacity-75"></i>
@@ -157,7 +202,7 @@ try {
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h3 class="mb-0">Rp <?= number_format(array_sum(array_column($customers, 'total_spent')), 0, ',', '.') ?></h3>
+                                <h3 class="mb-0">Rp <?= number_format($totalSales, 0, ',', '.') ?></h3>
                                 <p class="mb-0">Total Penjualan</p>
                             </div>
                             <i class="fas fa-money-bill-wave fa-2x opacity-75"></i>
@@ -176,11 +221,14 @@ try {
                         <button onclick="exportCustomers()" class="btn btn-success btn-sm">
                             <i class="fas fa-file-excel me-1"></i> Export Excel
                         </button>
-                        <input type="text" class="form-control form-control-sm" id="searchCustomer" 
-                               placeholder="Cari pelanggan..." style="width: 200px;">
-                        <button class="btn btn-outline-secondary btn-sm">
-                            <i class="fas fa-filter"></i>
-                        </button>
+                        <form method="get" class="d-flex gap-2">
+                            <input type="text" class="form-control form-control-sm" name="q"
+                                   placeholder="Cari pelanggan..." style="width: 200px;"
+                                   value="<?= htmlspecialchars($search) ?>">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -210,7 +258,7 @@ try {
                             <?php else: ?>
                                 <?php foreach ($customers as $index => $customer): ?>
                                 <tr>
-                                    <td><?= $index + 1 ?></td>
+                                    <td><?= $offset + $index + 1 ?></td>
                                     <td>
                                         <strong><?= htmlspecialchars($customer['customer_name']) ?></strong>
                                     </td>
@@ -248,6 +296,12 @@ try {
                         </tbody>
                     </table>
                 </div>
+                <?php if ($totalPages > 1): ?>
+                <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+                    <small class="text-muted">Menampilkan <?= $offset + 1 ?>–<?= min($offset + count($customers), $totalRows) ?> dari <?= number_format($totalRows, 0, ',', '.') ?> pelanggan</small>
+                    <?= renderPagination($totalPages, $page) ?>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -299,16 +353,7 @@ try {
             document.querySelector('.sidebar').classList.toggle('show');
         }
 
-        // Search functionality
-        document.getElementById('searchCustomer').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#customerTableBody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
+        // Search dilakukan server-side via form GET (?q=...)
 
         function editCustomer(customer) {
             // For now, just show an alert. You can implement edit functionality later

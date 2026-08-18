@@ -1,6 +1,7 @@
 <?php
 require_once 'config/database.php';
 require_once 'config/auth.php';
+require_once 'includes/pagination.php';
 
 // Require UMKM owner access
 requireAuth(['umkm_owner']);
@@ -67,28 +68,67 @@ try {
     $messageType = 'danger';
 }
 
-// Get transactions for this business
+// Statistik agregat (seluruh data bisnis, bukan hanya halaman aktif)
+$totalTransactions = 0;
+$totalRevenue = 0;
+$activeCustomers = 0;
+try {
+    $stmt = $db->prepare("SELECT COUNT(*) FROM transactions WHERE business_id = ?");
+    $stmt->execute([$business['id']]);
+    $totalTransactions = (int)$stmt->fetchColumn();
+
+    $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE business_id = ?");
+    $stmt->execute([$business['id']]);
+    $totalRevenue = (float)$stmt->fetchColumn();
+
+    $stmt = $db->prepare("SELECT COUNT(DISTINCT customer_id) FROM transactions WHERE business_id = ?");
+    $stmt->execute([$business['id']]);
+    $activeCustomers = (int)$stmt->fetchColumn();
+} catch (PDOException $e) {
+    $message = 'Error loading statistics: ' . $e->getMessage();
+    $messageType = 'danger';
+}
+$avgTransaction = $totalTransactions > 0 ? $totalRevenue / $totalTransactions : 0;
+
+// Pencarian server-side
+$search = trim($_GET['q'] ?? '');
+$where = 't.business_id = ?';
+$params = [$business['id']];
+if ($search !== '') {
+    $like = '%' . $search . '%';
+    $where .= ' AND (c.customer_name LIKE ? OR t.product_name LIKE ?)';
+    array_push($params, $like, $like);
+}
+
+$totalRows = 0;
+try {
+    $stmt = $db->prepare("SELECT COUNT(*) FROM transactions t JOIN customers c ON t.customer_id = c.id WHERE " . $where);
+    $stmt->execute($params);
+    $totalRows = (int)$stmt->fetchColumn();
+} catch (PDOException $e) {
+    $message = 'Error loading transactions: ' . $e->getMessage();
+    $messageType = 'danger';
+}
+
+[$page, $perPage, $offset, $totalPages] = paginate($totalRows);
+
+// Get transactions for this business (halaman aktif)
 $transactions = [];
 try {
     $stmt = $db->prepare("
         SELECT t.*, c.customer_name, c.phone
         FROM transactions t 
         JOIN customers c ON t.customer_id = c.id 
-        WHERE t.business_id = ? 
+        WHERE " . $where . "
         ORDER BY t.transaction_date DESC, t.created_at DESC
+        LIMIT " . (int)$perPage . " OFFSET " . (int)$offset . "
     ");
-    $stmt->execute([$business['id']]);
+    $stmt->execute($params);
     $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $message = 'Error loading transactions: ' . $e->getMessage();
     $messageType = 'danger';
 }
-
-// Calculate statistics
-$total_transactions = count($transactions);
-$total_revenue = array_sum(array_column($transactions, 'amount'));
-$avg_transaction = $total_transactions > 0 ? $total_revenue / $total_transactions : 0;
-$recent_transactions = array_slice($transactions, 0, 5); // Last 5 transactions
 ?>
 
 <!DOCTYPE html>
@@ -133,7 +173,7 @@ $recent_transactions = array_slice($transactions, 0, 5); // Last 5 transactions
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h3 class="mb-0"><?= $total_transactions ?></h3>
+                                <h3 class="mb-0"><?= number_format($totalTransactions, 0, ',', '.') ?></h3>
                                 <p class="mb-0">Total Transaksi</p>
                             </div>
                             <i class="fas fa-shopping-cart fa-2x opacity-75"></i>
@@ -146,7 +186,7 @@ $recent_transactions = array_slice($transactions, 0, 5); // Last 5 transactions
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h3 class="mb-0">Rp <?= number_format($total_revenue, 0, ',', '.') ?></h3>
+                                <h3 class="mb-0">Rp <?= number_format($totalRevenue, 0, ',', '.') ?></h3>
                                 <p class="mb-0">Total Pendapatan</p>
                             </div>
                             <i class="fas fa-money-bill-wave fa-2x opacity-75"></i>
@@ -159,7 +199,7 @@ $recent_transactions = array_slice($transactions, 0, 5); // Last 5 transactions
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h3 class="mb-0">Rp <?= number_format($avg_transaction, 0, ',', '.') ?></h3>
+                                <h3 class="mb-0">Rp <?= number_format($avgTransaction, 0, ',', '.') ?></h3>
                                 <p class="mb-0">Rata-rata Transaksi</p>
                             </div>
                             <i class="fas fa-chart-line fa-2x opacity-75"></i>
@@ -172,7 +212,7 @@ $recent_transactions = array_slice($transactions, 0, 5); // Last 5 transactions
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h3 class="mb-0"><?= count(array_unique(array_column($transactions, 'customer_id'))) ?></h3>
+                                <h3 class="mb-0"><?= number_format($activeCustomers, 0, ',', '.') ?></h3>
                                 <p class="mb-0">Pelanggan Aktif</p>
                             </div>
                             <i class="fas fa-users fa-2x opacity-75"></i>
@@ -191,11 +231,14 @@ $recent_transactions = array_slice($transactions, 0, 5); // Last 5 transactions
                         <button onclick="exportTransactions()" class="btn btn-success btn-sm">
                             <i class="fas fa-file-excel me-1"></i> Export Excel
                         </button>
-                        <input type="text" class="form-control form-control-sm" id="searchTransaction" 
-                               placeholder="Cari transaksi..." style="width: 200px;">
-                        <button class="btn btn-outline-secondary btn-sm">
-                            <i class="fas fa-filter"></i>
-                        </button>
+                        <form method="get" class="d-flex gap-2">
+                            <input type="text" class="form-control form-control-sm" name="q"
+                                   placeholder="Cari transaksi..." style="width: 200px;"
+                                   value="<?= htmlspecialchars($search) ?>">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -224,7 +267,7 @@ $recent_transactions = array_slice($transactions, 0, 5); // Last 5 transactions
                             <?php else: ?>
                                 <?php foreach ($transactions as $index => $transaction): ?>
                                 <tr>
-                                    <td><?= $index + 1 ?></td>
+                                    <td><?= $offset + $index + 1 ?></td>
                                     <td><?= date('d/m/Y', strtotime($transaction['transaction_date'])) ?></td>
                                     <td>
                                         <strong><?= htmlspecialchars($transaction['customer_name']) ?></strong><br>
@@ -256,6 +299,12 @@ $recent_transactions = array_slice($transactions, 0, 5); // Last 5 transactions
                         </tbody>
                     </table>
                 </div>
+                <?php if ($totalPages > 1): ?>
+                <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+                    <small class="text-muted">Menampilkan <?= $offset + 1 ?>–<?= min($offset + count($transactions), $totalRows) ?> dari <?= number_format($totalRows, 0, ',', '.') ?> transaksi</small>
+                    <?= renderPagination($totalPages, $page) ?>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -340,16 +389,7 @@ $recent_transactions = array_slice($transactions, 0, 5); // Last 5 transactions
             document.querySelector('.sidebar').classList.toggle('show');
         }
 
-        // Search functionality
-        document.getElementById('searchTransaction').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#transactionTableBody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
+        // Search dilakukan server-side via form GET (?q=...)
 
         // Calculate total amount
         function calculateTotal() {

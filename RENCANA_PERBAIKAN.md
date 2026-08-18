@@ -93,9 +93,9 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 - [x] Satukan sidebar include (`includes/sidebar.php` vs `admin/includes/sidebar.php` → pola konsisten; `admin/includes/sidebar.php` jadi wrapper yang memunculkan satu sumber)
 
 ### 3.4 Pagination & performa
-- [ ] Pagination server-side untuk `customers.php` dan `transactions.php` (LIMIT/OFFSET atau DataTables server-side)
-- [ ] Tambah index DB: `transactions(business_id, customer_id, transaction_date)`, `customers(business_id)`, `rfm_analysis(business_id)`
-- [ ] Pertimbangkan VIEW `v_rfm_scores` agar query analisis lebih ringkas
+- [x] Pagination server-side untuk `customers.php` dan `transactions.php` (LIMIT/OFFSET via `includes/pagination.php`, 20 baris/halaman, pencarian server-side `?q=`, penomoran lanjut antar halaman)
+- [x] Tambah index DB: `transactions(business_id, customer_id, transaction_date)` via `database_indexes.sql`; `customers(business_id)` & `rfm_analysis(business_id)` sudah ada otomatis dari FK
+- [x] Pertimbangkan VIEW `v_rfm_scores` — **tidak dibuat**: skor R/F/M sudah dipersist di `rfm_analysis` sejak Fase 3.2 (`recalculateRFM()`), `analysis.php` & dashboard membaca tabel tsb langsung; VIEW hanya duplikasi komputasi tanpa keuntungan query
 
 ### 3.5 Kredensial via environment
 - [ ] Baca konfigurasi DB & OpenAI dari `getenv()` dengan fallback
