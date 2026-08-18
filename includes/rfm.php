@@ -3,7 +3,14 @@
  * includes/rfm.php
  * Perhitungan RFM (Recency, Frequency, Monetary) terpusat.
  * Dipakai oleh analysis.php (dan dapat dipanggil dari cron/CLI).
+ *
+ * Skor & segmentasi dibangun dari App\Rfm (src/Rfm.php) agar logika PHP
+ * (unit test) dan SQL tidak terduplikasi. Lihat tests/RfmTest.php.
  */
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use App\Rfm;
 
 /**
  * Hitung ulang RFM untuk satu business.
@@ -23,44 +30,25 @@ function recalculateRFM(\PDO $db, $businessId, $userId = null)
     $stmt = $db->prepare("DELETE FROM rfm_analysis WHERE business_id = ?");
     $stmt->execute([$businessId]);
 
+    $rExpr = Rfm::recencyScoreSql('DATEDIFF(NOW(), MAX(t.transaction_date))');
+    $fExpr = Rfm::frequencyScoreSql('COUNT(t.id)');
+    $mExpr = Rfm::monetaryScoreSql('AVG(t.amount)');
+    $segmentCase = Rfm::segmentCaseSql('d.r', 'd.f', 'd.m');
+
     $query = "INSERT INTO rfm_analysis
         (business_id, customer_id, recency_score, frequency_score, monetary_score,
          rfm_segment, last_purchase_date, total_transactions, total_spent, analysis_date, created_at)
         SELECT d.business_id, d.customer_id, d.r, d.f, d.m,
-        CASE
-            WHEN d.r >= 4 AND d.f >= 4 AND d.m >= 4 THEN 'Champions'
-            WHEN d.r >= 3 AND d.f >= 3 THEN 'Loyal Customers'
-            WHEN d.r >= 3 AND d.m >= 3 THEN 'Potential Loyalists'
-            WHEN d.r <= 2 THEN 'At Risk'
-            ELSE 'Lost Customers'
-        END,
+        {$segmentCase},
         d.last_purchase_date, d.total_transactions, d.total_spent,
         CURDATE(), NOW()
         FROM (
             SELECT
                 c.business_id,
                 c.id AS customer_id,
-                CASE
-                    WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 30 THEN 5
-                    WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 90 THEN 4
-                    WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 180 THEN 3
-                    WHEN DATEDIFF(NOW(), MAX(t.transaction_date)) <= 365 THEN 2
-                    ELSE 1
-                END AS r,
-                CASE
-                    WHEN COUNT(t.id) >= 10 THEN 5
-                    WHEN COUNT(t.id) >= 7 THEN 4
-                    WHEN COUNT(t.id) >= 5 THEN 3
-                    WHEN COUNT(t.id) >= 3 THEN 2
-                    ELSE 1
-                END AS f,
-                CASE
-                    WHEN AVG(t.amount) >= 500000 THEN 5
-                    WHEN AVG(t.amount) >= 300000 THEN 4
-                    WHEN AVG(t.amount) >= 200000 THEN 3
-                    WHEN AVG(t.amount) >= 100000 THEN 2
-                    ELSE 1
-                END AS m,
+                {$rExpr} AS r,
+                {$fExpr} AS f,
+                {$mExpr} AS m,
                 MAX(t.transaction_date) AS last_purchase_date,
                 COUNT(t.id) AS total_transactions,
                 COALESCE(SUM(t.amount), 0) AS total_spent

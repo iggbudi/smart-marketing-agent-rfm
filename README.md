@@ -397,6 +397,15 @@ d:/xampp/htdocs/smart/
 
 ### 5. **Testing Setup**
 
+**Unit test (PHPUnit, Fase 4.1):**
+```bash
+composer test
+# atau: ./vendor/bin/phpunit
+# DB test: smart_marketing_rfm_test (lihat tests/bootstrap.php) — jangan jalankan ke DB produksi!
+```
+> Catatan: saat dijalankan sebagai root, composer menolak plugin tanpa
+> `COMPOSER_ALLOW_SUPERUSER=1`; gunakan di lingkungan CI/non-root.
+
 1. **Test Database Connection:**
    - Buka: http://localhost/smart/dashboard.php
    - Jika ada error koneksi, periksa konfigurasi database

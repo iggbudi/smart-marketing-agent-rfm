@@ -106,11 +106,11 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 ## Fase 4 — Testing & Dokumentasi (estimasi 3–5 hari)
 
 ### 4.1 Unit test (PHPUnit)
-- [ ] Install `phpunit/phpunit` sebagai dev-dependency
-- [ ] Test `AuthManager` (login sukses/gagal, session expiry, role check) dengan DB test
-- [ ] Test segmentasi RFM (input skor → segment yang benar untuk semua kategori)
-- [ ] Test helper export (format CSV/Excel benar)
-- [ ] CI sederhana: script `composer test`
+- [x] Install `phpunit/phpunit` sebagai dev-dependency (+ bump `phpoffice/phpspreadsheet` 1.30.0 → 1.30.6: menutup 9 advisory keamanan, `composer audit` 0 CVE)
+- [x] Test `AuthManager` (login sukses/gagal, session expiry, role check via `hasRequiredRole()`) dengan DB test `smart_marketing_rfm_test` (tests/AuthManagerTest.php)
+- [x] Test segmentasi RFM — logika skor & segmen diekstrak ke `src/Rfm.php` (single source of truth; SQL di includes/rfm.php dibangun dari fungsi yang sama) (tests/RfmTest.php, 125 kombinasi skor)
+- [x] Test helper export — logika export diekstrak ke `includes/export.php` (CSV BOM/header/baris + round-trip XLSX) (tests/ExportTest.php)
+- [x] CI sederhana: script `composer test` → `phpunit` (phpunit.xml + tests/bootstrap.php arahkan ke DB test; catatan: saat menjalankan sebagai root perlu `COMPOSER_ALLOW_SUPERUSER=1`)
 
 ### 4.2 Kebersihan repo
 - [ ] Hapus file PDF besar dari repo (`imk.pdf` 3.9MB, `panduan.pdf` 3.9MB, `Budget_...pdf` 39MB) — simpan di storage eksternal / Git LFS
@@ -130,7 +130,7 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 - [ ] `session_regenerate_id()` dipanggil saat login
 - [ ] Upload Excel benar-benar membaca file user dan mengimport sesuai business
 - [ ] RFM hanya dihitung saat diminta eksplisit, bukan setiap page-load
-- [ ] `composer test` hijau; dashboard duplikat dihapus; pagination aktif
+- [x] `composer test` hijau (27 test/509 asersi); dashboard duplikat dihapus; pagination aktif
 
 ---
 

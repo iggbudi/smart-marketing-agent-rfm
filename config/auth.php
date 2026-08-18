@@ -43,8 +43,10 @@ class AuthManager {
             $_SESSION['user_role'] = $user['role'];
             $_SESSION['session_token'] = $sessionToken;
 
-            // Prevent session fixation
-            session_regenerate_id(true);
+            // Prevent session fixation (guard headers_sent agar tetap bisa di-unit-test via CLI)
+            if (!headers_sent()) {
+                session_regenerate_id(true);
+            }
             
             // Log activity
             $this->logActivity($user['id'], 'login', 'User logged in');
@@ -89,12 +91,22 @@ class AuthManager {
             exit;
         }
         
-        if (!empty($allowedRoles) && !in_array($_SESSION['user_role'], $allowedRoles)) {
+        if (!$this->hasRequiredRole($allowedRoles)) {
             header('Location: unauthorized.php');
             exit;
         }
         
         return true;
+    }
+
+    /**
+     * Cek apakah role session user ada di daftar role yang diizinkan.
+     * Kosongkan $allowedRoles = semua role diizinkan.
+     * Dipisah dari requireAuth() agar logika role bisa di-unit-test.
+     */
+    public function hasRequiredRole($allowedRoles = []) {
+        return empty($allowedRoles)
+            || (isset($_SESSION['user_role']) && in_array($_SESSION['user_role'], $allowedRoles));
     }
     
     public function getUserBusiness($userId) {
@@ -146,7 +158,7 @@ function requireAuthJson($allowedRoles = []) {
         exit;
     }
 
-    if (!empty($allowedRoles) && !in_array($_SESSION['user_role'], $allowedRoles)) {
+    if (!auth()->hasRequiredRole($allowedRoles)) {
         header('Content-Type: application/json');
         http_response_code(403);
         echo json_encode(['success' => false, 'error' => 'Forbidden: Anda tidak memiliki akses ke resource ini']);

@@ -36,3 +36,7 @@ coverage/
 build/
 dist/
 
+
+# PHPUnit
+.phpunit.result.cache
+.phpunit.cache/
