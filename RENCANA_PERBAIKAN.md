@@ -55,9 +55,9 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 - [x] Validasi token di setiap handler POST (fail-fast dengan 403)
 
 ### 2.2 Session hardening
-- [ ] Panggil `session_regenerate_id(true)` setelah login sukses (cegah session fixation)
-- [ ] Set cookie flags: `HttpOnly`, `Secure`, `SameSite=Lax` via `session_set_cookie_params()` di `config/auth.php`
-- [ ] (Opsional) kunci `user_sessions` ke IP/UA ringan
+- [x] Panggil `session_regenerate_id(true)` setelah login sukses (cegah session fixation)
+- [x] Set cookie flags: `HttpOnly`, `Secure`, `SameSite=Lax` via `session_set_cookie_params()` di `config/auth.php`
+- [ ] (Opsional) kunci `user_sessions` ke IP/UA ringan — **didefer** (berisiko kunci di luar saat IP dinamis; dipertimbangkan ulang)
 
 ### 2.3 Validasi upload file sungguhan
 - [ ] Validasi ekstensi + MIME via `finfo_file()` (bukan hanya `$file['type']` dari client)
