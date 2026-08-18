@@ -212,9 +212,9 @@ smart/
 │   └── session.php         # Session management
 ├── 
 ├── assets/                   # Static assets
-│   ├── css/                # Custom stylesheets
-│   ├── js/                 # JavaScript files
-│   └── images/             # Image assets
+│   ├── landing.css         # Stylesheet landing page (index.php)
+│   ├── landing.js          # Interaksi landing page (index.php)
+│   └── user-styles.css     # Stylesheet dashboard user
 ├── 
 ├── includes/                # Shared components
 │   ├── header.php          # Common header
