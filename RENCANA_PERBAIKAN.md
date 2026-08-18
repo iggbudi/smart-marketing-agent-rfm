@@ -76,11 +76,11 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 ## Fase 3 — Fungsionalitas & Kualitas Kode (estimasi 1–2 minggu)
 
 ### 3.1 Implementasi upload Excel yang sebenarnya
-- [ ] Gunakan PhpSpreadsheet (sudah terinstall via Composer) untuk membaca file yang diupload
-- [ ] Mapping kolom: nama, email/telepon, tanggal transaksi, nominal, produk, qty
-- [ ] Upsert customer per `business_id` (jangan hanya lookup global by email)
-- [ ] Transaksi DB (`beginTransaction`/`commit`/`rollBack`) untuk import batch
-- [ ] Laporkan jumlah baris sukses/gagal + pesan per baris ke user
+- [x] Gunakan PhpSpreadsheet (sudah terinstall via Composer) untuk membaca file yang diupload (xlsx/xls/csv; logika terpusat di `includes/import.php`)
+- [x] Mapping kolom: nama, email/telepon, tanggal transaksi, nominal, produk, qty (header fleksibel ID/EN)
+- [x] Upsert customer per `business_id` (bukan hanya lookup global by email)
+- [x] Transaksi DB (`beginTransaction`/`commit`/`rollBack`) untuk import batch
+- [x] Laporkan jumlah baris sukses/gagal + pesan per baris ke user
 
 ### 3.2 Refactor kalkulasi RFM
 - [ ] Pindahkan fungsi `calculateRFM()` dari `analysis.php` ke file terpusat (mis. `includes/rfm.php`)

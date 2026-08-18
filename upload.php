@@ -1,6 +1,7 @@
 <?php
 require_once 'config/database.php';
 require_once 'config/auth.php';
+require_once 'includes/import.php';
 
 // Require UMKM owner access
 requireAuth(['umkm_owner']);
@@ -63,8 +64,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                 $uploadPath = $uploadDir . $newName;
 
                 if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-                    $message = 'File berhasil diupload! Proses import akan dilakukan dalam background.';
-                    $messageType = 'success';
+                    // Proses impor langsung dari file yang tersimpan
+                    $import = importCustomerSpreadsheet($db, $business['id'], $uploadPath, $file['name']);
+
+                    $message = $import['message'];
+                    $messageType = ($import['processed'] > 0) ? 'success' : 'warning';
+
+                    if (!empty($import['errors'])) {
+                        $message .= ' ' . implode(' ', array_slice($import['errors'], 0, 5));
+                    }
                 } else {
                     $message = 'Gagal mengupload file.';
                     $messageType = 'danger';

@@ -26,73 +26,48 @@ if (!isset($_FILES['excel_file'])) {
 }
 
 $file = $_FILES['excel_file'];
-$allowedTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
 
-if (!in_array($file['type'], $allowedTypes)) {
-    echo json_encode(['success' => false, 'error' => 'Invalid file type. Please upload Excel file.']);
+// Validasi ekstensi (parsing isi dilakukan di includes/import.php)
+$ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+// Validasi MIME asli via finfo (bukan hanya klaim dari client)
+$finfo = new finfo(FILEINFO_MIME_TYPE);
+$mime = $finfo->file($file['tmp_name']);
+$allowedMimes = [
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+    'application/vnd.ms-excel',                                          // .xls
+    'application/octet-stream',                                          // beberapa .xls lama
+    'text/csv',
+    'text/plain',
+];
+
+if (!in_array($ext, ['xlsx', 'xls', 'csv'], true)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Ekstensi tidak didukung. Gunakan .xlsx, .xls, atau .csv.']);
+    exit;
+}
+if (!in_array($mime, $allowedMimes, true)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Tipe file tidak valid. Pastikan file benar-benar spreadsheet/CSV.']);
     exit;
 }
 
+require_once '../includes/import.php';
+
 try {
-    // You would need to install PhpSpreadsheet for full Excel support
-    // For now, let's create a simple CSV handler as alternative
-    
     $db = getDB();
-    
-    // Save upload history
-    $stmt = $db->prepare("INSERT INTO upload_history (business_id, filename, records_imported, status, created_at) VALUES (?, ?, 0, 'processing', NOW())");
-    $stmt->execute([$business['id'], $file['name']]);
-    $uploadId = $db->lastInsertId();
-    
-    // For demo purposes, let's add some sample data
-    $sampleData = [
-        ['John Doe', 'john@email.com', '2024-01-15', 250000],
-        ['Jane Smith', 'jane@email.com', '2024-01-16', 150000],
-        ['Bob Johnson', 'bob@email.com', '2024-01-17', 300000],
-    ];
-    
-    $processed = 0;
-    foreach ($sampleData as $row) {
-        // Check if customer exists
-        $stmt = $db->prepare("SELECT id FROM customers WHERE email = ?");
-        $stmt->execute([$row[1]]);
-        $customer = $stmt->fetch();
-        
-        if (!$customer) {
-            // Create new customer
-            $stmt = $db->prepare("INSERT INTO customers (business_id, customer_name, email, created_at) VALUES (?, ?, ?, NOW())");
-            $stmt->execute([$business['id'], $row[0], $row[1]]);
-            $customerId = $db->lastInsertId();
-        } else {
-            $customerId = $customer['id'];
-        }
-        
-        // Add transaction
-        $stmt = $db->prepare("INSERT INTO transactions (business_id, customer_id, transaction_date, amount, created_at) VALUES (?, ?, ?, ?, NOW())");
-        $stmt->execute([$business['id'], $customerId, $row[2], $row[3]]);
-        $processed++;
-    }
-    
-    // Update upload status
-    $stmt = $db->prepare("UPDATE upload_history SET status = 'completed', records_imported = ? WHERE id = ?");
-    $stmt->execute([$processed, $uploadId]);
-    
+    $import = importCustomerSpreadsheet($db, $business['id'], $file['tmp_name'], $file['name']);
+
     echo json_encode([
-        'success' => true,
-        'message' => "Successfully processed {$processed} records",
-        'processed' => $processed
+        'success'   => $import['processed'] > 0,
+        'message'   => $import['message'],
+        'processed' => $import['processed'],
+        'failed'    => $import['failed'],
+        'errors'    => $import['errors'],
     ]);
-    
+
 } catch (Exception $e) {
-    // Update upload status to failed
-    if (isset($uploadId)) {
-        $stmt = $db->prepare("UPDATE upload_history SET status = 'failed', error_message = ? WHERE id = ?");
-        $stmt->execute([$e->getMessage(), $uploadId]);
-    }
-    
-    echo json_encode([
-        'success' => false,
-        'error' => $e->getMessage()
-    ]);
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Gagal import: ' . $e->getMessage()]);
 }
 ?>
