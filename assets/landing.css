@@ -1,16 +1,16 @@
 /* Smart Marketing Agent — Landing page styles (dipakai index.php) */
 :root {
-    --brand-1: #667eea;
-    --brand-2: #764ba2;
-    --grad-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --grad-secondary: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --brand-1: #0f766e;
+    --brand-2: #059669;
+    --grad-primary: linear-gradient(135deg, #0f766e 0%, #059669 100%);
+    --grad-secondary: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
     --ink: #1f2937;
     --muted: #6b7280;
     --bg-soft: #f8fafc;
     --border: #e5e7eb;
     --radius: 16px;
-    --shadow: 0 10px 30px rgba(102, 126, 234, 0.12);
-    --shadow-lg: 0 20px 50px rgba(102, 126, 234, 0.18);
+    --shadow: 0 10px 30px rgba(15, 118, 110, 0.12);
+    --shadow-lg: 0 20px 50px rgba(15, 118, 110, 0.18);
 }
 
 html { scroll-behavior: smooth; }
