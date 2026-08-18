@@ -25,7 +25,7 @@ URL = file `.php` langsung di docroot.
 | Kredensial env | `config/env.php` | `env($key, $default)` — prioritas: env var > `.env` > default |
 | DB / OpenAI | `config/database.php`, `config/openai.php` (**gitignored**) | Template yang di-commit: `*.example.php` |
 | API | `api/*.php` | `requireAuthJson()` → JSON + status HTTP benar |
-| Logika terpusat (cross-cutting) | `includes/pagination.php`, `includes/sidebar.php` | Satu-satunya sumber sidebar (admin pakai wrapper) |
+| Logika terpusat (cross-cutting) | `includes/pagination.php`, `includes/sidebar.php` (+ `includes/mobile-topbar.php`, `includes/bottom-nav.php`, `assets/mobile.js`, `assets/table-cards.js` utk shell & komponen UI mobile) | Satu-satunya sumber sidebar & shell mobile (admin pakai wrapper) |
 | Slice per fitur (PSR-4 `App\`) | `src/Customers`, `src/Transactions`, `src/Dashboard`, `src/Rfm`, `src/Import`, `src/Upload`, `src/Export`, `src/Ai`, `src/Business` | Tiap fitur punya class repository/service (query + aturan bisnis TIDAK inline di halaman); halaman/API tipis memanggil class ini |
 | Logika murni (PSR-4 `App\`) | `src/Rfm.php` | Single source of truth skor/segmen RFM; SQL di `src/Rfm/RfmService.php` **dibangun** dari sini |
 | Test | `tests/*.php` | PHPUnit 9.6; bootstrap arahkan ke DB test |

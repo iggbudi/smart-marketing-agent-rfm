@@ -327,10 +327,14 @@ GET /api/analytics       # Platform analytics
 - Chart.js for visualizations
 - DataTables for large datasets
 - Lazy loading for images
-- **Tampilan mobile khusus:** sidebar off-canvas (tombol hamburger di semua halaman
-  user & admin), tabel lebar bisa di-scroll horizontal (DataTables `scrollX`),
-  kontrol input 16px anti auto-zoom iOS, dan blok `@media` mobile di
-  `assets/user-styles.css` & `admin/assets/admin-styles.css`.
+- **Tampilan mobile khusus (segmen UMKM Indonesia):** satu identitas warna
+  hijau-teal + amber (design tokens `--brand-*` di semua stylesheet), top bar
+  sticky dengan hamburger di semua halaman user (`includes/mobile-topbar.php`),
+  sidebar overlay + backdrop (`assets/mobile.js`), bottom navigation 5 menu
+  (`includes/bottom-nav.php`), stats card 2 kolom, tabel Customers & Transactions
+  berubah jadi kartu di layar ≤575px (`assets/table-cards.js`), FAB tambah cepat,
+  modal bottom-sheet, dan label berbahasa Indonesia. Data tables lebar tetap
+  bisa di-scroll horizontal (DataTables `scrollX`), input 16px anti auto-zoom iOS.
 
 ### Backend
 - Prepared statements for security and performance
