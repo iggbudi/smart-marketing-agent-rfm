@@ -284,3 +284,113 @@ body {
     /* Modal pas di layar kecil */
     .modal-dialog { margin: .5rem; }
 }
+
+/* ===== Mobile Shell: top bar + sidebar overlay + bottom navigation ===== */
+.mobile-topbar { display: none; }
+.bottom-nav { display: none; }
+.fab { display: none; }
+.sidebar-backdrop { display: none; }
+
+@media (max-width: 767.98px) {
+    .mobile-topbar {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        position: sticky;
+        top: 0;
+        z-index: 1050;
+        background: var(--grad-brand);
+        color: #fff;
+        padding: .55rem .85rem;
+        box-shadow: 0 2px 10px rgba(15, 118, 110, .25);
+    }
+    .mobile-topbar .mobile-menu-toggle {
+        position: static;
+        background: transparent;
+        border: none;
+        color: #fff;
+        padding: .5rem .65rem;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .mobile-topbar-title { flex: 1; font-weight: 600; font-size: 1.05rem; }
+    .mobile-topbar-avatar {
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.15);
+        color: #fff;
+        display: inline-flex; align-items: center; justify-content: center;
+        text-decoration: none;
+    }
+
+    /* Sidebar overlay full + backdrop (di atas topbar, di bawah sidebar) */
+    .sidebar { width: 100%; max-width: 320px; z-index: 1100; }
+    .sidebar-backdrop {
+        display: block;
+        position: fixed; inset: 0;
+        background: rgba(15, 23, 42, .5);
+        z-index: 1055;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .3s ease, visibility .3s ease;
+    }
+    .sidebar-backdrop.show { opacity: 1; visibility: visible; }
+
+    /* Bottom navigation */
+    .bottom-nav {
+        display: flex;
+        position: fixed; left: 0; right: 0; bottom: 0;
+        z-index: 1040;
+        background: #fff;
+        border-top: 1px solid var(--border);
+        padding-bottom: env(safe-area-inset-bottom);
+        box-shadow: 0 -2px 10px rgba(0,0,0,.06);
+    }
+    .bottom-nav-item {
+        flex: 1;
+        display: flex; flex-direction: column; align-items: center;
+        gap: .2rem;
+        padding: .5rem 0 .4rem;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: .68rem;
+        font-weight: 600;
+    }
+    .bottom-nav-item i { font-size: 1.15rem; }
+    .bottom-nav-item.active { color: var(--brand-1); }
+
+    /* Beri ruang bawah utk bottom nav */
+    .main-content { padding-bottom: 72px; }
+}
+
+@media (max-width: 575.98px) {
+    .fab {
+        display: inline-flex;
+        align-items: center; justify-content: center;
+        position: fixed;
+        right: 1rem;
+        bottom: calc(64px + env(safe-area-inset-bottom));
+        z-index: 1030;
+        width: 56px; height: 56px;
+        border-radius: 50%;
+        border: none;
+        background: var(--grad-brand);
+        color: #fff;
+        font-size: 1.3rem;
+        box-shadow: 0 6px 16px rgba(15, 118, 110, .35);
+    }
+    .fab:active { transform: scale(.95); }
+
+    /* Modal jadi bottom sheet */
+    .modal-dialog {
+        align-items: flex-end;
+        min-height: calc(100% - 1rem);
+        margin: 0;
+    }
+    .modal.fade .modal-dialog { transform: translateY(60px); }
+    .modal.show .modal-dialog { transform: none; }
+    .modal-content { border-radius: 16px 16px 0 0; }
+    .modal-body { max-height: 70vh; overflow-y: auto; }
+}

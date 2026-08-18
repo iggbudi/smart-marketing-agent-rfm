@@ -72,4 +72,14 @@ class MobileRelayoutTest extends TestCase
         $this->assertFileExists(dirname(__DIR__) . '/includes/mobile-topbar.php', 'top bar include wajib ada');
         $this->assertFileExists(dirname(__DIR__) . '/includes/bottom-nav.php', 'bottom nav include wajib ada');
     }
+
+    public function testUserStylesheetPunyaShellMobile(): void
+    {
+        $css = file_get_contents(dirname(__DIR__) . '/assets/user-styles.css');
+        $this->assertNotFalse($css, 'user-styles.css harus bisa dibaca');
+        foreach (['.mobile-topbar', '.sidebar-backdrop', '.bottom-nav', '.fab'] as $sel) {
+            $this->assertStringContainsString($sel, $css, "user-styles.css: selector $sel wajib ada");
+        }
+        $this->assertStringContainsString('.mobile-topbar { display: none; }', $css, 'topbar hanya tampil di mobile (display:none di dasar)');
+    }
 }
