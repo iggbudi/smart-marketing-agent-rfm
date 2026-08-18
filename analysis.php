@@ -161,6 +161,7 @@
             $('#rfmTable').DataTable({
                 pageLength: 25,
                 order: [[5, 'asc']],
+                scrollX: true,
                 columnDefs: [
                     { targets: [2, 3, 4], className: 'text-center' },
                     { targets: [6, 7], className: 'text-end' }
@@ -172,6 +173,5 @@
             document.querySelector('.sidebar').classList.toggle('show');
         }
     </script>
-    </div> <!-- End main-content -->
 </body>
 </html>
