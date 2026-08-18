@@ -179,14 +179,16 @@ Smart Marketing Agent adalah platform komprehensif untuk analisis RFM (Recency, 
 ## Default Accounts
 
 ### Super Admin
-- **Username**: admin
-- **Password**: admin123
+- **Email**: admin@smartmarketing.local
+- **Password**: password123
 - **Access**: Full platform administration
 
-### UMKM Owner (Demo Accounts)
-- **Username**: umkm1, umkm2, umkm3, umkm4, umkm5
-- **Password**: umkm123
+### UMKM Owner (Demo)
+- **Email**: budi@batiksemarang.com
+- **Password**: password123
 - **Access**: Business-specific data only
+
+> Kredensial aktual diambil dari tabel `users` DB live (kedua akun ber-hash sama).
 
 ## File Structure
 
