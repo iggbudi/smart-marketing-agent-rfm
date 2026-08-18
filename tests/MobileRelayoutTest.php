@@ -124,4 +124,12 @@ class MobileRelayoutTest extends TestCase
             $this->assertStringContainsString('table-cards.js', $src, "$page: wajib memuat assets/table-cards.js");
         }
     }
+
+    public function testModalBottomSheet(): void
+    {
+        $css = file_get_contents(dirname(__DIR__) . '/assets/user-styles.css');
+        $this->assertNotFalse($css, 'user-styles.css harus bisa dibaca');
+        $this->assertStringContainsString('align-items: flex-end;', $css, 'modal jadi bottom sheet di mobile');
+        $this->assertStringContainsString('translateY(60px)', $css, 'animasi slide-up modal');
+    }
 }
