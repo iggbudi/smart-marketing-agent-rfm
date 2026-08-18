@@ -78,7 +78,7 @@ Dokumen ini merangkum modul, alur proses bisnis end-to-end, halaman/API, tabel, 
 - Metrik: Distribusi segmen, rata-rata skor R/F/M, proxy CLV (mis. total_spent)
 
 ## Tahap 7 — Dashboard & Analitik
-- Halaman: `dashboard.php`, `dashboard_new.php`, `admin/analytics.php`
+- Halaman: `dashboard.php`, `admin/analytics.php`
 - Data: agregasi dari `transactions`, `rfm_analysis`, `customers`
 - Alur: Tampilkan KPI (pendapatan, order, pelanggan aktif) + grafik tren + distribusi segmen; dukung filter waktu/bisnis
 - Selesai: KPI/visual konsisten dengan data dan filter
@@ -139,7 +139,7 @@ Dokumen ini merangkum modul, alur proses bisnis end-to-end, halaman/API, tabel, 
 - API: `api/upload-excel.php`, `api/generate-content.php`, `api/export-customers.php`, `api/export-transactions.php`
 - AI: `ai-content.php`, `config/openai.php`
 - Import/Export Tools: `upload.php`
-- RFM/Analitik: `analysis.php`, `dashboard_new.php`, `dashboard_old.php`
+- RFM/Analitik: `analysis.php`
 - Includes/Assets: `includes/sidebar.php`, `assets/user-styles.css`
 - DB & Diagnostik: `database_schema.sql`, `database_update.sql`, `check_tables.php`, `check_transactions_table.php`, `check_missing_tables.php`, `check_api_table.php`, `debug_auth.php`, `generate_sample_data.php`, `fix_passwords.php`
 

@@ -89,8 +89,8 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 - [x] Simpan juga `last_purchase_date`, `total_transactions`, `total_spent` saat insert (kolom sekarang terisi; halaman analysis membaca langsung dari kolom tsb)
 
 ### 3.3 Bersihkan duplikasi
-- [ ] Hapus `dashboard_old.php` dan `dashboard_new.php` (identik/versi lama dari `dashboard.php`)
-- [ ] Satukan sidebar include (`includes/sidebar.php` vs `admin/includes/sidebar.php` → pola konsisten)
+- [x] Hapus `dashboard_old.php` dan `dashboard_new.php` (identik/versi lama dari `dashboard.php`)
+- [x] Satukan sidebar include (`includes/sidebar.php` vs `admin/includes/sidebar.php` → pola konsisten; `admin/includes/sidebar.php` jadi wrapper yang memunculkan satu sumber)
 
 ### 3.4 Pagination & performa
 - [ ] Pagination server-side untuk `customers.php` dan `transactions.php` (LIMIT/OFFSET atau DataTables server-side)
