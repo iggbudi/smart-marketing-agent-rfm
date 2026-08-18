@@ -1,7 +1,7 @@
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
 require_once 'config/database.php';
 require_once 'config/auth.php';
-require_once 'includes/import.php';
 
 // Require UMKM owner access
 requireAuth(['umkm_owner']);
@@ -15,72 +15,43 @@ if (!$business) {
     die('Error: No business associated with your account. Please contact administrator.');
 }
 
+$importer = new \App\Import\SpreadsheetImporter($db);
 $message = '';
 $messageType = '';
 
-// Handle Excel upload
+// Handle Excel upload (validasi & impor di slice Import/Upload)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
     requireCsrf();
 
-    $file = $_FILES['excel_file'];
-
-    // Batas maksimal ukuran file (5 MB)
-    if ($file['error'] !== UPLOAD_ERR_OK) {
-        $message = 'Gagal mengunggah file (error code ' . (int)$file['error'] . ').';
-        $messageType = 'danger';
-    } elseif ($file['size'] > 5 * 1024 * 1024) {
-        $message = 'Ukuran file melebihi batas maksimal 5 MB.';
+    $validation = \App\Upload\UploadValidator::validate($_FILES['excel_file']);
+    if (!$validation['ok']) {
+        $message = $validation['message'];
         $messageType = 'danger';
     } else {
-        // Validasi ekstensi yang diizinkan
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        $allowedExt = ['xlsx', 'xls', 'csv'];
+        // Simpan dengan nama acak ke folder terproteksi (bukan nama asli user)
+        $uploadDir = __DIR__ . '/storage/uploads/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0770, true);
+        }
+        $newName = date('Ymd_His') . '_' . bin2hex(random_bytes(8)) . '.' . $validation['ext'];
+        $uploadPath = $uploadDir . $newName;
 
-        if (!in_array($ext, $allowedExt, true)) {
-            $message = 'Ekstensi file tidak diizinkan. Gunakan .xlsx, .xls, atau .csv.';
-            $messageType = 'danger';
-        } else {
-            // Validasi MIME asli via finfo (bukan hanya klaim jenis dari client)
-            $finfo = new finfo(FILEINFO_MIME_TYPE);
-            $mime = $finfo->file($file['tmp_name']);
-            $allowedMimes = [
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-                'application/vnd.ms-excel',                                          // .xls
-                'application/octet-stream',                                          // beberapa .xls lama terdeteksi ini
-                'text/csv',
-                'text/plain',
-            ];
-
-            if (!in_array($mime, $allowedMimes, true)) {
-                $message = 'Tipe file tidak valid. Pastikan file yang diunggah benar-benar spreadsheet/CSV. (terdeteksi: ' . htmlspecialchars($mime) . ')';
-                $messageType = 'danger';
-            } else {
-                // Simpan dengan nama acak ke folder terproteksi (bukan nama asli user)
-                $uploadDir = __DIR__ . '/storage/uploads/';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0770, true);
-                }
-                $newName = date('Ymd_His') . '_' . bin2hex(random_bytes(8)) . '.' . $ext;
-                $uploadPath = $uploadDir . $newName;
-
-                if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-                    // Proses impor langsung dari file yang tersimpan
-                    $import = importCustomerSpreadsheet($db, $business['id'], $uploadPath, $file['name']);
-
-                    $message = $import['message'];
-                    $messageType = ($import['processed'] > 0) ? 'success' : 'warning';
-
-                    if (!empty($import['errors'])) {
-                        $message .= ' ' . implode(' ', array_slice($import['errors'], 0, 5));
-                    }
-                } else {
-                    $message = 'Gagal mengupload file.';
-                    $messageType = 'danger';
-                }
+        if (move_uploaded_file($_FILES['excel_file']['tmp_name'], $uploadPath)) {
+            $import = $importer->import($business['id'], $uploadPath, $_FILES['excel_file']['name']);
+            $message = $import['message'];
+            $messageType = ($import['processed'] > 0) ? 'success' : 'warning';
+            if (!empty($import['errors'])) {
+                $message .= ' ' . implode(' ', array_slice($import['errors'], 0, 5));
             }
+        } else {
+            $message = 'Gagal mengupload file.';
+            $messageType = 'danger';
         }
     }
 }
+
+// Riwayat upload
+$uploadHistory = $importer->history($business['id'], 10);
 ?>
 
 <!DOCTYPE html>
@@ -186,11 +157,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php if (empty($uploadHistory)): ?>
                                     <tr>
                                         <td colspan="5" class="text-center text-muted">
                                             Belum ada riwayat upload
                                         </td>
                                     </tr>
+                                    <?php else: ?>
+                                        <?php foreach ($uploadHistory as $h): ?>
+                                        <tr>
+                                            <td><?= date('d/m/Y H:i', strtotime($h['created_at'])) ?></td>
+                                            <td><?= htmlspecialchars($h['filename']) ?></td>
+                                            <td>Pelanggan &amp; Transaksi</td>
+                                            <td>
+                                                <span class="badge bg-<?= $h['status'] === 'completed' ? 'success' : ($h['status'] === 'processing' ? 'warning' : 'danger') ?>">
+                                                    <?= htmlspecialchars($h['status']) ?>
+                                                </span>
+                                            </td>
+                                            <td><?= (int)$h['records_imported'] ?></td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>

@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once '../config/auth.php';
 require_once '../config/database.php';
 
@@ -25,38 +26,17 @@ if (!isset($_FILES['excel_file'])) {
     exit;
 }
 
-$file = $_FILES['excel_file'];
-
-// Validasi ekstensi (parsing isi dilakukan di includes/import.php)
-$ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-
-// Validasi MIME asli via finfo (bukan hanya klaim dari client)
-$finfo = new finfo(FILEINFO_MIME_TYPE);
-$mime = $finfo->file($file['tmp_name']);
-$allowedMimes = [
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-    'application/vnd.ms-excel',                                          // .xls
-    'application/octet-stream',                                          // beberapa .xls lama
-    'text/csv',
-    'text/plain',
-];
-
-if (!in_array($ext, ['xlsx', 'xls', 'csv'], true)) {
+// Validasi terpusat (ekstensi + MIME finfo + ukuran)
+$validation = \App\Upload\UploadValidator::validate($_FILES['excel_file']);
+if (!$validation['ok']) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Ekstensi tidak didukung. Gunakan .xlsx, .xls, atau .csv.']);
+    echo json_encode(['success' => false, 'error' => $validation['message']]);
     exit;
 }
-if (!in_array($mime, $allowedMimes, true)) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Tipe file tidak valid. Pastikan file benar-benar spreadsheet/CSV.']);
-    exit;
-}
-
-require_once '../includes/import.php';
 
 try {
-    $db = getDB();
-    $import = importCustomerSpreadsheet($db, $business['id'], $file['tmp_name'], $file['name']);
+    $import = (new \App\Import\SpreadsheetImporter(getDB()))
+        ->import($business['id'], $_FILES['excel_file']['tmp_name'], $_FILES['excel_file']['name']);
 
     echo json_encode([
         'success'   => $import['processed'] > 0,
@@ -65,9 +45,7 @@ try {
         'failed'    => $import['failed'],
         'errors'    => $import['errors'],
     ]);
-
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Gagal import: ' . $e->getMessage()]);
 }
-?>
