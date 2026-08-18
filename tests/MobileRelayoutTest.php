@@ -66,4 +66,10 @@ class MobileRelayoutTest extends TestCase
             $this->assertStringNotContainsString('stat-card bg-', $src, "$page: jangan pakai warna bootstrap acak");
         }
     }
+
+    public function testShellIncludeAda(): void
+    {
+        $this->assertFileExists(dirname(__DIR__) . '/includes/mobile-topbar.php', 'top bar include wajib ada');
+        $this->assertFileExists(dirname(__DIR__) . '/includes/bottom-nav.php', 'bottom nav include wajib ada');
+    }
 }
