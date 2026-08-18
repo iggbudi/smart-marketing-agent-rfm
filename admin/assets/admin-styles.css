@@ -163,3 +163,28 @@
 .sidebar::-webkit-scrollbar-thumb:hover {
     background: rgba(255,255,255,0.5);
 }
+
+/* ===== Optimasi Tampilan Mobile (admin) ===== */
+@media (max-width: 767.98px) {
+    .main-content { padding: 12px; }
+    h2 { font-size: 1.35rem; }
+    .card { margin-bottom: 14px; }
+    .card-header { padding: 12px 14px; }
+    .card-body { padding: 14px; }
+    .table th, .table td { padding: 10px 8px; }
+    .table-responsive { -webkit-overflow-scrolling: touch; }
+
+    /* Baris judul + tombol tidak overflow */
+    .main-content > .d-flex.justify-content-between,
+    .card-header > .d-flex.justify-content-between {
+        flex-wrap: wrap;
+        gap: .5rem .75rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .main-content { padding: 10px; }
+    .form-control, .form-select { font-size: 16px; }
+    .btn { padding: 10px 14px; }
+    .modal-dialog { margin: .5rem; }
+}
