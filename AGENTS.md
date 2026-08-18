@@ -119,6 +119,19 @@ composer audit            # harus 0 CVE (saat ini phpspreadsheet 1.30.6)
 # 4) Test fungsional (bila DB live aksesibel, MariaDB 10.11 lokal)
 #    - RfmService::recalculate() harus cocok dgn App\Rfm::segmentFromScores()
 #    - render halaman via wrapper CLI dengan session valid (pola tests/ + /tmp)
+
+# 5) E2E mobile via Playwright (bila server live aksesibel)
+#    App HANYA tersedia di https://smartrfm.my.id (vhost nginx + Let's Encrypt;
+#    http://localhost adalah nginx default /var/www/html — BUKAN app ini).
+#    Flow: emulasi mobile (Pixel 5, 393x851, hasTouch) -> login -> cek tombol
+#    .mobile-menu-toggle TERLIHAT & sidebar off-canvas bisa dibuka (class .show,
+#    box x>=0) -> klik link menu -> navigasi sukses. Pakai ignoreHTTPSErrors:true
+#    (sertifikat tidak diverifikasi curl lokal).
+#    Kredensial demo (DB live): budi@batiksemarang.com / password123 (umkm_owner),
+#    admin@smartmarketing.local / password123 (super_admin).
+#    /login.php punya rate limit (rb_login burst=5 nodelay) — jangan hammer;
+#    skrip e2e ad-hoc ditulis di /tmp (pola: /tmp/pw-e2e/check-mobile-menu.js,
+#    `npm i playwright` di sana) — JANGAN commit skrip ad-hoc ke repo.
 ```
 
 Aturan test DB: `tests/bootstrap.php` set `DB_NAME=smart_marketing_rfm_test`
