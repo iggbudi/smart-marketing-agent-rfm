@@ -325,6 +325,10 @@ GET /api/analytics       # Platform analytics
 - Chart.js for visualizations
 - DataTables for large datasets
 - Lazy loading for images
+- **Tampilan mobile khusus:** sidebar off-canvas (tombol hamburger di semua halaman
+  user & admin), tabel lebar bisa di-scroll horizontal (DataTables `scrollX`),
+  kontrol input 16px anti auto-zoom iOS, dan blok `@media` mobile di
+  `assets/user-styles.css` & `admin/assets/admin-styles.css`.
 
 ### Backend
 - Prepared statements for security and performance
