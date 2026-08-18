@@ -138,6 +138,10 @@ body {
 }
 
 /* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: none;
+}
+
 @media (max-width: 768px) {
     .mobile-menu-toggle {
         position: fixed;
@@ -155,10 +159,6 @@ body {
     .mobile-menu-toggle:hover {
         background: #1a7a95;
     }
-}
-
-.mobile-menu-toggle {
-    display: none;
 }
 
 /* Content Animation */

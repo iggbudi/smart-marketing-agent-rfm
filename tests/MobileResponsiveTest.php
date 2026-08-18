@@ -63,4 +63,33 @@ class MobileResponsiveTest extends TestCase
             $this->assertStringContainsString('flex-wrap: wrap', $src, basename($css) . ' wajib wrap header di mobile');
         }
     }
+
+    public function testMobileToggleDisplayNoneTidakMenimpaMediaQuery(): void
+    {
+        // Root cause (diverifikasi via Playwright mode mobile, 2026-08-18):
+        // aturan dasar `.mobile-menu-toggle { display:none }` ditulis SETELAH blok
+        // @media (max-width:768px) yang berisi `display:block`. Cascade CSS memenangkan
+        // aturan terakhir => tombol hamburger selalu display:none walau di mobile,
+        // sehingga menu sidebar off-canvas tak bisa dibuka (menu mobile hilang).
+        foreach ([
+            dirname(__DIR__) . '/assets/user-styles.css',
+            dirname(__DIR__) . '/admin/assets/admin-styles.css',
+        ] as $css) {
+            $src = file_get_contents($css);
+            $posNone = strpos($src, ".mobile-menu-toggle {\n    display: none;");
+            $posToggleMedia = strpos($src, "@media (max-width: 768px) {\n    .mobile-menu-toggle");
+            $this->assertNotFalse($posNone, basename($css) . ': aturan dasar display:none wajib ada');
+            $this->assertNotFalse($posToggleMedia, basename($css) . ': media query toggle mobile wajib ada');
+            $this->assertStringContainsString(
+                'display: block',
+                substr($src, $posToggleMedia, strpos($src, '}', $posToggleMedia) - $posToggleMedia),
+                basename($css) . ': media query toggle harus menampilkan tombol (display: block)'
+            );
+            $this->assertLessThan(
+                $posToggleMedia,
+                $posNone,
+                basename($css) . ': display:none harus SEBELUM @media toggle, jika setelahnya dia menimpa display:block (bug menu mobile hilang)'
+            );
+        }
+    }
 }

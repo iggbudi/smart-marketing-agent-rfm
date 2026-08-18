@@ -107,6 +107,10 @@
 }
 
 /* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: none;
+}
+
 @media (max-width: 768px) {
     .mobile-menu-toggle {
         position: fixed;
@@ -124,10 +128,6 @@
     .mobile-menu-toggle:hover {
         background: #5a6fd8;
     }
-}
-
-.mobile-menu-toggle {
-    display: none;
 }
 
 /* Animation for content loading */
