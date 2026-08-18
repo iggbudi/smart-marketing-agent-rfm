@@ -19,6 +19,7 @@ $error_message = '';
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
     $name = trim($_POST['name'] ?? '');
     $owner_name = trim($_POST['owner_name'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -126,6 +127,7 @@ $business_types = [
                         </div>
                         <div class="card-body">
                             <form method="post">
+                            <?= csrf_field() ?>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">

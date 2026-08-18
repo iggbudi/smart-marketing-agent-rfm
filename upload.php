@@ -19,6 +19,7 @@ $messageType = '';
 
 // Handle Excel upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
+    requireCsrf();
     $uploadDir = 'uploads/';
     if (!file_exists($uploadDir)) {
         mkdir($uploadDir, 0777, true);
@@ -81,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                         <p class="text-muted">Upload data pelanggan dan transaksi dalam format Excel.</p>
                         
                         <form method="POST" enctype="multipart/form-data">
+                            <?= csrf_field() ?>
                             <div class="mb-3">
                                 <label for="excel_file" class="form-label">Pilih File Excel</label>
                                 <input type="file" class="form-control" id="excel_file" name="excel_file" 

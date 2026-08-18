@@ -19,6 +19,7 @@ $messageType = '';
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
     if (isset($_POST['action'])) {
         if ($_POST['action'] === 'add') {
             $name = trim($_POST['name']);
@@ -260,6 +261,7 @@ try {
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form method="POST">
+                    <?= csrf_field() ?>
                     <div class="modal-body">
                         <input type="hidden" name="action" value="add">
                         <div class="mb-3">
@@ -286,6 +288,7 @@ try {
 
     <!-- Delete Customer Form -->
     <form id="deleteForm" method="POST" style="display: none;">
+        <?= csrf_field() ?>
         <input type="hidden" name="action" value="delete">
         <input type="hidden" name="customer_id" id="deleteCustomerId">
     </form>

@@ -10,6 +10,7 @@ $db = getDB();
 
 // Handle form submissions
 if ($_POST) {
+    requireCsrf();
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'update_general':
@@ -162,6 +163,7 @@ $platform_stats = [
                                     <!-- General Settings -->
                                     <div class="tab-pane fade show active" id="general" role="tabpanel">
                                         <form method="POST">
+                                            <?= csrf_field() ?>
                                             <input type="hidden" name="action" value="update_general">
                                             <div class="mb-3">
                                                 <label class="form-label">Platform Name</label>
@@ -208,6 +210,7 @@ $platform_stats = [
                                     <!-- Email Settings -->
                                     <div class="tab-pane fade" id="email" role="tabpanel">
                                         <form method="POST">
+                                            <?= csrf_field() ?>
                                             <input type="hidden" name="action" value="update_email">
                                             <div class="mb-3">
                                                 <label class="form-label">SMTP Host</label>
@@ -255,6 +258,7 @@ $platform_stats = [
                                     <!-- Security Settings -->
                                     <div class="tab-pane fade" id="security" role="tabpanel">
                                         <form method="POST">
+                                            <?= csrf_field() ?>
                                             <input type="hidden" name="action" value="update_security">
                                             <div class="mb-3">
                                                 <label class="form-label">Session Timeout (minutes)</label>

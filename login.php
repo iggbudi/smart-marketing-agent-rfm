@@ -46,6 +46,7 @@
     }
     
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        requireCsrf();
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
         
@@ -95,6 +96,7 @@
                             <?php endif; ?>
                             
                             <form method="POST">
+                                <?= csrf_field() ?>
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
                                     <div class="input-group">

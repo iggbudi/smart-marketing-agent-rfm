@@ -164,6 +164,7 @@ $revenue_trend = $stmt->fetchAll();
                     <div class="card-body">
                         <p>Pilih file Excel (.xlsx)</p>
                         <form action="upload.php" method="post" enctype="multipart/form-data">
+                            <?= csrf_field() ?>
                             <div class="upload-area" id="uploadArea">
                                 <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
                                 <p class="mb-2">Drag & drop file atau klik untuk pilih</p>
@@ -185,6 +186,7 @@ $revenue_trend = $stmt->fetchAll();
                     <div class="card-body">
                         <p>Generate content for your customer segments</p>
                         <form action="ai-content.php" method="post">
+                            <?= csrf_field() ?>
                             <div class="mb-3">
                                 <label class="form-label">Pilih Segment</label>
                                 <select name="segment" class="form-select">

@@ -20,16 +20,20 @@ $error_message = '';
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['segment'])) {
+    requireCsrf();
     $selected_segment = $_POST['segment'];
     
-    // Call the API to generate content
+    // Call the API to generate content (forward the session cookie so
+    // the internal api/generate-content.php can authenticate the same user)
     $api_url = '/smart/api/generate-content.php';
     $data = json_encode(['segment' => $selected_segment]);
     
     $context = stream_context_create([
         'http' => [
             'method' => 'POST',
-            'header' => 'Content-Type: application/json',
+            'header' =>
+                "Content-Type: application/json\r\n" .
+                "Cookie: " . session_name() . '=' . session_id() . "\r\n",
             'content' => $data
         ]
     ]);
@@ -99,6 +103,7 @@ $recent_content = $stmt->fetchAll();
                         </div>
                         <div class="card-body">
                             <form method="post">
+                                <?= csrf_field() ?>
                                 <div class="mb-3">
                                     <label class="form-label">Pilih Segmen Pelanggan</label>
                                     <select name="segment" class="form-select" required>

@@ -50,9 +50,9 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 ## Fase 2 — Hardening Keamanan (estimasi 2–4 hari)
 
 ### 2.1 CSRF protection
-- [ ] Tambah helper `csrf_token()` / `csrf_verify()` di `config/auth.php`
-- [ ] Sisipkan token tersembunyi di **semua form POST**: `login.php`, `customers.php`, `transactions.php`, `profile.php`, `upload.php`, `admin/users.php`, `admin/businesses.php`, `admin/settings.php`
-- [ ] Validasi token di setiap handler POST (fail-fast dengan 403)
+- [x] Tambah helper `csrf_token()` / `csrf_verify()` di `config/auth.php` (termasuk `requireCsrf()` fail-fast 403 & `csrf_field()`)
+- [x] Sisipkan token tersembunyi di **semua form POST**: `login.php`, `customers.php`, `transactions.php`, `profile.php`, `upload.php`, `admin/users.php`, `admin/businesses.php`, `admin/settings.php` (+ form upload/AI di `dashboard.php`/`dashboard_new.php` & `ai-content.php`)
+- [x] Validasi token di setiap handler POST (fail-fast dengan 403)
 
 ### 2.2 Session hardening
 - [ ] Panggil `session_regenerate_id(true)` setelah login sukses (cegah session fixation)

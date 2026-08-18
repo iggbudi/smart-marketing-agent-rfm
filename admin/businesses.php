@@ -10,6 +10,7 @@ $db = getDB();
 
 // Handle form submissions
 if ($_POST) {
+    requireCsrf();
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'add_business':
@@ -289,6 +290,7 @@ $stats = [
         <div class="modal-dialog">
             <div class="modal-content">
                 <form method="POST">
+<?= csrf_field() ?>
                     <div class="modal-header">
                         <h5 class="modal-title">Add New Business</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -341,6 +343,7 @@ $stats = [
     <div class="modal fade" id="editBusinessModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
+<?= csrf_field() ?>
                 <form method="POST" id="editBusinessForm">
                     <div class="modal-header">
                         <h5 class="modal-title">Edit Business</h5>
@@ -394,6 +397,7 @@ $stats = [
     <!-- Delete Business Modal -->
     <div class="modal fade" id="deleteBusinessModal" tabindex="-1">
         <div class="modal-dialog">
+<?= csrf_field() ?>
             <div class="modal-content">
                 <form method="POST" id="deleteBusinessForm">
                     <div class="modal-header">
