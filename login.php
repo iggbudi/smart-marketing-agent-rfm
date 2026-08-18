@@ -122,31 +122,9 @@
                                 </button>
                             </form>
                             
-                            <hr>
-                            
-                            <div class="text-center">
-                                <h6 class="text-muted mb-3">Demo Accounts (Development):</h6>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <small class="text-primary"><strong>Super Admin</strong></small><br>
-                                        <small>admin@smartmarketing.local</small><br>
-                                        <small>password123</small>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-success"><strong>UMKM Owner</strong></small><br>
-                                        <small>budi@batiksemarang.com</small><br>
-                                        <small>password123</small>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     
-                    <div class="text-center mt-3">
-                        <small class="text-light">
-                            <i class="fas fa-code"></i> Development Version - Localhost Environment
-                        </small>
-                    </div>
                 </div>
             </div>
         </div>

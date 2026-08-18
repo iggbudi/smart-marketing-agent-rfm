@@ -53,4 +53,15 @@ class LandingPageRenderTest extends TestCase
             $this->assertStringNotContainsString($text, $html, "Konten '$text' tidak boleh tampil di halaman publik");
         }
     }
+
+    // ---- Login page (login.php) ----
+
+    public function testLoginPageTidakMenampilkanKredensialDemo()
+    {
+        $html = $this->renderPage('login.php');
+
+        $this->assertStringNotContainsString('password123', $html);
+        $this->assertStringNotContainsString('admin@smartmarketing.local', $html);
+        $this->assertStringNotContainsString('Development Version', $html);
+    }
 }
