@@ -83,12 +83,7 @@ Smart Marketing Agent adalah platform komprehensif untuk analisis RFM (Recency, 
    Default settings work with XAMPP
    ```
 
-5. **Generate Sample Data**
-   ```
-   php generate_sample_data.php
-   ```
-
-6. **Access Platform**
+5. **Access Platform**
    ```
    Landing Page: http://localhost/smart/
    Admin Panel: http://localhost/smart/admin/

@@ -92,7 +92,7 @@ Dokumen ini merangkum modul, alur proses bisnis end-to-end, halaman/API, tabel, 
 - Metrik: Konten per segmen/kanal, tokens dan biaya per konten
 
 ## Tahap 9 — Pelaporan & Ekspor
-- Halaman/API: `admin/reports.php`, `api/export-customers.php`, `api/export-transactions.php`, `test-export.php`
+- Halaman/API: `admin/reports.php`, `api/export-customers.php`, `api/export-transactions.php`
 - Sumber: `customers`, `transactions`, `rfm_analysis`
 - Alur: Pilih laporan & periode → preview → ekspor CSV/XLSX → verifikasi format
 - Selesai: File sesuai skema kolom & format; dapat dibuka Excel
@@ -138,7 +138,7 @@ Dokumen ini merangkum modul, alur proses bisnis end-to-end, halaman/API, tabel, 
 - UMKM Owner: `dashboard.php`, `customers.php`, `transactions.php`, `profile.php`
 - API: `api/upload-excel.php`, `api/generate-content.php`, `api/export-customers.php`, `api/export-transactions.php`
 - AI: `ai-content.php`, `config/openai.php`
-- Import/Export Tools: `upload.php`, `test-export.php`, `test_export_format.php`
+- Import/Export Tools: `upload.php`
 - RFM/Analitik: `analysis.php`, `dashboard_new.php`, `dashboard_old.php`
 - Includes/Assets: `includes/sidebar.php`, `assets/user-styles.css`
 - DB & Diagnostik: `database_schema.sql`, `database_update.sql`, `check_tables.php`, `check_transactions_table.php`, `check_missing_tables.php`, `check_api_table.php`, `debug_auth.php`, `generate_sample_data.php`, `fix_passwords.php`

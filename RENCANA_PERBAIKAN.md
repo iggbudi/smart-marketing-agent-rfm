@@ -31,12 +31,12 @@
 - [x] Pastikan semua endpoint mengembalikan JSON error + HTTP status yang benar saat belum login (bukan redirect HTML)
 
 ### 1.2 Hapus / pindahkan file debug & diagnostik dari web root
-File yang harus dihapus atau dipindah ke folder di luar docroot (mis. `_tools/` yang diblokir di vhost):
-- [ ] `debug_auth.php` (berisiko membocorkan data user)
-- [ ] `fix_passwords.php` (berisiko memodifikasi password)
-- [ ] `check_api_table.php`, `check_missing_tables.php`, `check_tables.php`, `check_transactions_table.php`
-- [ ] `test-export.php`, `test.html`, `test_date_format.php`, `test_export_format.php`
-- [ ] `generate_sample_data.php` (hanya untuk seeding awal, jangan terekspos)
+File yang dihapus (tidak lagi dapat diakses via URL):
+- [x] `debug_auth.php` (berisiko membocorkan data user)
+- [x] `fix_passwords.php` (berisiko memodifikasi password)
+- [x] `check_api_table.php`, `check_missing_tables.php`, `check_tables.php`, `check_transactions_table.php`
+- [x] `test-export.php`, `test.html`, `test_date_format.php`, `test_export_format.php`
+- [x] `generate_sample_data.php` (hanya untuk seeding awal, jangan terekspos — dipindah jadi script non-web saat Fase 3/4)
 
 ### 1.3 Perbaiki bug error-handling di `api/upload-excel.php`
 - [ ] Catch block meng-update `WHERE upload_id = ?` padahal nama kolomnya `id` → ganti ke `WHERE id = ?`
