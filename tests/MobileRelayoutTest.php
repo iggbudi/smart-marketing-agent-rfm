@@ -132,4 +132,17 @@ class MobileRelayoutTest extends TestCase
         $this->assertStringContainsString('align-items: flex-end;', $css, 'modal jadi bottom sheet di mobile');
         $this->assertStringContainsString('translateY(60px)', $css, 'animasi slide-up modal');
     }
+
+    public function testFabTambahAda(): void
+    {
+        $src = file_get_contents(dirname(__DIR__) . '/customers.php');
+        $this->assertStringContainsString('class="fab"', $src, 'customers: FAB tambah wajib ada');
+        $this->assertStringContainsString('data-bs-target="#addCustomerModal"', $src, 'customers: FAB membuka modal tambah');
+        $this->assertStringContainsString('aria-label="Tambah pelanggan"', $src, 'customers: aria-label tambah pelanggan');
+
+        $src = file_get_contents(dirname(__DIR__) . '/transactions.php');
+        $this->assertStringContainsString('class="fab"', $src, 'transactions: FAB tambah wajib ada');
+        $this->assertStringContainsString('data-bs-target="#addTransactionModal"', $src, 'transactions: FAB membuka modal tambah');
+        $this->assertStringContainsString('aria-label="Tambah transaksi"', $src, 'transactions: aria-label tambah transaksi');
+    }
 }

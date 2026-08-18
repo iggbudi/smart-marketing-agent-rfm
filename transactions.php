@@ -398,6 +398,11 @@ $mobilePageTitle = 'Data Transaksi';
         }
     </script>
 
+    <!-- FAB: tambah cepat (mobile) -->
+    <button class="fab" data-bs-toggle="modal" data-bs-target="#addTransactionModal" aria-label="Tambah transaksi">
+        <i class="fas fa-plus"></i>
+    </button>
+
     <!-- Bottom Navigation (mobile) -->
     <?php include 'includes/bottom-nav.php'; ?>
 </body>
