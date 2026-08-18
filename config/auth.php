@@ -1,5 +1,13 @@
 <?php
 // config/auth.php
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'domain' => '',
+    'secure' => !empty($_SERVER['HTTPS']),
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
 session_start();
 require_once __DIR__ . '/database.php';
 
@@ -29,6 +37,9 @@ class AuthManager {
             $_SESSION['user_name'] = $user['full_name'];
             $_SESSION['user_role'] = $user['role'];
             $_SESSION['session_token'] = $sessionToken;
+
+            // Prevent session fixation
+            session_regenerate_id(true);
             
             // Log activity
             $this->logActivity($user['id'], 'login', 'User logged in');
@@ -145,5 +156,31 @@ function getCurrentUser() {
 
 function isLoggedIn() {
     return auth()->isLoggedIn();
+}
+
+// ---- CSRF protection helpers ----
+
+function csrf_token() {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function csrf_field() {
+    return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars(csrf_token()) . '">';
+}
+
+/**
+ * Verifikasi token CSRF dari $_POST. Fail-fast: HTTP 403 bila tidak valid.
+ * @return bool true bila valid (fungsi langsung exit bila gagal)
+ */
+function requireCsrf() {
+    $token = $_POST['csrf_token'] ?? '';
+    if (!empty($token) && hash_equals(csrf_token(), $token)) {
+        return true;
+    }
+    http_response_code(403);
+    die('Token CSRF tidak valid. Silakan muat ulang halaman dan coba lagi.');
 }
 ?>
