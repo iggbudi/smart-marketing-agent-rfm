@@ -1,6 +1,8 @@
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
 require_once 'config/database.php';
 require_once 'config/auth.php';
+require_once 'config/openai.php'; // definisi OpenAIClient (dipakai ContentGenerator utk path non-mock)
 
 // Require UMKM owner access
 requireAuth(['umkm_owner']);
@@ -14,54 +16,29 @@ if (!$business) {
     die('Error: Tidak ada bisnis yang terkait dengan akun Anda. Silakan hubungi administrator.');
 }
 
+$generator = new \App\Ai\ContentGenerator($db, $business['id']);
+
 $generated_content = '';
 $selected_segment = '';
 $error_message = '';
 
-// Handle form submission
+// Handle form submission: panggil service langsung (tanpa HTTP internal ke API)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['segment'])) {
     requireCsrf();
     $selected_segment = $_POST['segment'];
-    
-    // Call the API to generate content (forward the session cookie so
-    // the internal api/generate-content.php can authenticate the same user)
-    $api_url = '/smart/api/generate-content.php';
-    $data = json_encode(['segment' => $selected_segment]);
-    
-    $context = stream_context_create([
-        'http' => [
-            'method' => 'POST',
-            'header' =>
-                "Content-Type: application/json\r\n" .
-                "Cookie: " . session_name() . '=' . session_id() . "\r\n",
-            'content' => $data
-        ]
-    ]);
-    
-    $result = file_get_contents('http://localhost' . $api_url, false, $context);
-    
-    if ($result !== FALSE) {
-        $response = json_decode($result, true);
-        if ($response && $response['success']) {
-            $generated_content = $response['content'];
-        } else {
-            $error_message = $response['error'] ?? 'Gagal menghasilkan konten';
+    $result = $generator->generate($selected_segment);
+    if ($result['success']) {
+        $generated_content = nl2br(htmlspecialchars($result['content']));
+        if ($result['note'] !== null) {
+            $error_message = htmlspecialchars($result['note']);
         }
     } else {
-        $error_message = 'Tidak dapat terhubung ke layanan generator konten';
+        $error_message = htmlspecialchars($result['error'] ?? 'Gagal menghasilkan konten');
     }
 }
 
-// Get recent generated content
-$stmt = $db->prepare("
-    SELECT segment, content, created_at 
-    FROM ai_generated_content 
-    WHERE business_id = ? 
-    ORDER BY created_at DESC 
-    LIMIT 5
-");
-$stmt->execute([$business['id']]);
-$recent_content = $stmt->fetchAll();
+// Riwayat konten terbaru
+$recent_content = $generator->recent(5);
 ?>
 <!DOCTYPE html>
 <html lang="en">
