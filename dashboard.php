@@ -59,7 +59,7 @@ $mobilePageTitle = 'Dashboard';
                     <div class="card-body">
                         <i class="fas fa-users fa-2x mb-3"></i>
                         <h3><?= number_format($stats['total_customers']) ?></h3>
-                        <p class="mb-0">Total Customers</p>
+                        <p class="mb-0">Total Pelanggan</p>
                     </div>
                 </div>
             </div>
@@ -68,7 +68,7 @@ $mobilePageTitle = 'Dashboard';
                     <div class="card-body">
                         <i class="fas fa-shopping-cart fa-2x mb-3"></i>
                         <h3><?= number_format($stats['total_transactions']) ?></h3>
-                        <p class="mb-0">Total Transactions</p>
+                        <p class="mb-0">Total Transaksi</p>
                     </div>
                 </div>
             </div>
@@ -77,7 +77,7 @@ $mobilePageTitle = 'Dashboard';
                     <div class="card-body">
                         <i class="fas fa-dollar-sign fa-2x mb-3"></i>
                         <h3>Rp <?= number_format($stats['total_revenue'], 0, ',', '.') ?></h3>
-                        <p class="mb-0">Total Revenue</p>
+                        <p class="mb-0">Total Omzet</p>
                     </div>
                 </div>
             </div>
@@ -88,13 +88,13 @@ $mobilePageTitle = 'Dashboard';
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i> RFM Segments Distribution</h5>
+                        <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i> Distribusi Segmen RFM</h5>
                     </div>
                     <div class="card-body">
                         <?php if (!empty($rfm_data)): ?>
                             <canvas id="rfmChart"></canvas>
                         <?php else: ?>
-                            <p class="text-muted text-center">No RFM data available. Upload customer data first.</p>
+                            <p class="text-muted text-center">Belum ada data RFM. Upload data pelanggan terlebih dahulu.</p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -102,13 +102,13 @@ $mobilePageTitle = 'Dashboard';
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i> Revenue Trend (6 Months)</h5>
+                        <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i> Tren Omzet (6 Bulan)</h5>
                     </div>
                     <div class="card-body">
                         <?php if (!empty($revenue_trend)): ?>
                             <canvas id="revenueChart"></canvas>
                         <?php else: ?>
-                            <p class="text-muted text-center">No revenue data available.</p>
+                            <p class="text-muted text-center">Belum ada data omzet.</p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -133,7 +133,7 @@ $mobilePageTitle = 'Dashboard';
                                 <small class="text-muted">Format: Customer Name, Email, Transaction Date, Amount</small>
                             </div>
                             <button type="submit" class="btn btn-primary mt-3">
-                                <i class="fas fa-upload me-2"></i> Upload & Process
+                                <i class="fas fa-upload me-2"></i> Upload & Proses
                             </button>
                         </form>
                     </div>
@@ -159,7 +159,7 @@ $mobilePageTitle = 'Dashboard';
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-success">
-                                <i class="fas fa-magic me-2"></i> Generate Content
+                                <i class="fas fa-magic me-2"></i> Buat Konten
                             </button>
                         </form>
                     </div>
@@ -167,10 +167,10 @@ $mobilePageTitle = 'Dashboard';
             </div>
         </div>
 
-        <!-- Recent Transactions -->
+        <!-- Transaksi Terbaru -->
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-history me-2"></i> Recent Transactions</h5>
+                <h5 class="mb-0"><i class="fas fa-history me-2"></i> Transaksi Terbaru</h5>
             </div>
             <div class="card-body">
                 <?php if (!empty($recent_transactions)): ?>
@@ -199,7 +199,7 @@ $mobilePageTitle = 'Dashboard';
                         </table>
                     </div>
                 <?php else: ?>
-                    <p class="text-muted text-center">No transactions yet. Upload your data to get started.</p>
+                    <p class="text-muted text-center">Belum ada transaksi. Upload data Anda untuk mulai.</p>
                 <?php endif; ?>
             </div>
         </div>

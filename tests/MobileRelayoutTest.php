@@ -145,4 +145,16 @@ class MobileRelayoutTest extends TestCase
         $this->assertStringContainsString('data-bs-target="#addTransactionModal"', $src, 'transactions: FAB membuka modal tambah');
         $this->assertStringContainsString('aria-label="Tambah transaksi"', $src, 'transactions: aria-label tambah transaksi');
     }
+
+    public function testDashboardBerbahasaIndonesia(): void
+    {
+        $src = file_get_contents(dirname(__DIR__) . '/dashboard.php');
+        $this->assertNotFalse($src, 'dashboard.php harus bisa dibaca');
+        $this->assertStringContainsString('Total Pelanggan', $src, 'dashboard: label Total Pelanggan');
+        $this->assertStringContainsString('Total Transaksi', $src, 'dashboard: label Total Transaksi');
+        $this->assertStringContainsString('Total Omzet', $src, 'dashboard: label Total Omzet');
+        $this->assertStringContainsString('Transaksi Terbaru', $src, 'dashboard: judul tabel Transaksi Terbaru');
+        $this->assertStringNotContainsString('Total Customers', $src, 'dashboard: jangan label Inggris');
+        $this->assertStringNotContainsString('Recent Transactions', $src, 'dashboard: jangan judul Inggris');
+    }
 }
