@@ -39,7 +39,7 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 - [x] `generate_sample_data.php` (hanya untuk seeding awal, jangan terekspos — dipindah jadi script non-web saat Fase 3/4)
 
 ### 1.3 Perbaiki bug error-handling di `api/upload-excel.php`
-- [ ] Catch block meng-update `WHERE upload_id = ?` padahal nama kolomnya `id` → ganti ke `WHERE id = ?`
+- [x] Catch block meng-update `WHERE upload_id = ?` padahal nama kolomnya `id` → ganti ke `WHERE id = ?`
 
 ### 1.4 Rotasi kredensial
 - [ ] Ganti password user `smartrfm_user` di MySQL (sudah terekspos di file & mungkin di riwayat)

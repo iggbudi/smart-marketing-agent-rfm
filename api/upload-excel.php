@@ -86,7 +86,7 @@ try {
 } catch (Exception $e) {
     // Update upload status to failed
     if (isset($uploadId)) {
-        $stmt = $db->prepare("UPDATE upload_history SET status = 'failed', error_message = ? WHERE upload_id = ?");
+        $stmt = $db->prepare("UPDATE upload_history SET status = 'failed', error_message = ? WHERE id = ?");
         $stmt->execute([$e->getMessage(), $uploadId]);
     }
     
