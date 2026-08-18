@@ -82,4 +82,13 @@ class MobileRelayoutTest extends TestCase
         }
         $this->assertStringContainsString('.mobile-topbar { display: none; }', $css, 'topbar hanya tampil di mobile (display:none di dasar)');
     }
+
+    public function testMobileJsMengaturBackdrop(): void
+    {
+        $js = file_get_contents(dirname(__DIR__) . '/assets/mobile.js');
+        $this->assertNotFalse($js, 'mobile.js harus bisa dibaca');
+        $this->assertStringContainsString('sidebar-backdrop', $js, 'mobile.js: backdrop wajib dibuat');
+        $this->assertStringContainsString('classList.remove(\'show\')', $js, 'mobile.js: klik backdrop menutup sidebar');
+        $this->assertStringContainsString('DOMContentLoaded', $js, 'mobile.js: inisialisasi saat DOM siap');
+    }
 }
