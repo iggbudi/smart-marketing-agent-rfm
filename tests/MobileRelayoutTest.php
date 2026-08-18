@@ -101,4 +101,12 @@ class MobileRelayoutTest extends TestCase
         $this->assertStringContainsString('bottom-nav.php', $src, "$page: wajib include bottom nav");
         $this->assertStringContainsString('mobile.js', $src, "$page: wajib memuat assets/mobile.js");
     }
+
+    public function testStatsCardMobileDuaKolom(): void
+    {
+        $css = file_get_contents(dirname(__DIR__) . '/assets/user-styles.css');
+        $this->assertNotFalse($css, 'user-styles.css harus bisa dibaca');
+        $this->assertStringContainsString('flex: 0 0 50%;', $css, 'stats cards: grid 2 kolom di mobile');
+        $this->assertStringContainsString('.stats-card h3 { font-size: 1.5rem; }', $css, 'angka stats besar di mobile');
+    }
 }

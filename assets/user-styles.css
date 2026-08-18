@@ -271,8 +271,18 @@ body {
 
 @media (max-width: 575.98px) {
     .main-content { padding: 10px; }
-    .stats-card { padding: 16px; }
+    .stats-card { padding: 16px; min-height: 104px; }
     .stats-card h3 { font-size: 1.5rem; }
+    .stats-card p { font-size: .8rem; }
+
+    /* Statistik & segment summary: 2 kolom (bukan 4 kolom menyusut) */
+    .row .col-md-2, .row .col-md-3, .row .col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    .row .col-md-2 .card, .row .col-md-3 .card, .row .col-md-4 .card {
+        margin-bottom: 12px;
+    }
 
     /* Cegah iOS auto-zoom (input ≥16px) */
     .form-control, .form-select { font-size: 16px; }
