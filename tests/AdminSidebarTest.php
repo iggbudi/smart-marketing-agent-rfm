@@ -101,7 +101,7 @@ class AdminSidebarTest extends TestCase
                 "admin/dashboard.php gagal dirender (exit $code):\n" . implode("\n", array_slice($output, -15))
             );
             $html = implode("\n", $output);
-            $this->assertStringContainsString('Platform Overview', $html, 'Konten dashboard admin harus tampil');
+            $this->assertStringContainsString('Ringkasan Platform', $html, 'Konten dashboard admin harus tampil');
             $this->assertStringContainsString('Admin Panel', $html, 'Sidebar admin harus tampil');
             $this->assertStringNotContainsString('Allowed memory size', $html);
         } finally {
