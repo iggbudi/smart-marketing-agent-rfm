@@ -18,7 +18,7 @@ if ($_POST) {
         switch ($_POST['action']) {
             case 'add_user':
                 $stmt = $db->prepare("
-                    INSERT INTO users (email, password_hash, full_name, role, created_at)
+                    INSERT INTO users (email, password, full_name, role, created_at)
                     VALUES (?, ?, ?, ?, NOW())
                 ");
                 $stmt->execute([
@@ -43,7 +43,7 @@ if ($_POST) {
                 $params = [$_POST['email'], $_POST['full_name'], $_POST['role'], $_POST['user_id']];
 
                 if (!empty($_POST['password'])) {
-                    $query .= ", password_hash = ?";
+                    $query .= ", password = ?";
                     array_splice($params, -1, 0, [password_hash($_POST['password'], PASSWORD_DEFAULT)]);
                 }
 
