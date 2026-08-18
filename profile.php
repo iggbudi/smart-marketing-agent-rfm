@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
 require_once 'config/database.php';
 require_once 'config/auth.php';
 
@@ -14,70 +15,33 @@ if (!$business) {
     die('Error: Tidak ada bisnis yang terkait dengan akun Anda. Silakan hubungi administrator.');
 }
 
+$service = new \App\Business\BusinessProfileService($db);
+
 $success_message = '';
 $error_message = '';
 
-// Handle form submission
+// Handle form submission (validasi & update di service)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     requireCsrf();
-    $name = trim($_POST['name'] ?? '');
-    $owner_name = trim($_POST['owner_name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $phone = trim($_POST['phone'] ?? '');
-    $address = trim($_POST['address'] ?? '');
-    $business_type = trim($_POST['business_type'] ?? '');
-    
-    // Validation
-    if (empty($name)) {
-        $error_message = 'Nama bisnis wajib diisi';
-    } elseif (empty($owner_name)) {
-        $error_message = 'Nama pemilik wajib diisi';
-    } elseif (empty($email)) {
-        $error_message = 'Email wajib diisi';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error_message = 'Format email tidak valid';
+    $result = $service->update($business['id'], [
+        'name' => trim($_POST['name'] ?? ''),
+        'owner_name' => trim($_POST['owner_name'] ?? ''),
+        'email' => trim($_POST['email'] ?? ''),
+        'phone' => trim($_POST['phone'] ?? ''),
+        'address' => trim($_POST['address'] ?? ''),
+        'business_type' => trim($_POST['business_type'] ?? ''),
+    ]);
+    if ($result['ok']) {
+        $success_message = $result['message'];
+        // Refresh business data
+        $business = $service->get($business['id']);
     } else {
-        try {
-            // Check if email already exists for other businesses
-            $stmt = $db->prepare("SELECT id FROM businesses WHERE email = ? AND id != ?");
-            $stmt->execute([$email, $business['id']]);
-            if ($stmt->fetch()) {
-                $error_message = 'Email sudah digunakan oleh bisnis lain';
-            } else {
-                // Update business profile
-                $stmt = $db->prepare("
-                    UPDATE businesses 
-                    SET name = ?, owner_name = ?, email = ?, phone = ?, address = ?, business_type = ?, updated_at = NOW()
-                    WHERE id = ?
-                ");
-                $stmt->execute([$name, $owner_name, $email, $phone, $address, $business_type, $business['id']]);
-                
-                $success_message = 'Profil bisnis berhasil diperbarui';
-                
-                // Refresh business data
-                $business = auth()->getUserBusiness($user['id']);
-            }
-        } catch (Exception $e) {
-            $error_message = 'Terjadi kesalahan saat memperbarui profil: ' . $e->getMessage();
-        }
+        $error_message = $result['message'];
     }
 }
 
 // Business types for dropdown
-$business_types = [
-    'Retail/Eceran',
-    'F&B/Kuliner', 
-    'Fashion/Pakaian',
-    'Kecantikan/Kosmetik',
-    'Elektronik',
-    'Otomotif',
-    'Kesehatan',
-    'Pendidikan',
-    'Jasa',
-    'Teknologi',
-    'Pertanian',
-    'Lainnya'
-];
+$business_types = \App\Business\BusinessProfileService::businessTypes();
 ?>
 <!DOCTYPE html>
 <html lang="id">
