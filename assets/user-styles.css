@@ -227,3 +227,38 @@ body {
     height: 300px;
     margin: 20px 0;
 }
+
+/* ===== Optimasi Tampilan Mobile ===== */
+@media (max-width: 767.98px) {
+    .main-content { padding: 12px; }
+    h2 { font-size: 1.35rem; }
+    .card { margin-bottom: 14px; }
+    .card-header { padding: 12px 14px; }
+    .card-body { padding: 14px; }
+    .table th, .table td { padding: 10px 8px; }
+    .table-responsive { -webkit-overflow-scrolling: touch; }
+    .chart-container { height: 240px; }
+
+    /* Baris judul + tombol / tanggal tidak overflow */
+    .main-content > .d-flex.justify-content-between,
+    .card-header > .d-flex.justify-content-between {
+        flex-wrap: wrap;
+        gap: .5rem .75rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .main-content { padding: 10px; }
+    .stats-card { padding: 16px; }
+    .stats-card h3 { font-size: 1.5rem; }
+
+    /* Cegah iOS auto-zoom (input ≥16px) */
+    .form-control, .form-select { font-size: 16px; }
+
+    /* Touch target ergonomis */
+    .btn { padding: 10px 14px; }
+    .btn-sm { padding: .375rem .5rem; }
+
+    /* Modal pas di layar kecil */
+    .modal-dialog { margin: .5rem; }
+}

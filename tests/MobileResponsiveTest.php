@@ -59,8 +59,8 @@ class MobileResponsiveTest extends TestCase
             dirname(__DIR__) . '/admin/assets/admin-styles.css',
         ] as $css) {
             $src = file_get_contents($css);
-            $this->assertStringContainsString('@media (max-width: 575.98px)', basename($css) . ' wajib punya blok mobile');
-            $this->assertStringContainsString('flex-wrap: wrap', basename($css) . ' wajib wrap header di mobile');
+            $this->assertStringContainsString('@media (max-width: 575.98px)', $src, basename($css) . ' wajib punya blok mobile');
+            $this->assertStringContainsString('flex-wrap: wrap', $src, basename($css) . ' wajib wrap header di mobile');
         }
     }
 }
