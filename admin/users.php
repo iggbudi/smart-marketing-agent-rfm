@@ -80,28 +80,9 @@ $stats = [
     <title>User Management - Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="assets/admin-styles.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <style>
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
-            border-radius: 8px;
-            margin: 2px 0;
-            transition: all 0.3s ease;
-        }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            color: white;
-            background-color: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-        }
-        .card {
-            border: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-        }
         .stat-card {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
@@ -112,50 +93,17 @@ $stats = [
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2 sidebar px-3 py-4">
-                <div class="d-flex align-items-center mb-4">
-                    <i class="fas fa-shield-alt fa-2x text-white me-2"></i>
-                    <h5 class="text-white mb-0">Admin Panel</h5>
-                </div>
-                
-                <nav class="nav flex-column">
-                    <a class="nav-link" href="dashboard.php">
-                        <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-                    </a>
-                    <a class="nav-link active" href="users.php">
-                        <i class="fas fa-users me-2"></i> Users
-                    </a>
-                    <a class="nav-link" href="businesses.php">
-                        <i class="fas fa-building me-2"></i> Businesses
-                    </a>
-                    <a class="nav-link" href="analytics.php">
-                        <i class="fas fa-chart-line me-2"></i> Analytics
-                    </a>
-                    <a class="nav-link" href="api-management.php">
-                        <i class="fas fa-code me-2"></i> API Management
-                    </a>
-                    <a class="nav-link" href="settings.php">
-                        <i class="fas fa-cog me-2"></i> Settings
-                    </a>
-                    <a class="nav-link" href="reports.php">
-                        <i class="fas fa-file-alt me-2"></i> Reports
-                    </a>
-                    <hr class="text-white">
-                    <a class="nav-link" href="../dashboard.php">
-                        <i class="fas fa-arrow-left me-2"></i> Back to UMKM
-                    </a>
-                    <a class="nav-link" href="../logout.php">
-                        <i class="fas fa-sign-out-alt me-2"></i> Logout
-                    </a>
-                </nav>
-            </div>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
 
-            <!-- Main Content -->
-            <div class="col-md-10">
-                <div class="d-flex justify-content-between align-items-center py-4">
+    <!-- Sidebar -->
+    <?php include 'includes/sidebar.php'; ?>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2><i class="fas fa-users me-2"></i> User Management</h2>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
                         <i class="fas fa-plus me-2"></i> Add New User
@@ -258,8 +206,6 @@ $stats = [
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
     </div>
 
     <!-- Add User Modal -->
@@ -376,6 +322,21 @@ $stats = [
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     
     <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('show');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.querySelector('.sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(event.target) &&
+                !toggle.contains(event.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
+
         // Initialize DataTable
         $(document).ready(function() {
             $('#usersTable').DataTable({
