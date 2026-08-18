@@ -34,4 +34,12 @@ class MobileRelayoutTest extends TestCase
         $this->assertStringContainsString('--accent: #f59e0b', $css, 'user-styles.css: token accent (amber) wajib ada');
         $this->assertStringContainsString('var(--grad-brand)', $css, 'user-styles.css: sidebar/btn wajib pakai var(--grad-brand)');
     }
+
+    public function testAdminStylesheetPunyaDesignTokens(): void
+    {
+        $css = file_get_contents(dirname(__DIR__) . '/admin/assets/admin-styles.css');
+        $this->assertNotFalse($css, 'admin-styles.css harus bisa dibaca');
+        $this->assertStringContainsString('--brand-1: #0f766e', $css, 'admin-styles.css: token brand-1 wajib ada');
+        $this->assertStringContainsString('var(--grad-brand)', $css, 'admin-styles.css: sidebar wajib pakai var(--grad-brand)');
+    }
 }

@@ -1,11 +1,25 @@
 /* Admin Panel Global Styles */
+
+/* ===== Design Tokens (identitas sama dgn user: hijau-teal + amber, segmen UMKM Indonesia) ===== */
+:root {
+    --brand-1: #0f766e;
+    --brand-2: #059669;
+    --grad-brand: linear-gradient(135deg, #0f766e 0%, #059669 100%);
+    --accent: #f59e0b;
+    --danger: #dc2626;
+    --bg-soft: #f6f7f4;
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+}
+
 .sidebar {
     position: fixed;
     top: 0;
     left: 0;
     width: 250px;
     height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--grad-brand);
     z-index: 1000;
     overflow-y: auto;
 }
@@ -102,8 +116,8 @@
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    border-color: var(--brand-1);
+    box-shadow: 0 0 0 0.2rem rgba(15, 118, 110, 0.25);
 }
 
 /* Mobile Menu Toggle */
@@ -117,7 +131,7 @@
         top: 15px;
         left: 15px;
         z-index: 1100;
-        background: #667eea;
+        background: var(--brand-1);
         color: white;
         border: none;
         border-radius: 8px;
@@ -126,7 +140,7 @@
     }
     
     .mobile-menu-toggle:hover {
-        background: #5a6fd8;
+        background: #0c5f58;
     }
 }
 
