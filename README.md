@@ -348,26 +348,36 @@ SOURCE database_update.sql;
 SOURCE database_indexes.sql;
 ```
 
-### 3. **Konfigurasi File**
+### 3. **Konfigurasi Kredensial (Environment)**
 
-#### Edit `config/database.php`:
-```php
-<?php
-class Database {
-    private $host = 'localhost';
-    private $db_name = 'smart_marketing';  // Sesuaikan nama database
-    private $username = 'root';            // Username MySQL
-    private $password = '';                // Password MySQL (kosong untuk XAMPP default)
-    private $conn;
-    
-    // ... rest of the code
-}
+Kredensial DB & OpenAI dibaca dari **environment** dengan prioritas:
+`env var` (SetEnv Apache / systemd / export shell) > file `.env` > default di kode
+(lihat `config/env.php`, Fase 3.5).
+
+1. Salin contoh: `cp .env.example .env`
+2. Isi nilai asli di `.env` — file ini, `config/database.php`, dan `config/openai.php`
+   **tidak di-commit** (sudah di `.gitignore`):
+
+```ini
+# .env
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=smart_marketing_rfm
+DB_USER=root
+DB_PASSWORD=password_anda
+
+OPENAI_API_KEY=sk-...       # opsional, untuk fitur AI content
+OPENAI_MODEL=gpt-3.5-turbo
+OPENAI_BASE_URL=https://api.openai.com/v1/chat/completions
 ```
 
-#### Edit `config/openai.php` (opsional):
-```php
-private $apiKey = 'your-openai-api-key-here';  // Ganti dengan API key Anda
-```
+3. Alternatif tanpa `.env` — set environment variable langsung:
+   - **Apache vhost/.htaccess**: `SetEnv DB_USER root`
+   - **systemd unit**: `Environment=DB_USER=root`
+   - **CLI/cron**: `export DB_USER=root` sebelum menjalankan PHP
+
+> `config/database.example.php` & `config/openai.example.php` adalah template yang
+> di-commit; file asli `config/database.php` / `config/openai.php` bersifat lokal.
 
 ### 4. **Struktur File Akhir**
 ```

@@ -1,17 +1,33 @@
 <?php
-// Example: rename to config/database.php and set real credentials
+// Example: rename to config/database.php (atau set env var) untuk kredensial asli.
+// Kredensial dibaca dengan prioritas:
+//   env var (SetEnv Apache / systemd Environment / export shell)
+//   > file .env di root project (lihat .env.example)
+//   > default di bawah (aman untuk dev lokal XAMPP: user root tanpa password).
+require_once __DIR__ . '/env.php';
+
 class Database {
-    private $host = 'localhost';
-    private $db_name = 'smart_marketing_rfm';
-    private $username = 'root';
-    private $password = ''; // set your MySQL password (XAMPP default is empty)
+    private $host;
+    private $port;
+    private $db_name;
+    private $username;
+    private $password;
     private $conn;
+
+    public function __construct()
+    {
+        $this->host = env('DB_HOST', 'localhost');
+        $this->port = env('DB_PORT', '3306');
+        $this->db_name = env('DB_NAME', 'smart_marketing_rfm');
+        $this->username = env('DB_USER', 'root');
+        $this->password = env('DB_PASSWORD', '');
+    }
 
     public function getConnection() {
         $this->conn = null;
         try {
             $this->conn = new PDO(
-                'mysql:host=' . $this->host . ';port=3306;dbname=' . $this->db_name,
+                'mysql:host=' . $this->host . ';port=' . $this->port . ';dbname=' . $this->db_name,
                 $this->username,
                 $this->password,
                 array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
@@ -32,4 +48,3 @@ function getDB() {
     return $database->getConnection();
 }
 ?>
-

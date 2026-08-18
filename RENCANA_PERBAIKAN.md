@@ -98,8 +98,8 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 - [x] Pertimbangkan VIEW `v_rfm_scores` — **tidak dibuat**: skor R/F/M sudah dipersist di `rfm_analysis` sejak Fase 3.2 (`recalculateRFM()`), `analysis.php` & dashboard membaca tabel tsb langsung; VIEW hanya duplikasi komputasi tanpa keuntungan query
 
 ### 3.5 Kredensial via environment
-- [ ] Baca konfigurasi DB & OpenAI dari `getenv()` dengan fallback
-- [ ] Update `.env.example` / dokumentasi deployment
+- [x] Baca konfigurasi DB & OpenAI dari `getenv()` dengan fallback (helper `config/env.php`: prioritas env var > `.env` > default; dipakai `config/database.php` & `config/openai.php`)
+- [x] Update `.env.example` / dokumentasi deployment (README: bagian Environment & Deployment)
 
 ---
 

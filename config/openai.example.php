@@ -1,18 +1,24 @@
 <?php
-// Example: rename to config/openai.php and set your API key
+// Example: rename to config/openai.php dan set OPENAI_API_KEY via env/.env
+// (lihat .env.example). Jangan pernah menaruh API key asli di file yang di-commit.
+require_once __DIR__ . '/env.php';
+
 class OpenAIClient {
-    private $api_key; // e.g. 'sk-...'
-    private $base_url = 'https://api.openai.com/v1/chat/completions';
+    private $api_key; // dibaca dari env: OPENAI_API_KEY (default placeholder)
+    private $base_url;
+    private $model;
 
     public function __construct() {
-        $this->api_key = 'sk-your-openai-api-key';
+        $this->api_key = env('OPENAI_API_KEY', 'sk-your-openai-api-key');
+        $this->base_url = env('OPENAI_BASE_URL', 'https://api.openai.com/v1/chat/completions');
+        $this->model = env('OPENAI_MODEL', 'gpt-3.5-turbo');
     }
 
     public function generateMarketingContent($segment, $customerData = []) {
         $prompt = $this->buildPrompt($segment, $customerData);
 
         $data = [
-            'model' => 'gpt-3.5-turbo',
+            'model' => $this->model,
             'messages' => [
                 [
                     'role' => 'system',
@@ -43,7 +49,7 @@ class OpenAIClient {
 
     private function callOpenAI($data) {
         if (!$this->api_key || strpos($this->api_key, 'sk-') !== 0) {
-            throw new Exception('OpenAI API not configured. Set your API key in config/openai.php');
+            throw new Exception('OpenAI API not configured. Set OPENAI_API_KEY di .env (lihat .env.example).');
         }
         $headers = [
             'Content-Type: application/json',
@@ -83,4 +89,3 @@ class OpenAIClient {
     }
 }
 ?>
-
