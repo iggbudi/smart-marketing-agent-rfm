@@ -1,7 +1,18 @@
 <?php
+require_once '../config/auth.php';
 require_once '../config/database.php';
 
 header('Content-Type: application/json');
+
+// Autentikasi wajib: hanya UMKM owner berstatus login yang boleh mengakses
+requireAuthJson(['umkm_owner']);
+$user = getCurrentUser();
+$business = auth()->getUserBusiness($user['id']);
+if (!$business) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'No business associated with your account. Please contact administrator.']);
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -30,7 +41,7 @@ try {
     
     // Save upload history
     $stmt = $db->prepare("INSERT INTO upload_history (business_id, filename, records_imported, status, created_at) VALUES (?, ?, 0, 'processing', NOW())");
-    $stmt->execute([1, $file['name']]); // Default business_id = 1
+    $stmt->execute([$business['id'], $file['name']]);
     $uploadId = $db->lastInsertId();
     
     // For demo purposes, let's add some sample data
@@ -50,7 +61,7 @@ try {
         if (!$customer) {
             // Create new customer
             $stmt = $db->prepare("INSERT INTO customers (business_id, customer_name, email, created_at) VALUES (?, ?, ?, NOW())");
-            $stmt->execute([1, $row[0], $row[1]]); // Default business_id = 1
+            $stmt->execute([$business['id'], $row[0], $row[1]]);
             $customerId = $db->lastInsertId();
         } else {
             $customerId = $customer['id'];
@@ -58,7 +69,7 @@ try {
         
         // Add transaction
         $stmt = $db->prepare("INSERT INTO transactions (business_id, customer_id, transaction_date, amount, created_at) VALUES (?, ?, ?, ?, NOW())");
-        $stmt->execute([1, $customerId, $row[2], $row[3]]); // Default business_id = 1
+        $stmt->execute([$business['id'], $customerId, $row[2], $row[3]]);
         $processed++;
     }
     

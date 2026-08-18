@@ -122,6 +122,23 @@ function requireAuth($allowedRoles = []) {
     return auth()->requireAuth($allowedRoles);
 }
 
+function requireAuthJson($allowedRoles = []) {
+    if (!isLoggedIn()) {
+        header('Content-Type: application/json');
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Unauthorized: silakan login terlebih dahulu']);
+        exit;
+    }
+
+    if (!empty($allowedRoles) && !in_array($_SESSION['user_role'], $allowedRoles)) {
+        header('Content-Type: application/json');
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Forbidden: Anda tidak memiliki akses ke resource ini']);
+        exit;
+    }
+
+    return true;
+}
 function getCurrentUser() {
     return auth()->getCurrentUser();
 }

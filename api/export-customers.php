@@ -9,7 +9,7 @@ if ($hasPhpSpreadsheet) {
 }
 
 // Require UMKM owner access
-requireAuth(['umkm_owner']);
+requireAuthJson(['umkm_owner']);
 
 $user = getCurrentUser();
 $db = getDB();
@@ -17,7 +17,10 @@ $db = getDB();
 // Get user's business
 $business = auth()->getUserBusiness($user['id']);
 if (!$business) {
-    die('Error: No business associated with your account. Please contact administrator.');
+    header('Content-Type: application/json');
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'No business associated with your account. Please contact administrator.']);
+    exit;
 }
 
 // Get customers for this business
@@ -37,7 +40,10 @@ try {
     $stmt->execute([$business['id']]);
     $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    die('Error loading customers: ' . $e->getMessage());
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Error loading customers: ' . $e->getMessage()]);
+    exit;
 }
 
 // Check if PhpSpreadsheet is available
@@ -184,6 +190,9 @@ try {
     $writer->save('php://output');
     
 } catch (Exception $e) {
-    die('Error creating Excel file: ' . $e->getMessage());
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Error creating Excel file: ' . $e->getMessage()]);
+    exit;
 }
 ?>

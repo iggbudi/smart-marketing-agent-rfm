@@ -1,11 +1,19 @@
 <?php
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Content-Type');
-
+require_once '../config/auth.php';
 require_once '../config/openai.php';
 require_once '../config/database.php';
+
+header('Content-Type: application/json');
+
+// Autentikasi wajib: hanya UMKM owner berstatus login yang boleh mengakses
+requireAuthJson(['umkm_owner']);
+$user = getCurrentUser();
+$business = auth()->getUserBusiness($user['id']);
+if (!$business) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'No business associated with your account. Please contact administrator.']);
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -32,7 +40,7 @@ try {
     // Save to database
     $db = getDB();
     $stmt = $db->prepare("INSERT INTO ai_generated_content (business_id, segment, content, created_at) VALUES (?, ?, ?, NOW())");
-    $stmt->execute([1, $segment, $content]); // Default business_id = 1
+    $stmt->execute([$business['id'], $segment, $content]);
     
     echo json_encode([
         'success' => true,
@@ -47,7 +55,7 @@ try {
     // Save dummy content to database
     $db = getDB();
     $stmt = $db->prepare("INSERT INTO ai_generated_content (business_id, segment, content, created_at) VALUES (?, ?, ?, NOW())");
-    $stmt->execute([1, $segment, $dummyContent]);
+    $stmt->execute([$business['id'], $segment, $dummyContent]);
     
     echo json_encode([
         'success' => true,

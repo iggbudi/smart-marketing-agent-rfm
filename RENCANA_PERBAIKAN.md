@@ -25,10 +25,10 @@
 ## Fase 1 — Perbaikan Kritis (Segera, estimasi 1–2 hari)
 
 ### 1.1 Amankan semua endpoint `/api`
-- [ ] `api/generate-content.php`: tambahkan `require_once '../config/auth.php'` + `requireAuth(['umkm_owner'])`, hapus `Access-Control-Allow-Origin: *`
-- [ ] `api/upload-excel.php`: tambahkan autentikasi; ganti hardcode `business_id = 1` dengan `business_id` dari session user
-- [ ] `api/export-customers.php` & `api/export-transactions.php`: audit ulang — pastikan wajib login dan export hanya data business milik user (cek `getUserBusiness()`), tolak akses lintas-bisnis
-- [ ] Pastikan semua endpoint mengembalikan JSON error + HTTP status yang benar saat belum login (bukan redirect HTML)
+- [x] `api/generate-content.php`: tambahkan `require_once '../config/auth.php'` + `requireAuth(['umkm_owner'])`, hapus `Access-Control-Allow-Origin: *`
+- [x] `api/upload-excel.php`: tambahkan autentikasi; ganti hardcode `business_id = 1` dengan `business_id` dari session user
+- [x] `api/export-customers.php` & `api/export-transactions.php`: audit ulang — pastikan wajib login dan export hanya data business milik user (cek `getUserBusiness()`), tolak akses lintas-bisnis
+- [x] Pastikan semua endpoint mengembalikan JSON error + HTTP status yang benar saat belum login (bukan redirect HTML)
 
 ### 1.2 Hapus / pindahkan file debug & diagnostik dari web root
 File yang harus dihapus atau dipindah ke folder di luar docroot (mis. `_tools/` yang diblokir di vhost):
