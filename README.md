@@ -52,6 +52,10 @@ Smart Marketing Agent adalah platform komprehensif untuk analisis RFM (Recency, 
 - **System Settings**: Configure platform parameters
 - **Reports**: Generate various business reports
 
+> **Dashboard admin = cockpit monitoring desktop-first** (6 KPI, grafik pertumbuhan
+> bisnis & API usage, tabel aktivitas terbaru) — label berbahasa Indonesia, identitas
+> visual sama dgn sisi UMKM, data dari slice `App\Admin\PlatformStats`.
+
 ## Installation
 
 ### Prerequisites
@@ -487,6 +491,7 @@ d:/xampp/htdocs/smart/
 │   ├── openai.php              # class OpenAIClient (gitignored; template: openai.example.php)
 │   └── auth.php                # AuthManager + requireAuth/requireAuthJson/csrf_*
 ├── src/                        # Slice vertikal per fitur (PSR-4 App\ => src/)
+│   ├── Admin/PlatformStats.php # dashboard admin (panel super_admin)
 │   ├── Customers/CustomerRepository.php
 │   ├── Transactions/TransactionRepository.php
 │   ├── Dashboard/DashboardStats.php
