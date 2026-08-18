@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
 require_once 'config/database.php';
 require_once 'config/auth.php';
 require_once 'includes/pagination.php';
@@ -15,107 +16,66 @@ if (!$business) {
     die('Error: No business associated with your account. Please contact administrator.');
 }
 
+$repo = new \App\Customers\CustomerRepository($db);
 $message = '';
 $messageType = '';
 
-// Handle form submission
+// Lapisan HTTP + CSRF; logika data & validasi di repository
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     requireCsrf();
-    if (isset($_POST['action'])) {
-        if ($_POST['action'] === 'add') {
-            $name = trim($_POST['name']);
-            $phone = trim($_POST['phone']);
-            $email = trim($_POST['email']);
-            
-            if (!empty($name) && !empty($phone)) {
-                try {
-                    $stmt = $db->prepare("INSERT INTO customers (business_id, customer_name, phone, email, created_at) VALUES (?, ?, ?, ?, NOW())");
-                    $stmt->execute([$business['id'], $name, $phone, $email]);
-                    $message = 'Pelanggan berhasil ditambahkan!';
-                    $messageType = 'success';
-                } catch (PDOException $e) {
-                    $message = 'Error: ' . $e->getMessage();
-                    $messageType = 'danger';
-                }
-            } else {
-                $message = 'Nama dan nomor HP harus diisi!';
-                $messageType = 'warning';
-            }
-        } elseif ($_POST['action'] === 'delete' && isset($_POST['customer_id'])) {
-            try {
-                $stmt = $db->prepare("DELETE FROM customers WHERE id = ? AND business_id = ?");
-                $stmt->execute([$_POST['customer_id'], $business['id']]);
-                $message = 'Pelanggan berhasil dihapus!';
-                $messageType = 'success';
-            } catch (PDOException $e) {
-                $message = 'Error: ' . $e->getMessage();
-                $messageType = 'danger';
-            }
+    if (($_POST['action'] ?? '') === 'add') {
+        try {
+            $repo->add($business['id'], trim($_POST['name'] ?? ''), trim($_POST['phone'] ?? ''), trim($_POST['email'] ?? ''));
+            $message = 'Pelanggan berhasil ditambahkan!';
+            $messageType = 'success';
+        } catch (\InvalidArgumentException $e) {
+            $message = $e->getMessage();
+            $messageType = 'warning';
+        } catch (\PDOException $e) {
+            $message = 'Error: ' . $e->getMessage();
+            $messageType = 'danger';
+        }
+    } elseif (($_POST['action'] ?? '') === 'delete' && isset($_POST['customer_id'])) {
+        try {
+            $repo->delete($business['id'], (int)$_POST['customer_id']);
+            $message = 'Pelanggan berhasil dihapus!';
+            $messageType = 'success';
+        } catch (\PDOException $e) {
+            $message = 'Error: ' . $e->getMessage();
+            $messageType = 'danger';
         }
     }
 }
 
-// Statistik agregat (seluruh data bisnis, bukan hanya halaman aktif)
+// Statistik kartu (agregat penuh, bukan dari halaman aktif)
 $totalCustomers = 0;
 $activeCustomers = 0;
 $totalSales = 0;
 try {
-    $stmt = $db->prepare("SELECT COUNT(*) FROM customers WHERE business_id = ?");
-    $stmt->execute([$business['id']]);
-    $totalCustomers = (int)$stmt->fetchColumn();
-
-    $stmt = $db->prepare("SELECT COUNT(DISTINCT customer_id) FROM transactions WHERE business_id = ?");
-    $stmt->execute([$business['id']]);
-    $activeCustomers = (int)$stmt->fetchColumn();
-
-    $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE business_id = ?");
-    $stmt->execute([$business['id']]);
-    $totalSales = (float)$stmt->fetchColumn();
-} catch (PDOException $e) {
+    $totalCustomers = $repo->count($business['id']);
+    $activeCustomers = $repo->countActive($business['id']);
+    $totalSales = $repo->totalSales($business['id']);
+} catch (\PDOException $e) {
     $message = 'Error loading statistics: ' . $e->getMessage();
     $messageType = 'danger';
 }
 
-// Pencarian server-side
+// Pencarian server-side + pagination (LIMIT/OFFSET di-cast (int) di repository)
 $search = trim($_GET['q'] ?? '');
-$where = 'c.business_id = ?';
-$params = [$business['id']];
-if ($search !== '') {
-    $like = '%' . $search . '%';
-    $where .= ' AND (c.customer_name LIKE ? OR c.phone LIKE ? OR c.email LIKE ?)';
-    array_push($params, $like, $like, $like);
-}
-
 $totalRows = 0;
 try {
-    $stmt = $db->prepare("SELECT COUNT(*) FROM customers c WHERE " . $where);
-    $stmt->execute($params);
-    $totalRows = (int)$stmt->fetchColumn();
-} catch (PDOException $e) {
+    $totalRows = $repo->countSearch($business['id'], $search);
+} catch (\PDOException $e) {
     $message = 'Error loading customers: ' . $e->getMessage();
     $messageType = 'danger';
 }
 
 [$page, $perPage, $offset, $totalPages] = paginate($totalRows);
 
-// Get customers for this business (halaman aktif)
 $customers = [];
 try {
-    $stmt = $db->prepare("
-        SELECT c.*, 
-               COUNT(t.id) as total_transactions,
-               COALESCE(SUM(t.amount), 0) as total_spent,
-               MAX(t.transaction_date) as last_transaction
-        FROM customers c 
-        LEFT JOIN transactions t ON c.id = t.customer_id 
-        WHERE " . $where . "
-        GROUP BY c.id 
-        ORDER BY c.created_at DESC
-        LIMIT " . (int)$perPage . " OFFSET " . (int)$offset . "
-    ");
-    $stmt->execute($params);
-    $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
+    $customers = $repo->search($business['id'], $search, $perPage, $offset);
+} catch (\PDOException $e) {
     $message = 'Error loading customers: ' . $e->getMessage();
     $messageType = 'danger';
 }

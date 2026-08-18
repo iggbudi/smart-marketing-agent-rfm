@@ -9,7 +9,7 @@ docroot (tanpa router — konvensi AGENTS.md §1 tetap dijaga), sehingga tidak a
 URL publik, sidebar, maupun perilaku.
 
 **Architecture:** Pola "thin page → feature class". Setiap fitur memiliki class PSR-4 di
-`src/App/<Fitur>/` (autoload `App\` → `src/` sudah ada di composer.json) yang memegang
+`src/<Fitur>/` (autoload `App\` → `src/` sudah ada di composer.json) yang memegang
 SEMUA query + aturan bisnis fitur tsb; halaman docroot hanya: `requireAuth` → ambil
 business → handle POST (CSRF) → panggil class → render HTML (variabel HTML tidak berubah
 sama sekali). Cross-cutting yang TETAP di `includes/`: `sidebar.php` (satu sumber menu) &
@@ -32,14 +32,14 @@ teknologi, dan bukan perubahan URL/router). Acuan teknis: AGENTS.md §1 (peta ar
 
 | Kondisi sekarang (horizontal) | Target (vertikal) |
 |---|---|
-| `customers.php` (390 baris, SQL inline) | `src/App/Customers/CustomerRepository.php` + `customers.php` tipis |
-| `transactions.php` (439 baris, SQL inline) | `src/App/Transactions/TransactionRepository.php` + `transactions.php` tipis |
-| `dashboard.php` (351 baris, SQL inline) | `src/App/Dashboard/DashboardStats.php` + `dashboard.php` tipis |
-| `analysis.php` + `includes/rfm.php` (recalculateRFM) | `src/App/Rfm/RfmService.php` + `analysis.php` tipis; `includes/rfm.php` DIHAPUS |
-| `upload.php` + `api/upload-excel.php` (validasi duplikat) + `includes/import.php` | `src/App/Import/SpreadsheetImporter.php` + `src/App/Upload/UploadValidator.php` (validasi dedupe) + keduanya tipis; `includes/import.php` DIHAPUS |
-| `api/export-customers.php` + `api/export-transactions.php` + `includes/export.php` | `src/App/Export/CustomersExporter.php` + `src/App/Export/TransactionsExporter.php`; API tipis; `includes/export.php` DIHAPUS |
-| `ai-content.php` (HTTP internal ke API) + `api/generate-content.php` (dummy inline) | `src/App/Ai/ContentGenerator.php`; page panggil class langsung (hapus HTTP internal); API tipis |
-| `profile.php` (validasi + update inline) | `src/App/Business/BusinessProfileService.php` + `profile.php` tipis |
+| `customers.php` (390 baris, SQL inline) | `src/Customers/CustomerRepository.php` + `customers.php` tipis |
+| `transactions.php` (439 baris, SQL inline) | `src/Transactions/TransactionRepository.php` + `transactions.php` tipis |
+| `dashboard.php` (351 baris, SQL inline) | `src/Dashboard/DashboardStats.php` + `dashboard.php` tipis |
+| `analysis.php` + `includes/rfm.php` (recalculateRFM) | `src/Rfm/RfmService.php` + `analysis.php` tipis; `includes/rfm.php` DIHAPUS |
+| `upload.php` + `api/upload-excel.php` (validasi duplikat) + `includes/import.php` | `src/Import/SpreadsheetImporter.php` + `src/Upload/UploadValidator.php` (validasi dedupe) + keduanya tipis; `includes/import.php` DIHAPUS |
+| `api/export-customers.php` + `api/export-transactions.php` + `includes/export.php` | `src/Export/CustomersExporter.php` + `src/Export/TransactionsExporter.php`; API tipis; `includes/export.php` DIHAPUS |
+| `ai-content.php` (HTTP internal ke API) + `api/generate-content.php` (dummy inline) | `src/Ai/ContentGenerator.php`; page panggil class langsung (hapus HTTP internal); API tipis |
+| `profile.php` (validasi + update inline) | `src/Business/BusinessProfileService.php` + `profile.php` tipis |
 | `includes/sidebar.php`, `includes/pagination.php`, `config/*` | TETAP (cross-cutting) |
 | `tests/*` (6 file campur) | + 8 file test baru, `ExportTest.php` ditulis ulang |
 
@@ -50,14 +50,14 @@ setelah tiap commit.
 
 | # | Slice | Dependensi | File baru |
 |---|---|---|---|
-| 1 | Customers | — | `src/App/Customers/CustomerRepository.php`, `tests/CustomerRepositoryTest.php` |
-| 2 | Transactions | Customers (`listForDropdown`) | `src/App/Transactions/TransactionRepository.php`, `tests/TransactionRepositoryTest.php` |
-| 3 | Dashboard | Customers + Transactions | `src/App/Dashboard/DashboardStats.php`, `tests/DashboardStatsTest.php` |
-| 4 | RFM Analysis | `src/Rfm.php` (tetap) | `src/App/Rfm/RfmService.php`, `tests/RfmServiceTest.php` |
-| 5 | Import + Upload | PhpSpreadsheet | `src/App/Import/SpreadsheetImporter.php`, `src/App/Upload/UploadValidator.php`, `tests/ImportTest.php`, `tests/UploadValidatorTest.php` |
-| 6 | Export | Customers + Transactions | `src/App/Export/CustomersExporter.php`, `src/App/Export/TransactionsExporter.php`, `tests/ExportTest.php` (tulis ulang) |
-| 7 | AI Content | `config/openai.php` | `src/App/Ai/ContentGenerator.php`, `tests/ContentGeneratorTest.php` |
-| 8 | Profil Bisnis | — | `src/App/Business/BusinessProfileService.php`, `tests/BusinessProfileServiceTest.php` |
+| 1 | Customers | — | `src/Customers/CustomerRepository.php`, `tests/CustomerRepositoryTest.php` |
+| 2 | Transactions | Customers (`listForDropdown`) | `src/Transactions/TransactionRepository.php`, `tests/TransactionRepositoryTest.php` |
+| 3 | Dashboard | Customers + Transactions | `src/Dashboard/DashboardStats.php`, `tests/DashboardStatsTest.php` |
+| 4 | RFM Analysis | `src/Rfm.php` (tetap) | `src/Rfm/RfmService.php`, `tests/RfmServiceTest.php` |
+| 5 | Import + Upload | PhpSpreadsheet | `src/Import/SpreadsheetImporter.php`, `src/Upload/UploadValidator.php`, `tests/ImportTest.php`, `tests/UploadValidatorTest.php` |
+| 6 | Export | Customers + Transactions | `src/Export/CustomersExporter.php`, `src/Export/TransactionsExporter.php`, `tests/ExportTest.php` (tulis ulang) |
+| 7 | AI Content | `config/openai.php` | `src/Ai/ContentGenerator.php`, `tests/ContentGeneratorTest.php` |
+| 8 | Profil Bisnis | — | `src/Business/BusinessProfileService.php`, `tests/BusinessProfileServiceTest.php` |
 | 9 | Dokumentasi | semua | AGENTS.md + README.md |
 
 **Di luar scope plan ini (jangan disentuh):**
@@ -89,6 +89,12 @@ setelah tiap commit.
 - `composer test` hijau sebelum commit; test memakai DB `smart_marketing_rfm_test`
   (tests/bootstrap.php), JANGAN pernah DB produksi. Saat root: `COMPOSER_ALLOW_SUPERUSER=1`.
 - Jangan commit rahasia (.env, config/*.php). Jangan ubah `src/Rfm.php`.
+- **WAJIB: setiap halaman/API tipis yang memakai class `App\*` harus memuat autoload sendiri**
+  (`require_once __DIR__ . '/vendor/autoload.php';` untuk docroot, `dirname(__DIR__) . '/vendor/autoload.php'`
+  untuk `api/`). Root cause (ditemukan saat eksekusi Sprint 1): web request TIDAK pernah memuat
+  `vendor/autoload.php` — hanya `includes/rfm.php` & `includes/import.php` yang memuatnya. Jangan
+  pindahkan ke `config/database.php` (central) karena itu mengubah perilaku `class_exists()`
+  di `api/export-*.php` (CSV → XLSX) di luar scope.
 - Test DB perlu schema terkini: `sed '/^USE /d' database_schema.sql database_update.sql database_indexes.sql | mysql -u root smart_marketing_rfm_test` bila perlu.
 
 ---
@@ -96,7 +102,7 @@ setelah tiap commit.
 ### Task 1: Slice Customers
 
 **Files:**
-- Create: `src/App/Customers/CustomerRepository.php`
+- Create: `src/Customers/CustomerRepository.php`
 - Modify: `customers.php` (blok PHP baris 1–123 diganti; HTML/JS mulai `<!DOCTYPE html>` TIDAK berubah)
 - Test: `tests/CustomerRepositoryTest.php`
 
@@ -230,12 +236,12 @@ class CustomerRepositoryTest extends TestCase
 - [ ] **Step 2: Jalankan & pastikan gagal** — `vendor/bin/phpunit tests/CustomerRepositoryTest.php`
   → FAIL: `Class 'App\Customers\CustomerRepository' not found`.
 
-- [ ] **Step 3: Implementasi minimal** — `src/App/Customers/CustomerRepository.php`:
+- [ ] **Step 3: Implementasi minimal** — `src/Customers/CustomerRepository.php`:
 
 ```php
 <?php
 /**
- * src/App/Customers/CustomerRepository.php
+ * src/Customers/CustomerRepository.php
  * Slice vertikal "Customers": akses data + aturan bisnis pelanggan.
  * Dipakai oleh customers.php (list/search/pagination/CRUD), transactions.php
  * (dropdown), dashboard.php (count), api/export-customers.php (withStats).
@@ -385,6 +391,7 @@ class CustomerRepository
 
 ```php
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
 require_once 'config/database.php';
 require_once 'config/auth.php';
 require_once 'includes/pagination.php';
@@ -449,19 +456,19 @@ HTML/JS mulai `<!DOCTYPE html>` TIDAK berubah (variabel `$totalCustomers`, `$act
 `$totalSales`, `$search`, `$customers`, `$page`, `$perPage`, `$offset`, `$totalPages`,
 `$totalRows`, `$message`, `$messageType` tetap sama).
 
-- [ ] **Step 6: Lint & test penuh** — `php -l src/App/Customers/CustomerRepository.php`,
+- [ ] **Step 6: Lint & test penuh** — `php -l src/Customers/CustomerRepository.php`,
       `php -l customers.php`, `composer dump-autoload`, `composer test` → semua hijau (27 test lama + baru).
       Verifikasi render: `php -r` tidak perlu; cukup `composer test` + smoke via pola
       `tests/LandingPageRenderTest` bila ragu.
 
-- [ ] **Step 7: Commit** — `git add src/App/Customers/CustomerRepository.php tests/CustomerRepositoryTest.php customers.php && git commit -m "refactor(customers): ekstrak slice Customers ke App\\Customers\\CustomerRepository, rampingkan customers.php"`
+- [ ] **Step 7: Commit** — `git add src/Customers/CustomerRepository.php tests/CustomerRepositoryTest.php customers.php && git commit -m "refactor(customers): ekstrak slice Customers ke App\\Customers\\CustomerRepository, rampingkan customers.php"`
 
 ---
 
 ### Task 2: Slice Transactions
 
 **Files:**
-- Create: `src/App/Transactions/TransactionRepository.php`
+- Create: `src/Transactions/TransactionRepository.php`
 - Modify: `transactions.php` (blok PHP baris 1–133 diganti; HTML/JS tidak berubah)
 - Test: `tests/TransactionRepositoryTest.php`
 
@@ -577,12 +584,12 @@ class TransactionRepositoryTest extends TestCase
 
 - [ ] **Step 2: Jalankan & pastikan gagal** — `vendor/bin/phpunit tests/TransactionRepositoryTest.php` → FAIL (class belum ada).
 
-- [ ] **Step 3: Implementasi minimal** — `src/App/Transactions/TransactionRepository.php`:
+- [ ] **Step 3: Implementasi minimal** — `src/Transactions/TransactionRepository.php`:
 
 ```php
 <?php
 /**
- * src/App/Transactions/TransactionRepository.php
+ * src/Transactions/TransactionRepository.php
  * Slice vertikal "Transactions": akses data + aturan bisnis transaksi.
  * Dipakai oleh transactions.php, dashboard.php (recent/revenue),
  * api/export-transactions.php (allWithCustomer).
@@ -727,6 +734,7 @@ class TransactionRepository
 
 ```php
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
 require_once 'config/database.php';
 require_once 'config/auth.php';
 require_once 'includes/pagination.php';
@@ -803,16 +811,16 @@ HTML/JS tidak berubah (variabel `$customers`, `$totalTransactions`, `$totalReven
 `$activeCustomers`, `$avgTransaction`, `$search`, `$transactions`, `$page`, `$perPage`,
 `$offset`, `$totalPages`, `$totalRows` tetap sama).
 
-- [ ] **Step 6: Lint & test penuh** — `php -l src/App/Transactions/TransactionRepository.php`, `php -l transactions.php`, `composer test` → hijau.
+- [ ] **Step 6: Lint & test penuh** — `php -l src/Transactions/TransactionRepository.php`, `php -l transactions.php`, `composer test` → hijau.
 
-- [ ] **Step 7: Commit** — `git add src/App/Transactions/TransactionRepository.php tests/TransactionRepositoryTest.php transactions.php && git commit -m "refactor(transactions): ekstrak slice Transactions ke App\\Transactions\\TransactionRepository, rampingkan transactions.php"`
+- [ ] **Step 7: Commit** — `git add src/Transactions/TransactionRepository.php tests/TransactionRepositoryTest.php transactions.php && git commit -m "refactor(transactions): ekstrak slice Transactions ke App\\Transactions\\TransactionRepository, rampingkan transactions.php"`
 
 ---
 
 ### Task 3: Slice Dashboard
 
 **Files:**
-- Create: `src/App/Dashboard/DashboardStats.php`
+- Create: `src/Dashboard/DashboardStats.php`
 - Modify: `dashboard.php` (blok PHP baris 1–64 diganti; HTML/JS tidak berubah)
 - Test: `tests/DashboardStatsTest.php`
 
@@ -906,12 +914,12 @@ class DashboardStatsTest extends TestCase
 
 - [ ] **Step 2: Jalankan & pastikan gagal** — `vendor/bin/phpunit tests/DashboardStatsTest.php` → FAIL.
 
-- [ ] **Step 3: Implementasi minimal** — `src/App/Dashboard/DashboardStats.php`:
+- [ ] **Step 3: Implementasi minimal** — `src/Dashboard/DashboardStats.php`:
 
 ```php
 <?php
 /**
- * src/App/Dashboard/DashboardStats.php
+ * src/Dashboard/DashboardStats.php
  * Slice vertikal "Dashboard": agregat + data grafik untuk dashboard.php.
  * Memakai repository Customers & Transactions agar query tidak diduplikasi.
  */
@@ -981,6 +989,7 @@ class DashboardStats
 
 ```php
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
 require_once 'config/database.php';
 require_once 'config/auth.php';
 
@@ -1008,16 +1017,16 @@ $revenue_trend = $dash->getRevenueTrend($business['id'], 6);
 
 HTML/JS tidak berubah (variabel `$stats`, `$recent_transactions`, `$rfm_data`, `$revenue_trend` sama).
 
-- [ ] **Step 6: Lint & test penuh** — `php -l src/App/Dashboard/DashboardStats.php`, `php -l dashboard.php`, `composer test` → hijau.
+- [ ] **Step 6: Lint & test penuh** — `php -l src/Dashboard/DashboardStats.php`, `php -l dashboard.php`, `composer test` → hijau.
 
-- [ ] **Step 7: Commit** — `git add src/App/Dashboard/DashboardStats.php tests/DashboardStatsTest.php dashboard.php && git commit -m "refactor(dashboard): ekstrak slice Dashboard ke App\\Dashboard\\DashboardStats, rampingkan dashboard.php"`
+- [ ] **Step 7: Commit** — `git add src/Dashboard/DashboardStats.php tests/DashboardStatsTest.php dashboard.php && git commit -m "refactor(dashboard): ekstrak slice Dashboard ke App\\Dashboard\\DashboardStats, rampingkan dashboard.php"`
 
 ---
 
 ### Task 4: Slice RFM Analysis
 
 **Files:**
-- Create: `src/App/Rfm/RfmService.php`
+- Create: `src/Rfm/RfmService.php`
 - Delete: `includes/rfm.php` (setelah semua pemakai dipindah; grep: hanya `analysis.php`)
 - Modify: `analysis.php` (blok PHP baris 13–73 diganti; HTML/JS tidak berubah)
 - Test: `tests/RfmServiceTest.php`
@@ -1150,12 +1159,12 @@ class RfmServiceTest extends TestCase
 
 - [ ] **Step 2: Jalankan & pastikan gagal** — `vendor/bin/phpunit tests/RfmServiceTest.php` → FAIL.
 
-- [ ] **Step 3: Implementasi minimal** — `src/App/Rfm/RfmService.php`:
+- [ ] **Step 3: Implementasi minimal** — `src/Rfm/RfmService.php`:
 
 ```php
 <?php
 /**
- * src/App/Rfm/RfmService.php
+ * src/Rfm/RfmService.php
  * Slice vertikal "RFM Analysis": rekalkulasi & pembacaan rfm_analysis.
  * Logika skor/segmentasi tetap di src/Rfm.php (single source of truth);
  * SQL di sini DIBANGUN dari \App\Rfm::*Sql() (sama seperti includes/rfm.php lama).
@@ -1275,6 +1284,7 @@ class RfmService
 
 ```php
     <?php
+    require_once __DIR__ . '/vendor/autoload.php';
     require_once 'config/database.php';
     require_once 'config/auth.php';
 
@@ -1313,19 +1323,19 @@ class RfmService
 Lalu `git rm includes/rfm.php`. Fungsi `getSegmentBadgeClass()` (view logic) TETAP di
 `analysis.php`. HTML/JS tidak berubah.
 
-- [ ] **Step 6: Lint & test penuh** — `php -l src/App/Rfm/RfmService.php`, `php -l analysis.php`,
+- [ ] **Step 6: Lint & test penuh** — `php -l src/Rfm/RfmService.php`, `php -l analysis.php`,
       `grep -rn "includes/rfm\|recalculateRFM" --include="*.php" . | grep -v vendor` → kosong,
       `composer test` → hijau (termasuk RfmTest 125 kombinasi — tidak tersentuh).
 
-- [ ] **Step 7: Commit** — `git add -A src/App/Rfm tests/RfmServiceTest.php analysis.php includes/rfm.php && git commit -m "refactor(rfm): pindah recalculateRFM ke App\\Rfm\\RfmService, hapus includes/rfm.php"`
+- [ ] **Step 7: Commit** — `git add -A src/Rfm tests/RfmServiceTest.php analysis.php includes/rfm.php && git commit -m "refactor(rfm): pindah recalculateRFM ke App\\Rfm\\RfmService, hapus includes/rfm.php"`
 
 ---
 
 ### Task 5: Slice Import + Upload
 
 **Files:**
-- Create: `src/App/Upload/UploadValidator.php`
-- Create: `src/App/Import/SpreadsheetImporter.php`
+- Create: `src/Upload/UploadValidator.php`
+- Create: `src/Import/SpreadsheetImporter.php`
 - Delete: `includes/import.php` (grep: hanya upload.php & api/upload-excel.php)
 - Modify: `upload.php` (blok PHP baris 1–85 + script drag&drop TETAP), `api/upload-excel.php` (tulis ulang tipis)
 - Test: `tests/UploadValidatorTest.php`, `tests/ImportTest.php`
@@ -1509,12 +1519,12 @@ class ImportTest extends TestCase
 
 - [ ] **Step 2: Jalankan & pastikan gagal** — `vendor/bin/phpunit tests/UploadValidatorTest.php tests/ImportTest.php` → FAIL.
 
-- [ ] **Step 3a: Implementasi `UploadValidator`** — `src/App/Upload/UploadValidator.php`:
+- [ ] **Step 3a: Implementasi `UploadValidator`** — `src/Upload/UploadValidator.php`:
 
 ```php
 <?php
 /**
- * src/App/Upload/UploadValidator.php
+ * src/Upload/UploadValidator.php
  * Validasi upload spreadsheet: error code, ukuran (5MB), ekstensi, MIME finfo.
  * Menyatukan validasi yang dulu diduplikasi di upload.php & api/upload-excel.php.
  */
@@ -1583,7 +1593,7 @@ class UploadValidator
 }
 ```
 
-- [ ] **Step 3b: Implementasi `SpreadsheetImporter`** — `src/App/Import/SpreadsheetImporter.php`.
+- [ ] **Step 3b: Implementasi `SpreadsheetImporter`** — `src/Import/SpreadsheetImporter.php`.
       Isi `import()` = transkripsi `importCustomerSpreadsheet()` dari `includes/import.php`
       baris 30–144 dengan substitusi: `$db` → `$this->db`, `_importReadCsv(...)` →
       `$this->readCsv(...)`, `_importMapColumns(...)` → `$this->mapColumns(...)`,
@@ -1619,6 +1629,7 @@ class UploadValidator
 
 ```php
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
 require_once 'config/database.php';
 require_once 'config/auth.php';
 
@@ -1711,6 +1722,7 @@ regresi, hanya menghilangkan placeholder). Form & script drag&drop TIDAK berubah
 
 ```php
 <?php
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once '../config/auth.php';
 require_once '../config/database.php';
 
@@ -1764,18 +1776,18 @@ try {
 
   Lalu `git rm includes/import.php`.
 
-- [ ] **Step 6: Lint & test penuh** — `php -l src/App/Upload/UploadValidator.php`, `php -l src/App/Import/SpreadsheetImporter.php`, `php -l upload.php`, `php -l api/upload-excel.php`,
+- [ ] **Step 6: Lint & test penuh** — `php -l src/Upload/UploadValidator.php`, `php -l src/Import/SpreadsheetImporter.php`, `php -l upload.php`, `php -l api/upload-excel.php`,
       `grep -rn "includes/import\|importCustomerSpreadsheet" --include="*.php" . | grep -v vendor` → kosong,
       `composer test` → hijau.
 
-- [ ] **Step 7: Commit** — `git add -A src/App/Upload src/App/Import tests/UploadValidatorTest.php tests/ImportTest.php upload.php api/upload-excel.php includes/import.php && git commit -m "refactor(import): pindah impor ke App\\Import\\SpreadsheetImporter + validasi upload ke App\\Upload\\UploadValidator"`
+- [ ] **Step 7: Commit** — `git add -A src/Upload src/Import tests/UploadValidatorTest.php tests/ImportTest.php upload.php api/upload-excel.php includes/import.php && git commit -m "refactor(import): pindah impor ke App\\Import\\SpreadsheetImporter + validasi upload ke App\\Upload\\UploadValidator"`
 
 ---
 
 ### Task 6: Slice Export
 
 **Files:**
-- Create: `src/App/Export/CustomersExporter.php`, `src/App/Export/TransactionsExporter.php`
+- Create: `src/Export/CustomersExporter.php`, `src/Export/TransactionsExporter.php`
 - Delete: `includes/export.php` (grep: api/export-*.php + tests/bootstrap.php)
 - Modify: `api/export-customers.php`, `api/export-transactions.php` (tulis ulang tipis), `tests/bootstrap.php` (hapus require export.php), `tests/ExportTest.php` (tulis ulang ke class baru)
 - Test: `tests/ExportTest.php` (tulis ulang — asersi yang sama, panggilan class baru)
@@ -1936,7 +1948,7 @@ class ExportTest extends TestCase
 
 - [ ] **Step 2: Jalankan & pastikan gagal** — `vendor/bin/phpunit tests/ExportTest.php` → FAIL (class belum ada).
 
-- [ ] **Step 3: Implementasi** — `src/App/Export/CustomersExporter.php` (isi = pemindahan
+- [ ] **Step 3: Implementasi** — `src/Export/CustomersExporter.php` (isi = pemindahan
       `exportCustomersHeaders()`, `formatCustomerExportRow()`, `writeCustomersCsv()`,
       `buildCustomersSpreadsheet()` dari `includes/export.php` baris 13–119 verbatim menjadi
       static method; `styleExportHeaderCell()` menjadi `private static`, dipakai kedua exporter —
@@ -1947,7 +1959,7 @@ class ExportTest extends TestCase
 ```php
 <?php
 /**
- * src/App/Export/CustomersExporter.php
+ * src/Export/CustomersExporter.php
  * Slice Export (customers): header, format baris, CSV (BOM UTF-8), XLSX.
  * Format DIKUNCI oleh tests/ExportTest.php (AGENTS.md §8 Export).
  * Data diambil via CustomerRepository::withStats() di API.
@@ -2067,7 +2079,7 @@ class CustomersExporter
 }
 ```
 
-  `src/App/Export/TransactionsExporter.php` — sama persis polanya, memindahkan
+  `src/Export/TransactionsExporter.php` — sama persis polanya, memindahkan
   `exportTransactionsHeaders()`, `formatTransactionExportRow()`, `writeTransactionsCsv()`,
   `buildTransactionsSpreadsheet()` dari `includes/export.php` baris 121–228 verbatim
   (header `No, Tanggal Transaksi, Nama Pelanggan, No HP, Nama Produk, Jumlah, Harga Satuan (Rp),
@@ -2086,9 +2098,9 @@ class CustomersExporter
 
 ```php
 <?php
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once '../config/database.php';
 require_once '../config/auth.php';
-require_once '../vendor/autoload.php';
 
 // Require UMKM owner access
 requireAuthJson(['umkm_owner']);
@@ -2149,9 +2161,9 @@ temuan #3 di §2 (bug kecil ikut teratasi).
 
 ```php
 <?php
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once '../config/database.php';
 require_once '../config/auth.php';
-require_once '../vendor/autoload.php';
 
 // Require UMKM owner access
 requireAuthJson(['umkm_owner']);
@@ -2207,18 +2219,18 @@ try {
 
   Lalu `git rm includes/export.php`.
 
-- [ ] **Step 6: Lint & test penuh** — `php -l src/App/Export/*.php`, `php -l api/export-*.php`,
+- [ ] **Step 6: Lint & test penuh** — `php -l src/Export/*.php`, `php -l api/export-*.php`,
       `php -l tests/bootstrap.php`, `grep -rn "includes/export\|formatCustomerExportRow\|writeCustomersCsv\|buildCustomersSpreadsheet" --include="*.php" . | grep -v vendor` → kosong,
       `composer test` → hijau.
 
-- [ ] **Step 7: Commit** — `git add -A src/App/Export tests/ExportTest.php tests/bootstrap.php api/export-customers.php api/export-transactions.php includes/export.php && git commit -m "refactor(export): pindah helper export ke App\\Export\\CustomersExporter & TransactionsExporter, API tipis"`
+- [ ] **Step 7: Commit** — `git add -A src/Export tests/ExportTest.php tests/bootstrap.php api/export-customers.php api/export-transactions.php includes/export.php && git commit -m "refactor(export): pindah helper export ke App\\Export\\CustomersExporter & TransactionsExporter, API tipis"`
 
 ---
 
 ### Task 7: Slice AI Content
 
 **Files:**
-- Create: `src/App/Ai/ContentGenerator.php`
+- Create: `src/Ai/ContentGenerator.php`
 - Modify: `ai-content.php` (blok PHP baris 1–65 diganti; HTML/JS tidak berubah), `api/generate-content.php` (tulis ulang tipis)
 - Test: `tests/ContentGeneratorTest.php`
 
@@ -2328,12 +2340,12 @@ class ContentGeneratorTest extends TestCase
 
 - [ ] **Step 2: Jalankan & pastikan gagal** — `vendor/bin/phpunit tests/ContentGeneratorTest.php` → FAIL.
 
-- [ ] **Step 3: Implementasi** — `src/App/Ai/ContentGenerator.php`:
+- [ ] **Step 3: Implementasi** — `src/Ai/ContentGenerator.php`:
 
 ```php
 <?php
 /**
- * src/App/Ai/ContentGenerator.php
+ * src/Ai/ContentGenerator.php
  * Slice vertikal "AI Content": generate konten marketing per segmen + persist.
  * Mencoba OpenAIClient dulu; fallback dummy bila gagal/tidak dikonfigurasi.
  * OpenAIClient di-inject opsional agar bisa di-mock di test (tanpa network).
@@ -2501,6 +2513,7 @@ class ContentGenerator
 
 ```php
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
 require_once 'config/database.php';
 require_once 'config/auth.php';
 
@@ -2547,6 +2560,7 @@ $recent_content = $generator->recent(5);
 
 ```php
 <?php
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once '../config/auth.php';
 require_once '../config/database.php';
 require_once '../config/openai.php';
@@ -2599,18 +2613,18 @@ echo json_encode($response);
   Catatan: perilaku API identik (success + content escaped + source; note hanya saat dummy);
   hanya `generateDummyContent()` tidak lagi di api file.
 
-- [ ] **Step 6: Lint & test penuh** — `php -l src/App/Ai/ContentGenerator.php`, `php -l ai-content.php`,
+- [ ] **Step 6: Lint & test penuh** — `php -l src/Ai/ContentGenerator.php`, `php -l ai-content.php`,
       `php -l api/generate-content.php`, `grep -rn "generateDummyContent" --include="*.php" . | grep -v vendor` → kosong,
       `composer test` → hijau.
 
-- [ ] **Step 7: Commit** — `git add -A src/App/Ai tests/ContentGeneratorTest.php ai-content.php api/generate-content.php && git commit -m "refactor(ai): pindah logika AI ke App\\Ai\\ContentGenerator, hapus HTTP internal ai-content.php"`
+- [ ] **Step 7: Commit** — `git add -A src/Ai tests/ContentGeneratorTest.php ai-content.php api/generate-content.php && git commit -m "refactor(ai): pindah logika AI ke App\\Ai\\ContentGenerator, hapus HTTP internal ai-content.php"`
 
 ---
 
 ### Task 8: Slice Profil Bisnis
 
 **Files:**
-- Create: `src/App/Business/BusinessProfileService.php`
+- Create: `src/Business/BusinessProfileService.php`
 - Modify: `profile.php` (blok PHP baris 1–81 diganti; HTML tidak berubah)
 - Test: `tests/BusinessProfileServiceTest.php`
 
@@ -2722,12 +2736,12 @@ class BusinessProfileServiceTest extends TestCase
 
 - [ ] **Step 2: Jalankan & pastikan gagal** — `vendor/bin/phpunit tests/BusinessProfileServiceTest.php` → FAIL.
 
-- [ ] **Step 3: Implementasi** — `src/App/Business/BusinessProfileService.php`:
+- [ ] **Step 3: Implementasi** — `src/Business/BusinessProfileService.php`:
 
 ```php
 <?php
 /**
- * src/App/Business/BusinessProfileService.php
+ * src/Business/BusinessProfileService.php
  * Slice vertikal "Profil Bisnis": validasi + update data bisnis UMKM.
  * Dipakai oleh profile.php (email unik dicek lintas bisnis, kecuali diri sendiri).
  */
@@ -2826,6 +2840,7 @@ class BusinessProfileService
 
 ```php
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
 require_once 'config/database.php';
 require_once 'config/auth.php';
 
@@ -2873,42 +2888,42 @@ $business_types = \App\Business\BusinessProfileService::businessTypes();
 
 HTML tidak berubah (`$business`, `$success_message`, `$error_message`, `$business_types` sama).
 
-- [ ] **Step 6: Lint & test penuh** — `php -l src/App/Business/BusinessProfileService.php`, `php -l profile.php`, `composer test` → hijau.
+- [ ] **Step 6: Lint & test penuh** — `php -l src/Business/BusinessProfileService.php`, `php -l profile.php`, `composer test` → hijau.
 
-- [ ] **Step 7: Commit** — `git add -A src/App/Business tests/BusinessProfileServiceTest.php profile.php && git commit -m "refactor(profile): ekstrak slice Profil Bisnis ke App\\Business\\BusinessProfileService"`
+- [ ] **Step 7: Commit** — `git add -A src/Business tests/BusinessProfileServiceTest.php profile.php && git commit -m "refactor(profile): ekstrak slice Profil Bisnis ke App\\Business\\BusinessProfileService"`
 
 ---
 
 ### Task 9: Dokumentasi Struktur Baru
 
 **Files:**
-- Modify: `AGENTS.md` (§1 tabel peta file: `includes/rfm.php` → `src/App/Rfm/RfmService.php`,
-  `includes/import.php` → `src/App/Import/SpreadsheetImporter.php` + `src/App/Upload/UploadValidator.php`,
-  `includes/export.php` → `src/App/Export/*`, tambah baris `src/App/<Fitur>/*`; §8 checklist
+- Modify: `AGENTS.md` (§1 tabel peta file: `includes/rfm.php` → `src/Rfm/RfmService.php`,
+  `includes/import.php` → `src/Import/SpreadsheetImporter.php` + `src/Upload/UploadValidator.php`,
+  `includes/export.php` → `src/Export/*`, tambah baris `src/<Fitur>/*`; §8 checklist
   refactor: area RFM/export/import/upload merujuk class baru), `README.md` (bagian struktur
   file/arsitektur)
 
 **Interfaces:** — (dokumentasi)
 
 - [ ] **Step 1: Update `AGENTS.md`** — §1 "Peta file": tambahkan baris
-      `| Logika per fitur (vertikal) | src/App/<Fitur>/*.php | Customers, Transactions, Dashboard, Rfm, Import, Upload, Export, Ai, Business |`
+      `| Logika per fitur (vertikal) | src/<Fitur>/*.php | Customers, Transactions, Dashboard, Rfm, Import, Upload, Export, Ai, Business |`
       dan ubah baris `includes/rfm.php`, `includes/import.php`, `includes/export.php` menjadi
       merujuk class App yang baru (hapus dari daftar includes). §8 "Refactor — Checklist per
-      Area": area RFM sekarang `src/App/Rfm/RfmService.php` (+ `src/Rfm.php` tetap single source
-      of truth), area Export sekarang `src/App/Export/*` + repository, area Upload/Import sekarang
-      `src/App/Upload/UploadValidator.php` + `src/App/Import/SpreadsheetImporter.php`. Sesuaikan
+      Area": area RFM sekarang `src/Rfm/RfmService.php` (+ `src/Rfm.php` tetap single source
+      of truth), area Export sekarang `src/Export/*` + repository, area Upload/Import sekarang
+      `src/Upload/UploadValidator.php` + `src/Import/SpreadsheetImporter.php`. Sesuaikan
       kalimat "SQL di includes/rfm.php dibangun dari src/Rfm.php" → "SQL di
-      src/App/Rfm/RfmService.php dibangun dari src/Rfm.php".
+      src/Rfm/RfmService.php dibangun dari src/Rfm.php".
 
 - [ ] **Step 2: Update `README.md`** — bagian struktur file/arsitektur: ganti daftar
       `includes/export.php`, `includes/import.php`, `includes/rfm.php` dengan daftar
-      `src/App/<Fitur>/` (9 class) dan catatan bahwa halaman docroot tipis (lapisan HTTP+render)
+      `src/<Fitur>/` (9 class) dan catatan bahwa halaman docroot tipis (lapisan HTTP+render)
       sementara logika data & bisnis di class per fitur.
 
 - [ ] **Step 3: Verifikasi penuh** — `find . -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l`,
       `composer test` (semua hijau), `composer audit` (0 advisory), `git status` bersih.
 
-- [ ] **Step 4: Commit** — `git add AGENTS.md README.md && git commit -m "docs: struktur vertical slicing di AGENTS.md & README (src/App/<Fitur>)"`
+- [ ] **Step 4: Commit** — `git add AGENTS.md README.md && git commit -m "docs: struktur vertical slicing di AGENTS.md & README (src/<Fitur>)"`
 
 ---
 

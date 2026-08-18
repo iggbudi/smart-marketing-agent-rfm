@@ -1,7 +1,7 @@
 # Vertical Slicing — Sprint Plan (4 Sprint)
 
 **Goal:** Restrukturisasi aplikasi UMKM owner dari struktur horizontal (halaman gemuk,
-helper `includes/` lintas-fitur) menjadi slice vertikal per fitur (`src/App/<Fitur>/` +
+helper `includes/` lintas-fitur) menjadi slice vertikal per fitur (`src/<Fitur>/` +
 halaman/API tipis + test per slice), dalam **4 sprint** — setiap sprint menghasilkan
 **increment yang shippable**: aplikasi tetap berjalan, `composer test` hijau, satu commit
 per task (AGENTS.md §6).
@@ -31,6 +31,10 @@ sprint + definisi selesai + verifikasi per sprint.
   `mysql -u root -e "DROP DATABASE IF EXISTS smart_marketing_rfm_test; CREATE DATABASE smart_marketing_rfm_test CHARACTER SET utf8mb4;"`
   lalu `for f in database_schema.sql database_update.sql database_indexes.sql; do sed '/^USE /d' "$f" | mysql -u root smart_marketing_rfm_test; done`
   (sekaligus verifikasi baseline: `composer test` hijau sebelum sprint 1).
+- **Halaman/API tipis WAJIB memuat autoload sendiri** (`require_once __DIR__ . '/vendor/autoload.php';`
+  docroot / `dirname(__DIR__) . '/vendor/autoload.php'` di `api/`) — web request tidak memuat
+  autoload secara otomatis (ditemukan & dikunci di S1 Task 1). Jangan central-kan di
+  `config/database.php` (mengubah perilaku `class_exists()` di `api/export-*.php`).
 - Verifikasi tiap sprint (wajib, lihat skill `verification-before-completion`):
   `find . -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l` &&
   `composer test` && `composer audit` (0 advisory) && `git status` bersih.
@@ -43,8 +47,8 @@ sprint + definisi selesai + verifikasi per sprint.
 menjadi tipis; pola "thin page → class repository" terbentuk dan dipakai 2 fitur utama.
 
 **Scope:**
-- Create `src/App/Customers/CustomerRepository.php` + `tests/CustomerRepositoryTest.php`
-- Create `src/App/Transactions/TransactionRepository.php` + `tests/TransactionRepositoryTest.php`
+- Create `src/Customers/CustomerRepository.php` + `tests/CustomerRepositoryTest.php`
+- Create `src/Transactions/TransactionRepository.php` + `tests/TransactionRepositoryTest.php`
 - Modify `customers.php`, `transactions.php` (blok PHP diganti; HTML/JS TIDAK berubah)
 
 **Task:** Task 1 (Customers), Task 2 (Transactions) di plan detail.
@@ -70,8 +74,8 @@ cek daftar variabel di plan detail (Task 1 Step 5, Task 2 Step 5) sebelum commit
 pindah ke `App\Rfm\RfmService`; `includes/rfm.php` dihapus.
 
 **Scope:**
-- Create `src/App/Dashboard/DashboardStats.php` + `tests/DashboardStatsTest.php`
-- Create `src/App/Rfm/RfmService.php` + `tests/RfmServiceTest.php`
+- Create `src/Dashboard/DashboardStats.php` + `tests/DashboardStatsTest.php`
+- Create `src/Rfm/RfmService.php` + `tests/RfmServiceTest.php`
 - Modify `dashboard.php`, `analysis.php`
 - Delete `includes/rfm.php`
 
@@ -94,13 +98,13 @@ pindah ke `App\Rfm\RfmService`; `includes/rfm.php` dihapus.
 ## Sprint 3 — Siklus Data: Import/Upload & Export
 
 **Durasi estimasi:** 1 minggu. **Increment:** validasi upload ter-dedupe, impor & export
-pindah ke `src/App/`, `includes/import.php` & `includes/export.php` dihapus, API export tipis,
+pindah ke `src/`, `includes/import.php` & `includes/export.php` dihapus, API export tipis,
 riwayat upload benar-benar tampil di halaman.
 
 **Scope:**
-- Create `src/App/Upload/UploadValidator.php` + `tests/UploadValidatorTest.php`
-- Create `src/App/Import/SpreadsheetImporter.php` + `tests/ImportTest.php`
-- Create `src/App/Export/CustomersExporter.php`, `src/App/Export/TransactionsExporter.php`
+- Create `src/Upload/UploadValidator.php` + `tests/UploadValidatorTest.php`
+- Create `src/Import/SpreadsheetImporter.php` + `tests/ImportTest.php`
+- Create `src/Export/CustomersExporter.php`, `src/Export/TransactionsExporter.php`
 - Rewrite `tests/ExportTest.php` (asersi format sama, panggilan class baru)
 - Modify `upload.php`, `api/upload-excel.php`, `api/export-customers.php`,
   `api/export-transactions.php`, `tests/bootstrap.php`
@@ -130,8 +134,8 @@ riwayat upload benar-benar tampil di halaman.
 internal; logika profil bisnis ter-extract; struktur baru terdokumentasi di AGENTS.md/README.
 
 **Scope:**
-- Create `src/App/Ai/ContentGenerator.php` + `tests/ContentGeneratorTest.php`
-- Create `src/App/Business/BusinessProfileService.php` + `tests/BusinessProfileServiceTest.php`
+- Create `src/Ai/ContentGenerator.php` + `tests/ContentGeneratorTest.php`
+- Create `src/Business/BusinessProfileService.php` + `tests/BusinessProfileServiceTest.php`
 - Modify `ai-content.php`, `api/generate-content.php`, `profile.php`
 - Modify `AGENTS.md` (§1 peta file, §8 checklist refactor), `README.md` (struktur file)
 
@@ -144,7 +148,7 @@ internal; logika profil bisnis ter-extract; struktur baru terdokumentasi di AGEN
       (dummy pindah ke `ContentGenerator::dummyContent()`).
 - [ ] `ai-content.php` tidak lagi `file_get_contents('http://localhost...')` — panggil
       `ContentGenerator` langsung (hapus ketergantungan path `/smart/` hardcoded).
-- [ ] `AGENTS.md` & `README.md` konsisten dengan struktur baru (`src/App/<Fitur>/`; daftar
+- [ ] `AGENTS.md` & `README.md` konsisten dengan struktur baru (`src/<Fitur>/`; daftar
       `includes/` yang tersisa: sidebar, pagination).
 - [ ] Verifikasi penuh terakhir: lint seluruh repo, `composer test`, `composer audit`, `git status` bersih.
 
