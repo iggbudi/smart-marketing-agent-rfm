@@ -157,4 +157,12 @@ class MobileRelayoutTest extends TestCase
         $this->assertStringNotContainsString('Total Customers', $src, 'dashboard: jangan label Inggris');
         $this->assertStringNotContainsString('Recent Transactions', $src, 'dashboard: jangan judul Inggris');
     }
+
+    public function testHeadingKonsistenH2(): void
+    {
+        $src = file_get_contents(dirname(__DIR__) . '/ai-content.php');
+        $this->assertNotFalse($src, 'ai-content.php harus bisa dibaca');
+        $this->assertStringContainsString('<h2', $src, 'ai-content: heading h2');
+        $this->assertStringNotContainsString('<h1>', $src, 'ai-content: tidak boleh ada h1 (konsisten dgn halaman lain)');
+    }
 }

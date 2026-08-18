@@ -61,7 +61,7 @@ $mobilePageTitle = 'Generator Konten AI';
         <!-- Main Content -->
         <div class="main-content">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1><i class="fas fa-magic me-2"></i> Generator Konten AI</h1>
+                <h2><i class="fas fa-magic me-2"></i> Generator Konten AI</h2>
                 <div class="text-muted">
                     Bisnis: <?= htmlspecialchars($business['name']) ?>
                 </div>
