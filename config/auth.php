@@ -11,6 +11,11 @@ session_set_cookie_params([
 session_start();
 require_once __DIR__ . '/database.php';
 
+// Headers keamanan dasar (diterapkan ke semua halaman yang memuat auth.php)
+header('X-Frame-Options: DENY');
+header('X-Content-Type-Options: nosniff');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+
 class AuthManager {
     private $db;
     

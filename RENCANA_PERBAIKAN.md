@@ -65,8 +65,8 @@ File yang dihapus (tidak lagi dapat diakses via URL):
 - [x] Simpan file upload di luar web root atau folder yang diblokir eksekusi PHP (ke `storage/uploads/` + `.htaccess` blokir PHP/listing)
 
 ### 2.4 Header keamanan (di PHP atau vhost Apache)
-- [ ] `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`
-- [ ] Pertimbangkan CSP dasar (perhatikan CDN Bootstrap/FA/Chart.js/DataTables)
+- [x] `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy` (diset di `config/auth.php`, berlaku ke semua halaman yang memuatnya)
+- [ ] Pertimbangkan CSP dasar (perhatikan CDN Bootstrap/FA/Chart.js/DataTables) — **didefer**: banyak halaman memakai inline `<script>` + banyak CDN, butuh refactor bertahap agar tidak merusak fungsionalitas
 
 ### 2.5 Perbaiki `Database::getConnection()`
 - [ ] Jangan `echo 'Connection error.'` ke output — lempar exception atau tampilkan halaman error netral; log detail ke `error_log`
