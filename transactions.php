@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
 require_once 'config/database.php';
 require_once 'config/auth.php';
 require_once 'includes/pagination.php';
@@ -15,117 +16,78 @@ if (!$business) {
     die('Error: No business associated with your account. Please contact administrator.');
 }
 
+$repo = new \App\Transactions\TransactionRepository($db);
+$customerRepo = new \App\Customers\CustomerRepository($db);
 $message = '';
 $messageType = '';
 
-// Handle form submission
+// Lapisan HTTP + CSRF; logika data & validasi di repository
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     requireCsrf();
-    if (isset($_POST['action'])) {
-        if ($_POST['action'] === 'add') {
-            $customer_id = trim($_POST['customer_id']);
-            $transaction_date = trim($_POST['transaction_date']);
-            $amount = trim($_POST['amount']);
-            $product_name = trim($_POST['product_name']);
-            $quantity = trim($_POST['quantity']) ?: 1;
-            
-            if (!empty($customer_id) && !empty($transaction_date) && !empty($amount)) {
-                try {
-                    $stmt = $db->prepare("INSERT INTO transactions (business_id, customer_id, transaction_date, amount, product_name, quantity, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-                    $stmt->execute([$business['id'], $customer_id, $transaction_date, $amount, $product_name, $quantity]);
-                    $message = 'Transaksi berhasil ditambahkan!';
-                    $messageType = 'success';
-                } catch (PDOException $e) {
-                    $message = 'Error: ' . $e->getMessage();
-                    $messageType = 'danger';
-                }
-            } else {
-                $message = 'Customer, tanggal, dan jumlah harus diisi!';
-                $messageType = 'warning';
-            }
-        } elseif ($_POST['action'] === 'delete' && isset($_POST['transaction_id'])) {
-            try {
-                $stmt = $db->prepare("DELETE FROM transactions WHERE id = ? AND business_id = ?");
-                $stmt->execute([$_POST['transaction_id'], $business['id']]);
-                $message = 'Transaksi berhasil dihapus!';
-                $messageType = 'success';
-            } catch (PDOException $e) {
-                $message = 'Error: ' . $e->getMessage();
-                $messageType = 'danger';
-            }
+    if (($_POST['action'] ?? '') === 'add') {
+        try {
+            $repo->add(
+                $business['id'],
+                (int)trim($_POST['customer_id'] ?? ''),
+                trim($_POST['transaction_date'] ?? ''),
+                (float)trim($_POST['amount'] ?? ''),
+                trim($_POST['product_name'] ?? '') !== '' ? trim($_POST['product_name']) : null,
+                (int)($_POST['quantity'] ?? 1)
+            );
+            $message = 'Transaksi berhasil ditambahkan!';
+            $messageType = 'success';
+        } catch (\InvalidArgumentException $e) {
+            $message = $e->getMessage();
+            $messageType = 'warning';
+        } catch (\PDOException $e) {
+            $message = 'Error: ' . $e->getMessage();
+            $messageType = 'danger';
+        }
+    } elseif (($_POST['action'] ?? '') === 'delete' && isset($_POST['transaction_id'])) {
+        try {
+            $repo->delete($business['id'], (int)$_POST['transaction_id']);
+            $message = 'Transaksi berhasil dihapus!';
+            $messageType = 'success';
+        } catch (\PDOException $e) {
+            $message = 'Error: ' . $e->getMessage();
+            $messageType = 'danger';
         }
     }
 }
 
-// Get customers for dropdown
-$customers = [];
-try {
-    $stmt = $db->prepare("SELECT id, customer_name, phone FROM customers WHERE business_id = ? ORDER BY customer_name");
-    $stmt->execute([$business['id']]);
-    $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    $message = 'Error loading customers: ' . $e->getMessage();
-    $messageType = 'danger';
-}
+// Dropdown pelanggan (dari slice Customers)
+$customers = $customerRepo->listForDropdown($business['id']);
 
-// Statistik agregat (seluruh data bisnis, bukan hanya halaman aktif)
+// Statistik kartu (agregat penuh, bukan dari halaman aktif)
 $totalTransactions = 0;
 $totalRevenue = 0;
 $activeCustomers = 0;
 try {
-    $stmt = $db->prepare("SELECT COUNT(*) FROM transactions WHERE business_id = ?");
-    $stmt->execute([$business['id']]);
-    $totalTransactions = (int)$stmt->fetchColumn();
-
-    $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE business_id = ?");
-    $stmt->execute([$business['id']]);
-    $totalRevenue = (float)$stmt->fetchColumn();
-
-    $stmt = $db->prepare("SELECT COUNT(DISTINCT customer_id) FROM transactions WHERE business_id = ?");
-    $stmt->execute([$business['id']]);
-    $activeCustomers = (int)$stmt->fetchColumn();
-} catch (PDOException $e) {
+    $totalTransactions = $repo->count($business['id']);
+    $totalRevenue = $repo->totalRevenue($business['id']);
+    $activeCustomers = $repo->countActiveCustomers($business['id']);
+} catch (\PDOException $e) {
     $message = 'Error loading statistics: ' . $e->getMessage();
     $messageType = 'danger';
 }
 $avgTransaction = $totalTransactions > 0 ? $totalRevenue / $totalTransactions : 0;
 
-// Pencarian server-side
+// Pencarian server-side + pagination (LIMIT/OFFSET di-cast (int) di repository)
 $search = trim($_GET['q'] ?? '');
-$where = 't.business_id = ?';
-$params = [$business['id']];
-if ($search !== '') {
-    $like = '%' . $search . '%';
-    $where .= ' AND (c.customer_name LIKE ? OR t.product_name LIKE ?)';
-    array_push($params, $like, $like);
-}
-
 $totalRows = 0;
 try {
-    $stmt = $db->prepare("SELECT COUNT(*) FROM transactions t JOIN customers c ON t.customer_id = c.id WHERE " . $where);
-    $stmt->execute($params);
-    $totalRows = (int)$stmt->fetchColumn();
-} catch (PDOException $e) {
+    $totalRows = $repo->countSearch($business['id'], $search);
+} catch (\PDOException $e) {
     $message = 'Error loading transactions: ' . $e->getMessage();
     $messageType = 'danger';
 }
 
 [$page, $perPage, $offset, $totalPages] = paginate($totalRows);
 
-// Get transactions for this business (halaman aktif)
 $transactions = [];
 try {
-    $stmt = $db->prepare("
-        SELECT t.*, c.customer_name, c.phone
-        FROM transactions t 
-        JOIN customers c ON t.customer_id = c.id 
-        WHERE " . $where . "
-        ORDER BY t.transaction_date DESC, t.created_at DESC
-        LIMIT " . (int)$perPage . " OFFSET " . (int)$offset . "
-    ");
-    $stmt->execute($params);
-    $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
+    $transactions = $repo->search($business['id'], $search, $perPage, $offset);
+} catch (\PDOException $e) {
     $message = 'Error loading transactions: ' . $e->getMessage();
     $messageType = 'danger';
 }
