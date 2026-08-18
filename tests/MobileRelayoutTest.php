@@ -56,4 +56,14 @@ class MobileRelayoutTest extends TestCase
             $this->assertStringContainsString('#f59e0b', $src, basename($css) . ': aksen amber wajib');
         }
     }
+
+    public function testStatsCardKonsistenDiHalamanData(): void
+    {
+        foreach (['customers.php', 'transactions.php'] as $page) {
+            $src = file_get_contents(dirname(__DIR__) . '/' . $page);
+            $this->assertNotFalse($src, "$page harus bisa dibaca");
+            $this->assertStringContainsString('stats-card', $src, "$page: kartu statistik pakai class .stats-card (bukan .stat-card bg-*)");
+            $this->assertStringNotContainsString('stat-card bg-', $src, "$page: jangan pakai warna bootstrap acak");
+        }
+    }
 }

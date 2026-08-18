@@ -119,7 +119,7 @@ try {
         <!-- Statistics Cards -->
         <div class="row mb-4">
             <div class="col-md-3">
-                <div class="card stat-card bg-primary text-white">
+                <div class="card stats-card customers">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -132,7 +132,7 @@ try {
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card stat-card bg-success text-white">
+                <div class="card stats-card loyal">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -145,7 +145,7 @@ try {
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card stat-card bg-info text-white">
+                <div class="card stats-card potential">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -158,7 +158,7 @@ try {
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card stat-card bg-warning text-white">
+                <div class="card stats-card revenue">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>

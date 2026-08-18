@@ -102,6 +102,14 @@ body {
     background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%); 
 }
 
+.stats-card.loyal { 
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+}
+
+.stats-card.potential { 
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); 
+}
+
 /* Tables */
 .table {
     background: white;
