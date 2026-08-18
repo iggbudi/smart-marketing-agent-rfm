@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/vendor/autoload.php';
 require_once 'config/database.php';
 require_once 'config/auth.php';
 
@@ -14,52 +15,13 @@ if (!$business) {
     die('Error: No business associated with your account. Please contact administrator.');
 }
 
-// Get statistics for this business only
-$stats = [];
-$stmt = $db->prepare("SELECT COUNT(*) as total_customers FROM customers WHERE business_id = ?");
-$stmt->execute([$business['id']]);
-$stats['total_customers'] = $stmt->fetch()['total_customers'];
+$dash = new \App\Dashboard\DashboardStats($db);
 
-$stmt = $db->prepare("SELECT COUNT(*) as total_transactions FROM transactions WHERE business_id = ?");
-$stmt->execute([$business['id']]);
-$stats['total_transactions'] = $stmt->fetch()['total_transactions'];
-
-$stmt = $db->prepare("SELECT SUM(amount) as total_revenue FROM transactions WHERE business_id = ?");
-$stmt->execute([$business['id']]);
-$stats['total_revenue'] = $stmt->fetch()['total_revenue'] ?? 0;
-
-// Get recent transactions
-$stmt = $db->prepare("
-    SELECT t.*, c.customer_name 
-    FROM transactions t 
-    JOIN customers c ON t.customer_id = c.id 
-    WHERE t.business_id = ? 
-    ORDER BY t.transaction_date DESC 
-    LIMIT 10
-");
-$stmt->execute([$business['id']]);
-$recent_transactions = $stmt->fetchAll();
-
-// Get RFM data for charts
-$stmt = $db->prepare("
-    SELECT rfm_segment, COUNT(*) as count 
-    FROM rfm_analysis 
-    WHERE business_id = ? 
-    GROUP BY rfm_segment
-");
-$stmt->execute([$business['id']]);
-$rfm_data = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
-
-// Get monthly revenue trend
-$stmt = $db->prepare("
-    SELECT DATE_FORMAT(transaction_date, '%Y-%m') as month, SUM(amount) as revenue 
-    FROM transactions 
-    WHERE business_id = ? AND transaction_date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-    GROUP BY DATE_FORMAT(transaction_date, '%Y-%m') 
-    ORDER BY month
-");
-$stmt->execute([$business['id']]);
-$revenue_trend = $stmt->fetchAll();
+// Statistik & data grafik untuk business ini
+$stats = $dash->getStats($business['id']);
+$recent_transactions = $dash->getRecentTransactions($business['id'], 10);
+$rfm_data = $dash->getRfmData($business['id']);
+$revenue_trend = $dash->getRevenueTrend($business['id'], 6);
 ?>
 
 <!DOCTYPE html>
