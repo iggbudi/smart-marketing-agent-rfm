@@ -197,6 +197,7 @@ $uploadHistory = $importer->history($business['id'], 10);
                                 <h5>Drag & Drop File Excel Disini</h5>
                                 <p class="text-muted">Atau klik untuk memilih file</p>
                                 <input type="file" id="dragDropFile" class="d-none" accept=".xlsx,.xls">
+                                <?= csrf_field() ?>
                             </div>
                         </div>
                     </div>
@@ -247,6 +248,12 @@ $uploadHistory = $importer->history($business['id'], 10);
                 
                 const formData = new FormData();
                 formData.append('excel_file', file);
+
+                // Sertakan token CSRF agar requireCsrf() tidak menolak (403)
+                const csrfToken = document.querySelector('#dropZone input[name="csrf_token"]');
+                if (csrfToken) {
+                    formData.append('csrf_token', csrfToken.value);
+                }
                 
                 // Show loading
                 dropZone.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Mengupload...</p></div>';
