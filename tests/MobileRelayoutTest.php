@@ -109,4 +109,19 @@ class MobileRelayoutTest extends TestCase
         $this->assertStringContainsString('flex: 0 0 50%;', $css, 'stats cards: grid 2 kolom di mobile');
         $this->assertStringContainsString('.stats-card h3 { font-size: 1.5rem; }', $css, 'angka stats besar di mobile');
     }
+
+    public function testTableCardsDipasang(): void
+    {
+        $js = file_get_contents(dirname(__DIR__) . '/assets/table-cards.js');
+        $this->assertNotFalse($js, 'table-cards.js harus bisa dibaca');
+        $this->assertStringContainsString('table-cards-target', $js, 'table-cards.js: selector wajib');
+        $this->assertStringContainsString('innerWidth <= 575', $js, 'table-cards.js: hanya aktif ≤575px');
+
+        foreach (['customers.php', 'transactions.php'] as $page) {
+            $src = file_get_contents(dirname(__DIR__) . '/' . $page);
+            $this->assertNotFalse($src, "$page harus bisa dibaca");
+            $this->assertStringContainsString('table-cards-target', $src, "$page: tabel wajib class table-cards-target");
+            $this->assertStringContainsString('table-cards.js', $src, "$page: wajib memuat assets/table-cards.js");
+        }
+    }
 }

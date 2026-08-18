@@ -193,7 +193,7 @@ $mobilePageTitle = 'Data Pelanggan';
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover table-cards-target">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -308,6 +308,7 @@ $mobilePageTitle = 'Data Pelanggan';
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/mobile.js"></script>
+    <script src="assets/table-cards.js"></script>
     <script>
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('show');

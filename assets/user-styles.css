@@ -404,3 +404,22 @@ body {
     .modal-content { border-radius: 16px 16px 0 0; }
     .modal-body { max-height: 70vh; overflow-y: auto; }
 }
+
+/* ===== Card view untuk tabel (dibuat oleh assets/table-cards.js saat ≤575px) ===== */
+.table-cards { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.table-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, .05);
+}
+.table-card-title { font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+.table-card-body { display: flex; flex-direction: column; gap: 6px; }
+.table-card-item {
+    display: flex; justify-content: space-between; align-items: center; gap: .75rem;
+    font-size: .9rem;
+}
+.table-card-label { color: var(--muted); font-size: .78rem; }
+.table-card-value { font-weight: 600; color: var(--ink); text-align: right; }
+.table-card-item .btn-group { gap: .35rem; }
