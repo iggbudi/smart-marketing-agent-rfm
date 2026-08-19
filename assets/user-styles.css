@@ -423,3 +423,37 @@ body {
 .table-card-label { color: var(--muted); font-size: .78rem; }
 .table-card-value { font-weight: 600; color: var(--ink); text-align: right; }
 .table-card-item .btn-group { gap: .35rem; }
+
+/* ===== Kartu KPI (identitas sama dgn admin dashboard) ===== */
+.kpi-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 100%;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .05);
+}
+.kpi-card .kpi-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.25rem; color: #fff;
+    flex-shrink: 0;
+}
+.kpi-card .kpi-icon.teal  { background: var(--grad-brand); }
+.kpi-card .kpi-icon.amber { background: linear-gradient(135deg, #f59e0b, #f97316); }
+.kpi-card .kpi-icon.blue  { background: linear-gradient(135deg, #3b82f6, #6366f1); }
+.kpi-card .kpi-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
+.kpi-card .kpi-icon.red   { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.kpi-card .kpi-icon.gray  { background: linear-gradient(135deg, #6b7280, #4b5563); }
+.kpi-card .kpi-value { font-size: 1.35rem; font-weight: 700; color: var(--ink); line-height: 1.1; }
+.kpi-card .kpi-label { color: var(--muted); font-size: .78rem; }
+
+@media (max-width: 575.98px) {
+    .kpi-card { flex-direction: row; align-items: center; gap: 10px; padding: 12px; }
+    .kpi-card .kpi-icon { width: 40px; height: 40px; font-size: 1rem; }
+    .kpi-value { font-size: 1.15rem; }
+}
