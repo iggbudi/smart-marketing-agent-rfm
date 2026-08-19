@@ -17,4 +17,13 @@ class DashboardUmkmLayoutTest extends TestCase
         $this->assertStringContainsString('.kpi-card', $css, 'user-styles: .kpi-card wajib ada (identitas)');
         $this->assertStringContainsString('.kpi-icon', $css, 'user-styles: ikon KPI wajib ada');
     }
+
+    public function testDashboardPakaiKpiCardDanInsight(): void
+    {
+        $src = file_get_contents(dirname(__DIR__) . '/dashboard.php');
+        $this->assertNotFalse($src, 'dashboard.php harus bisa dibaca');
+        $this->assertStringContainsString('kpi-card', $src, 'dashboard wajib pakai .kpi-card utk metrik utama');
+        $this->assertStringContainsString('getAttentionCount', $src, 'dashboard wajib memakai metrik getAttentionCount');
+        $this->assertStringContainsString('Butuh Perhatian', $src, 'KPI/label insight "Butuh Perhatian"');
+    }
 }

@@ -19,6 +19,7 @@ $dash = new \App\Dashboard\DashboardStats($db);
 
 // Statistik & data grafik untuk business ini
 $stats = $dash->getStats($business['id']);
+$attentionCount = $dash->getAttentionCount($business['id']);
 $recent_transactions = $dash->getRecentTransactions($business['id'], 10);
 $rfm_data = $dash->getRfmData($business['id']);
 $revenue_trend = $dash->getRevenueTrend($business['id'], 6);
@@ -52,32 +53,41 @@ $mobilePageTitle = 'Dashboard';
             </div>
         </div>
 
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card stats-card customers">
-                    <div class="card-body">
-                        <i class="fas fa-users fa-2x mb-3"></i>
-                        <h3><?= number_format($stats['total_customers']) ?></h3>
-                        <p class="mb-0">Total Pelanggan</p>
+        <!-- Metrik Utama: KPI card identitas -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="kpi-card">
+                    <span class="kpi-icon teal"><i class="fas fa-users"></i></span>
+                    <div>
+                        <div class="kpi-value"><?= number_format($stats['total_customers']) ?></div>
+                        <div class="kpi-label">Total Pelanggan</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card stats-card transactions">
-                    <div class="card-body">
-                        <i class="fas fa-shopping-cart fa-2x mb-3"></i>
-                        <h3><?= number_format($stats['total_transactions']) ?></h3>
-                        <p class="mb-0">Total Transaksi</p>
+            <div class="col-6 col-md-3">
+                <div class="kpi-card">
+                    <span class="kpi-icon blue"><i class="fas fa-shopping-cart"></i></span>
+                    <div>
+                        <div class="kpi-value"><?= number_format($stats['total_transactions']) ?></div>
+                        <div class="kpi-label">Total Transaksi</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card stats-card revenue">
-                    <div class="card-body">
-                        <i class="fas fa-dollar-sign fa-2x mb-3"></i>
-                        <h3>Rp <?= number_format($stats['total_revenue'], 0, ',', '.') ?></h3>
-                        <p class="mb-0">Total Omzet</p>
+            <div class="col-6 col-md-3">
+                <div class="kpi-card">
+                    <span class="kpi-icon amber"><i class="fas fa-money-bill-wave"></i></span>
+                    <div>
+                        <div class="kpi-value">Rp <?= number_format($stats['total_revenue'], 0, ',', '.') ?></div>
+                        <div class="kpi-label">Total Omzet</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="kpi-card">
+                    <span class="kpi-icon red"><i class="fas fa-exclamation-triangle"></i></span>
+                    <div>
+                        <div class="kpi-value"><?= number_format($attentionCount) ?></div>
+                        <div class="kpi-label">Pelanggan Butuh Perhatian</div>
                     </div>
                 </div>
             </div>
