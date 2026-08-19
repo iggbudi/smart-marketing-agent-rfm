@@ -11,14 +11,15 @@ $db = getDB();
 
 $apiAdmin = new \App\Admin\ApiManagementAdmin($db);
 
-// Handle form submissions (POST — dipertahankan apa adanya)
+// Handle form submissions (POST + CSRF)
 if ($_POST) {
+    requireCsrf();
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'clear_logs':
                 $days = intval($_POST['days']);
-                $stmt = $db->prepare("DELETE FROM api_usage_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)");
-                $stmt->execute([$days]);
+                $stmt = $db->prepare("DELETE FROM api_usage_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL " . (int)$days . " DAY)");
+                $stmt->execute();
                 $success = "Log API lebih tua dari {$days} hari telah dihapus!";
                 auth()->logActivity($_SESSION['user_id'], 'api_logs_cleanup', "Cleared API logs older than {$days} days");
                 break;
@@ -230,6 +231,7 @@ $settings = $apiAdmin->settings();
         <div class="modal-dialog">
             <div class="modal-content">
                 <form method="POST">
+                    <?= csrf_field() ?>
                     <div class="modal-header">
                         <h5 class="modal-title">Kosongkan Log API</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -264,6 +266,7 @@ $settings = $apiAdmin->settings();
         <div class="modal-dialog">
             <div class="modal-content">
                 <form method="POST">
+                    <?= csrf_field() ?>
                     <div class="modal-header">
                         <h5 class="modal-title">Pengaturan API</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
