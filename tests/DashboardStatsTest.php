@@ -79,4 +79,27 @@ class DashboardStatsTest extends TestCase
         $this->assertSame([], (new DashboardStats($this->db))->getRfmData($biz));
         $this->assertSame([], (new DashboardStats($this->db))->getRevenueTrend($biz, 6));
     }
+
+    public function testGetAttentionCountMenghitungSegmentBerisiko(): void
+    {
+        $biz = $this->createBusiness();
+        $custRepo = new CustomerRepository($this->db);
+        $c1 = $custRepo->add($biz, 'Andi', '0811', '');
+        $c2 = $custRepo->add($biz, 'Sari', '0822', '');
+        $c3 = $custRepo->add($biz, 'Budi', '0833', '');
+
+        $seed = function (int $cust, string $segment) use ($biz) {
+            $stmt = $this->db->prepare(
+                "INSERT INTO rfm_analysis (business_id, customer_id, recency_score, frequency_score, monetary_score, rfm_segment, analysis_date, created_at)
+                 VALUES (?, ?, 3, 2, 2, ?, CURDATE(), NOW())"
+            );
+            $stmt->execute([$biz, $cust, $segment]);
+        };
+        $seed($c1, 'Champions');
+        $seed($c2, 'At Risk');
+        $seed($c3, 'About to Sleep');
+
+        $count = (new DashboardStats($this->db))->getAttentionCount($biz);
+        $this->assertSame(2, $count, 'hanya segmen berisiko (At Risk & About to Sleep) yang dihitung');
+    }
 }

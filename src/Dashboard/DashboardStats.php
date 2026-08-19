@@ -47,6 +47,18 @@ class DashboardStats
         return $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
     }
 
+    /** Jumlah pelanggan pada segmen berisiko (butuh perhatian / berpotensi hilang). */
+    public function getAttentionCount(int $businessId): int
+    {
+        $stmt = $this->db->prepare(
+            "SELECT COUNT(*) FROM rfm_analysis
+             WHERE business_id = ?
+               AND rfm_segment IN ('At Risk', 'About to Sleep', 'Customers Needing Attention', 'Cannot Lose Them', 'Lost Customers')"
+        );
+        $stmt->execute([$businessId]);
+        return (int)$stmt->fetchColumn();
+    }
+
     /** Tren revenue per bulan (N bulan terakhir). */
     public function getRevenueTrend(int $businessId, int $months = 6): array
     {
