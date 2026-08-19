@@ -259,3 +259,12 @@ body { background-color: var(--bg-soft); }
     padding: 1rem;
     margin-bottom: .5rem;
 }
+
+/* ===== Laporan (admin reports) ===== */
+.report-filter {
+    background: #f6f7f4;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
