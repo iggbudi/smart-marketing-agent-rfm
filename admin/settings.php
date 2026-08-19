@@ -359,7 +359,12 @@ $platformStats = $settingsAdmin->platformStats();
                 actionInput.type = 'hidden';
                 actionInput.name = 'action';
                 actionInput.value = 'backup_database';
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrf_token';
+                csrfInput.value = <?= json_encode(csrf_token()) ?>;
                 form.appendChild(actionInput);
+                form.appendChild(csrfInput);
                 document.body.appendChild(form);
                 form.submit();
             }
@@ -374,7 +379,12 @@ $platformStats = $settingsAdmin->platformStats();
                 actionInput.type = 'hidden';
                 actionInput.name = 'action';
                 actionInput.value = 'clear_cache';
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrf_token';
+                csrfInput.value = <?= json_encode(csrf_token()) ?>;
                 form.appendChild(actionInput);
+                form.appendChild(csrfInput);
                 document.body.appendChild(form);
                 form.submit();
             }
