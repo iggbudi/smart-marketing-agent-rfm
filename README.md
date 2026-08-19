@@ -55,6 +55,12 @@ Smart Marketing Agent adalah platform komprehensif untuk analisis RFM (Recency, 
 > **Dashboard admin = cockpit monitoring desktop-first** (6 KPI, grafik pertumbuhan
 > bisnis & API usage, tabel aktivitas terbaru) — label berbahasa Indonesia, identitas
 > visual sama dgn sisi UMKM, data dari slice `App\Admin\PlatformStats`.
+>
+> **Panel admin kini konsisten** (identitas hijau-teal-amber + bahasa Indonesia +
+> kartu `.kpi-card`, data baca lewat slice `src/Admin/*`): dashboard, users
+> (`UserAdmin`), businesses (`BusinessAdmin`), analytics (`AnalyticsAdmin`),
+> api-management (`ApiManagementAdmin`), settings (`SettingsAdmin`), reports
+> (`ReportsAdmin`).
 
 ## Installation
 
